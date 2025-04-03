@@ -30,6 +30,9 @@
           <p>
            Lorem ipsum dolor sit, amet consectetur adipisicing elit. A, voluptate. Architecto, molestiae animi. Numquam saepe debitis, nemo corrupti quibusdam possimus accusamus dolorum nostrum sed alias quia recusandae ad temporibus repudiandae.
           </p>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque magni provident expedita culpa corporis autem minima tenetur necessitatibus eaque numquam nisi possimus ex earum accusamus, excepturi eligendi quas. Ea, cupiditate.
+            </p>
       </div>
     </section>
 
@@ -54,13 +57,9 @@
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit
           </p>
-        </div>
-
-        
-          
-
+        </div>         
     </main>
-    </div>    
-
+    </div>  
+      
 </body>
 </html>
