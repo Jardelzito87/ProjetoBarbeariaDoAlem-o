@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt_br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index| Projeto Web Standards</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../assets/fontawesome/css/all.min.css">
+</head>
+<body>
+    <nav id="backgroundImage">
+        <div id="Ajuste">
+
+            <div class="imagemCep">
+                 <img src="../images/buscacep_correios.jpg" alt="Imagem de Busca de CEP">  
+            </div>
+          
+            <p>Digite o CEP a ser procurar</p>                   
+          
+            <div class="grupoCep">                               
+                <input type="text" name="BuscarCep" placeholder="Ex: 00000-000">                
+                <input class="botaoPadrao BotaoEntrar" type="button" value="Buscar" onclick="BuscarCep()"> 
+                <input class="botaoPadrao BotaoLimpar" type="button" value="Limpar" onclick="limparCep()">                
+            </div> 
+                       
+            <p>Logradouro/Endereço</p>  
+
+            <div class="grupoEndereco">
+                <input type="text" name="endereco" placeholder="ex: Rua, Avenida, etc">            
+            </div>
+
+            <p>Complemento</p>  
+
+            <div class="grupoComplemento">
+                <input type="text" name="grupoComplemento" placeholder="Ex: Apto, Bloco, Casa, etc">
+            </div>
+
+            <p>Número</p>  
+
+            <div class="grupoNumero">
+                <input type="text" name="numero" placeholder="Ex: 12, 123, 1234, etc">
+            </div>
+
+            <p>Bairro</p>    
+
+            <div class="grupoBairro">
+                <input type="text" name="bairro" placeholder="Ex: Centro, Jardim, etc">
+            </div>
+            
+            <p>Localidade/Cidade</p>    
+
+            <div class="grupoCidade">
+                <input type="text" name="cidade" placeholder="Ex: São Paulo, Rio de Janeiro, etc">
+            </div>
+
+            <p>UF</p>   
+            
+            <div class="grupoEstado">
+                <input type="text" name="estado" placeholder="Ex: SP, RJ, etc">
+            </div>
+          
+        </div>
+    </nav>      
+</body>
+<script type="text/javascript" src="../js/script.js"></script>
+<script type="text/javascript" src="../assets/fontawesome/js/all.min.js"></script>
+</html>

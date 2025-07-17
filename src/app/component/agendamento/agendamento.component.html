@@ -1,0 +1,73 @@
+<div class="agendamento-container">
+  <h1>Faça seu Agendamento</h1>
+  
+  <div *ngIf="mensagem" class="mensagem" [ngClass]="mensagemTipo">
+    {{ mensagem }}
+  </div>
+  
+  <div *ngIf="carregando" class="loading">
+    Carregando...
+  </div>
+  
+  <form class="agendamento-form" (ngSubmit)="onSubmit()" *ngIf="!carregando">
+    <!-- Informações do Cliente -->
+    <h2>Informações Pessoais</h2>
+    
+    <div class="form-group">
+      <label for="nome">Nome Completo</label>
+      <input type="text" id="nome" name="nome" [(ngModel)]="cliente.nome" required placeholder="Digite seu nome completo">
+    </div>
+    
+    <div class="form-group">
+      <label for="telefone">Telefone</label>
+      <input type="tel" id="telefone" name="telefone" [(ngModel)]="cliente.telefone" required placeholder="(XX) XXXXX-XXXX">
+    </div>
+    
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" [(ngModel)]="cliente.email" placeholder="seu.email@exemplo.com">
+    </div>
+    
+    <!-- Informações do Agendamento -->
+    <h2>Detalhes do Agendamento</h2>
+    
+    <div class="form-group">
+      <label for="data">Data</label>
+      <input type="date" id="data" name="data_agendada" [(ngModel)]="agendamento.data_agendada" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="horario">Horário</label>
+      <select id="horario" name="hora_agendada" [(ngModel)]="agendamento.hora_agendada" required>
+        <option value="">Selecione um horário</option>
+        <option value="09:00:00">09:00</option>
+        <option value="10:00:00">10:00</option>
+        <option value="11:00:00">11:00</option>
+        <option value="14:00:00">14:00</option>
+        <option value="15:00:00">15:00</option>
+        <option value="16:00:00">16:00</option>
+        <option value="17:00:00">17:00</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="servico">Serviço</label>
+      <select id="servico" name="servico_id" [(ngModel)]="agendamento.servico_id" required>
+        <option value="">Selecione um serviço</option>
+        <option *ngFor="let servico of servicos" [value]="servico.id">
+          {{ servico.nome }} - R$ {{ servico.preco.toFixed(2) }}
+        </option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" name="observacoes" [(ngModel)]="agendamento.observacoes" rows="4" placeholder="Alguma observação adicional?"></textarea>
+    </div>
+    
+    <div class="form-buttons">
+      <button type="button" class="btn-reset" (click)="limparFormulario()">Limpar</button>
+      <button type="submit" class="btn-submit">Agendar</button>
+    </div>
+  </form>
+</div>
