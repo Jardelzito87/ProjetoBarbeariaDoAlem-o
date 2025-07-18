@@ -59,12 +59,31 @@
 .filter-btn:hover, .filter-btn.active {
   background: #b30000;
   transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(179, 0, 0, 0.5);
+  border-color: #ffe600;
+}
+
+.gallery-empty {
+  text-align: center;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 500px;
+  border: 2px dashed #b30000;
+}
+
+.gallery-empty p {
+  color: #fff;
+  font-size: 1.2rem;
+  text-shadow: 0 2px 8px #000;
 }
 
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 25px;
+  min-height: 200px;
 }
 
 .gallery-item {
@@ -74,6 +93,12 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   transition: all 0.4s ease;
   border: 2px solid transparent;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .gallery-item:hover {

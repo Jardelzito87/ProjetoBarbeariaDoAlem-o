@@ -3,90 +3,29 @@
   <p class="gallery-subtitle">Conheça nossos melhores trabalhos e estilos</p>
   
   <div class="gallery-filter">
-    <button class="filter-btn active">Todos</button>
-    <button class="filter-btn">Cortes</button>
-    <button class="filter-btn">Barbas</button>
-    <button class="filter-btn">Especiais</button>
+    <button class="filter-btn" [class.active]="categoriaAtual === 'todos'" (click)="filtrarPorCategoria('todos')">Todos</button>
+    <button class="filter-btn" [class.active]="categoriaAtual === 'cortes'" (click)="filtrarPorCategoria('cortes')">Cortes</button>
+    <button class="filter-btn" [class.active]="categoriaAtual === 'barbas'" (click)="filtrarPorCategoria('barbas')">Barbas</button>
+    <button class="filter-btn" [class.active]="categoriaAtual === 'especiais'" (click)="filtrarPorCategoria('especiais')">Especiais</button>
   </div>
   
   <div class="gallery">
-    <div class="gallery-item">
+    <div class="gallery-item" *ngFor="let item of itensFiltrados">
       <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/DzWHSK4r/download-1.jpg" alt="Corte Moderno">
+        <img [src]="item.imagem" [alt]="item.titulo">
         <div class="gallery-overlay">
           <span class="gallery-zoom">+</span>
         </div>
       </div>
       <div class="gallery-info">
-        <h3>Corte Moderno</h3>
-        <p>Estilo contemporâneo com acabamento perfeito</p>
+        <h3>{{item.titulo}}</h3>
+        <p>{{item.descricao}}</p>
       </div>
     </div>
-    
-    <div class="gallery-item">
-      <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/133LZF9Y/download-4.jpg" alt="Barba Estilizada">
-        <div class="gallery-overlay">
-          <span class="gallery-zoom">+</span>
-        </div>
-      </div>
-      <div class="gallery-info">
-        <h3>Barba Estilizada</h3>
-        <p>Definição e contorno para destacar seu estilo</p>
-      </div>
-    </div>
-    
-    <div class="gallery-item">
-      <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/dQ8MRvHn/download-2.jpg" alt="Corte Clássico">
-        <div class="gallery-overlay">
-          <span class="gallery-zoom">+</span>
-        </div>
-      </div>
-      <div class="gallery-info">
-        <h3>Corte Clássico</h3>
-        <p>Elegância atemporal para qualquer ocasião</p>
-      </div>
-    </div>
-    
-    <div class="gallery-item">
-      <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/tJbMvZSk/Freddie.jpg" alt="Estilo Retrô">
-        <div class="gallery-overlay">
-          <span class="gallery-zoom">+</span>
-        </div>
-      </div>
-      <div class="gallery-info">
-        <h3>Estilo Retrô</h3>
-        <p>Inspirado nos clássicos que nunca saem de moda</p>
-      </div>
-    </div>
-    
-    <div class="gallery-item">
-      <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/NfY3pVZt/opvoeden-aleid-truijens-getty-images.jpg" alt="Corte Degradê">
-        <div class="gallery-overlay">
-          <span class="gallery-zoom">+</span>
-        </div>
-      </div>
-      <div class="gallery-info">
-        <h3>Corte Degradê</h3>
-        <p>Transição perfeita para um visual moderno</p>
-      </div>
-    </div>
-    
-    <div class="gallery-item">
-      <div class="gallery-img-container">
-        <img src="https://i.postimg.cc/gJ87KqDr/Samuel-L-Jackson.jpg" alt="Estilo Exclusivo">
-        <div class="gallery-overlay">
-          <span class="gallery-zoom">+</span>
-        </div>
-      </div>
-      <div class="gallery-info">
-        <h3>Estilo Exclusivo</h3>
-        <p>Personalidade e atitude em cada detalhe</p>
-      </div>
-    </div>
+  </div>
+  
+  <div class="gallery-empty" *ngIf="itensFiltrados.length === 0">
+    <p>Nenhum item encontrado nesta categoria.</p>
   </div>
 </div>
 
