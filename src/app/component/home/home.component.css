@@ -8,6 +8,17 @@
     padding: 2rem;
 }
 
+.home-banner {
+  margin-bottom: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.banner-img {
+  width: 100%;
+  display: block;
+}
+
 .welcome-section {
     margin-bottom: 3rem;
 }
@@ -23,4 +34,3 @@
     color: #333;
     margin-bottom: 1rem;
 }
-
