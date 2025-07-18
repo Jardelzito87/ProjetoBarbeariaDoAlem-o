@@ -9,11 +9,7 @@
     <button class="filter-btn" [class.active]="categoriaAtual === 'especiais' && !servicoSelecionado" (click)="filtrarPorCategoria('especiais'); servicoSelecionado = null">Especiais</button>
   </div>
   
-  <div class="gallery-filter services-filter">
-    <button class="filter-btn" [class.active]="servicoSelecionado === 'Corte Sobrenatural'" (click)="filtrarPorServico('Corte Sobrenatural')">Serviço 1</button>
-    <button class="filter-btn" [class.active]="servicoSelecionado === 'Barba Maldita'" (click)="filtrarPorServico('Barba Maldita')">Serviço 2</button>
-    <button class="filter-btn" [class.active]="servicoSelecionado === 'Pacto completo'" (click)="filtrarPorServico('Pacto completo')">Serviço 3</button>
-  </div>
+  <!-- Botões de serviço removidos -->
   
   <div class="gallery">
     <div class="gallery-item" *ngFor="let item of servicoSelecionado ? itensPorServico : itensFiltrados">
