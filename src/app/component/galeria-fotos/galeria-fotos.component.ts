@@ -55,7 +55,7 @@ export class GaleriaFotosComponent implements OnInit {
       imagem: 'https://i.postimg.cc/tJbMvZSk/Freddie.jpg',
       titulo: 'Pacto completo',
       descricao: 'Inspirado nos clássicos que nunca saem de moda',
-      categoria: 'barbas'
+      categoria: 'especiais'
     },
     {
       imagem: 'https://i.postimg.cc/NfY3pVZt/opvoeden-aleid-truijens-getty-images.jpg',
@@ -80,5 +80,18 @@ export class GaleriaFotosComponent implements OnInit {
 
   filtrarPorCategoria(categoria: string): void {
     this.categoriaAtual = categoria;
+  }
+
+  servicoSelecionado: string | null = null;
+
+  filtrarPorServico(titulo: string): void {
+    this.servicoSelecionado = titulo;
+  }
+
+  get itensPorServico(): GaleriaItem[] {
+    if (!this.servicoSelecionado) {
+      return this.itensFiltrados;
+    }
+    return this.itensGaleria.filter(item => item.titulo === this.servicoSelecionado);
   }
 }

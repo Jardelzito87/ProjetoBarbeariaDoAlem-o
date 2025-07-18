@@ -42,7 +42,18 @@
   display: flex;
   justify-content: center;
   gap: 16px;
+  margin-bottom: 20px;
+}
+
+.services-filter {
   margin-bottom: 32px;
+  border-top: 1px solid rgba(179, 0, 0, 0.3);
+  padding-top: 20px;
+}
+
+.services-filter .filter-btn {
+  background: #2a2a2a;
+  border-color: #ffe600;
 }
 
 .filter-btn {
