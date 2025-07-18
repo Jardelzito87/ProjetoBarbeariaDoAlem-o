@@ -458,6 +458,52 @@ body {
     width: 100%;
     z-index: 1000;
 }
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+}
+
+.ghost-icon {
+    position: absolute;
+    animation: float 3s ease-in-out infinite;
+}
+
+.ghost-left {
+    left: 20px;
+}
+
+.ghost-right {
+    right: 20px;
+    animation-delay: 1.5s;
+}
+
+.ghost-svg {
+    width: 40px;
+    height: 40px;
+    fill: #ffffff;
+    filter: drop-shadow(0 0 5px #b30000);
+}
+
+.ghost-right-svg {
+    transform: scaleX(-1); /* Espelha o fantasma para olhar na direção oposta */
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
 .logo-area {
     display: flex;
     align-items: center;
