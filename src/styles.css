@@ -56,43 +56,59 @@
   border-radius: 14px;
 }
 /* Informações de contato estilosas */
-.contato-info-estiloso {
-  display: flex;
-  flex-direction: row;
-  gap: 32px;
-  justify-content: center;
-  align-items: center;
-  margin: 24px 0 18px 0;
+.contato-card {
+  max-width: 600px;
+  margin: 30px auto;
+  background: rgba(24, 24, 24, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: 2px solid #b30000;
 }
-.contato-item {
+
+.contato-info {
+  padding: 20px;
+}
+
+.contato-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #181818;
-  padding: 12px 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(255,0,0,0.10);
+  padding: 15px 0;
+  border-bottom: 1px solid rgba(179, 0, 0, 0.2);
 }
-.contato-item i {
-  font-size: 2rem;
+
+.contato-row:last-child {
+  border-bottom: none;
+}
+
+.contato-icon {
+  flex: 0 0 60px;
+  text-align: center;
+}
+
+.contato-icon i {
+  font-size: 28px;
   color: #b30000;
   text-shadow: 0 2px 8px #000;
 }
+
+.contato-text {
+  flex: 1;
+}
+
 .contato-label {
   font-family: 'Creepster', cursive;
-  color: #fff;
+  color: #ffe600;
   font-size: 1.2rem;
   letter-spacing: 1px;
+  margin-bottom: 5px;
 }
-.contato-destaque {
+
+.contato-value {
   color: #fff;
-  font-size: 1.15rem;
-  font-weight: bold;
-  background: #b30000;
-  padding: 4px 12px;
-  border-radius: 8px;
-  margin-left: 8px;
-  text-shadow: 0 2px 8px #000;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 /* Título estiloso do contato */
 .contato-titulo-estiloso {
