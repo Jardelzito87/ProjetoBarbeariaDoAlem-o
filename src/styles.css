@@ -249,6 +249,7 @@
   font-size: 1.5rem;
   margin-top: 8px;
   text-shadow: 0 2px 8px #222;
+  white-space: nowrap;
 }
 .servicos-destaque {
     display: flex;
