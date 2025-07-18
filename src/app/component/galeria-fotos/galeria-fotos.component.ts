@@ -22,11 +22,8 @@ export class GaleriaFotosComponent implements OnInit {
   ngOnInit(): void {
     const servicoSelecionado = this.galeriaService.getServicoSelecionado();
     if (servicoSelecionado) {
-      // Find matching category based on service title
-      const item = this.itensGaleria.find(item => item.titulo === servicoSelecionado);
-      if (item) {
-        this.filtrarPorCategoria(item.categoria);
-      }
+      // Se um serviço foi selecionado na home, filtrar por ele
+      this.filtrarPorServico(servicoSelecionado);
       this.galeriaService.limparServicoSelecionado();
     }
   }
