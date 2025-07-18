@@ -259,13 +259,21 @@
     flex-wrap: nowrap;
     margin-bottom: 32px;
 }
-.cortes-titulo-centralizado {
+.cortes-titulo-alem {
     text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #b30000;
-    margin-bottom: 18px;
-    letter-spacing: 1px;
+    font-family: 'Creepster', cursive;
+    color: #ffe600;
+    font-size: 2.3rem;
+    margin: 30px 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+    background: rgba(24, 24, 24, 0.8);
+    padding: 15px 0;
+    border-radius: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 .galeria-cortes {
     display: flex;
