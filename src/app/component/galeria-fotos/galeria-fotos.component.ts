@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { GaleriaService } from '../../services/galeria.service';
 
 interface GaleriaItem {
   imagem: string;
@@ -15,43 +16,56 @@ interface GaleriaItem {
   templateUrl: './galeria-fotos.component.html',
   styleUrl: './galeria-fotos.component.css'
 })
-export class GaleriaFotosComponent {
+export class GaleriaFotosComponent implements OnInit {
+  constructor(private galeriaService: GaleriaService) {}
+
+  ngOnInit(): void {
+    const servicoSelecionado = this.galeriaService.getServicoSelecionado();
+    if (servicoSelecionado) {
+      // Find matching category based on service title
+      const item = this.itensGaleria.find(item => item.titulo === servicoSelecionado);
+      if (item) {
+        this.filtrarPorCategoria(item.categoria);
+      }
+      this.galeriaService.limparServicoSelecionado();
+    }
+  }
   categoriaAtual: string = 'todos';
   
   itensGaleria: GaleriaItem[] = [
     {
       imagem: 'https://i.postimg.cc/DzWHSK4r/download-1.jpg',
-      titulo: 'Corte Moderno',
+      titulo: 'Transformação Sombria',
       descricao: 'Estilo contemporâneo com acabamento perfeito',
       categoria: 'cortes'
     },
     {
       imagem: 'https://i.postimg.cc/133LZF9Y/download-4.jpg',
-      titulo: 'Barba Estilizada',
+      titulo: 'Barba Maldita',
       descricao: 'Definição e contorno para destacar seu estilo',
       categoria: 'barbas'
     },
     {
       imagem: 'https://i.postimg.cc/dQ8MRvHn/download-2.jpg',
-      titulo: 'Corte Clássico',
+      titulo: 'Corte Sobrenatural',
       descricao: 'Elegância atemporal para qualquer ocasião',
       categoria: 'cortes'
     },
     {
       imagem: 'https://i.postimg.cc/tJbMvZSk/Freddie.jpg',
-      titulo: 'Estilo Retrô',
+      titulo: 'Pacto completo',
       descricao: 'Inspirado nos clássicos que nunca saem de moda',
       categoria: 'barbas'
     },
     {
       imagem: 'https://i.postimg.cc/NfY3pVZt/opvoeden-aleid-truijens-getty-images.jpg',
-      titulo: 'Corte Degradê',
+      titulo: 'Degradê Espectral',
       descricao: 'Transição perfeita para um visual moderno',
       categoria: 'cortes'
     },
     {
       imagem: 'https://i.postimg.cc/gJ87KqDr/Samuel-L-Jackson.jpg',
-      titulo: 'Estilo Exclusivo',
+      titulo: 'Navalha Demoníaca',
       descricao: 'Personalidade e atitude em cada detalhe',
       categoria: 'especiais'
     }
