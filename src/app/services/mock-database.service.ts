@@ -9,9 +9,12 @@ import { Servico, Cliente, Agendamento } from './database.service';
 export class MockDatabaseService {
   // Mock data
   private servicos: Servico[] = [
-    { id: 1, nome: 'Social', descricao: 'Corte tradicional, bem alinhado. Laterais curtas e topo médio. Estilo ideal para ambientes formais.', preco: 25.00 },
-    { id: 2, nome: 'Degradê (Fade)', descricao: 'Laterais raspadas com transição suave para o topo. Inclui: Low, Mid, High e Skin fade.', preco: 30.00 },
-    { id: 3, nome: 'Corte na Navalha', descricao: 'Feito com navalha para dar textura. Ideal para quem tem cabelo grosso.', preco: 40.00 }
+    { id: 1, nome: 'Corte Sobrenatural', descricao: 'Transformação completa com técnicas ancestrais. Inclui ritual de purificação capilar.', preco: 45.00 },
+    { id: 2, nome: 'Degradê Espectral', descricao: 'Fade perfeito com transições invisíveis. Realizado com tesouras forjadas em metal do além.', preco: 55.00 },
+    { id: 3, nome: 'Navalha Demoníaca', descricao: 'Precisão sobrenatural com nossa navalha ritual. Inclui massagem craniana com óleos místicos.', preco: 65.00 },
+    { id: 4, nome: 'Barba Maldita', descricao: 'Modelagem completa da barba com produtos infernais. Inclui toalha quente e óleo de barba especial.', preco: 40.00 },
+    { id: 5, nome: 'Pacto Completo', descricao: 'Combo de corte e barba com direito a ritual completo. Inclui bebida e tratamento facial.', preco: 90.00 },
+    { id: 6, nome: 'Transformação Sombria', descricao: 'Mudança radical de visual com direito a coloração e tratamento capilar das trevas.', preco: 120.00 }
   ];
 
   private clientes: Cliente[] = [];

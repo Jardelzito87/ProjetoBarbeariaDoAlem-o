@@ -45,7 +45,7 @@ export class AgendamentoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao carregar serviços:', err);
-        this.mensagem = 'Erro ao carregar serviços. Por favor, tente novamente mais tarde.';
+        this.mensagem = 'O grimório de serviços está temporariamente inacessível. Os espíritos estão trabalhando para resolver o problema.';
         this.mensagemTipo = 'erro';
         this.carregando = false;
       }
@@ -64,14 +64,14 @@ export class AgendamentoComponent implements OnInit {
         
         this.dbService.createAgendamento(this.agendamento).subscribe({
           next: () => {
-            this.mensagem = 'Agendamento realizado com sucesso!';
+            this.mensagem = 'Pacto selado com sucesso! Sua alma... quer dizer, seu horário está confirmado.';
             this.mensagemTipo = 'sucesso';
             this.limparFormulario();
             this.carregando = false;
           },
           error: (err) => {
             console.error('Erro ao criar agendamento:', err);
-            this.mensagem = 'Erro ao criar agendamento. Por favor, tente novamente.';
+            this.mensagem = 'As entidades do além rejeitaram seu agendamento. Tente novamente quando a lua estiver em outra posição.';
             this.mensagemTipo = 'erro';
             this.carregando = false;
           }
@@ -79,7 +79,7 @@ export class AgendamentoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao criar cliente:', err);
-        this.mensagem = 'Erro ao criar cliente. Por favor, tente novamente.';
+        this.mensagem = 'Os espíritos não reconheceram suas informações. Verifique seus dados e tente novamente.';
         this.mensagemTipo = 'erro';
         this.carregando = false;
       }
