@@ -7,7 +7,14 @@ require('dotenv').config();
 // const disponibilidadeRoutes = require('./disponibilidade');
 
 const app = express();
-app.use(cors());
+
+// Configurar CORS para permitir acesso da Vercel
+app.use(cors({
+  origin: ['http://localhost:4200', 'https://barbearia-do-alem.vercel.app'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.static('public')); // Servir arquivos estáticos da pasta public
 

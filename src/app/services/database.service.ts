@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface Servico {
   id: number;
@@ -57,7 +58,7 @@ export interface LogAgendamento {
   providedIn: 'root'
 })
 export class DatabaseService {
-  private apiUrl = 'http://localhost:3000/api'; // URL do backend
+  private apiUrl = environment.apiUrl; // URL do backend
 
   constructor(private http: HttpClient) { }
 
