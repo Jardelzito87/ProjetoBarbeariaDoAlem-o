@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Servico, Cliente, Agendamento } from './database.service';
+import { Servico, Cliente, Agendamento, DataBloqueada } from './database.service';
 
 // Interface para simular o armazenamento persistente
+// Using DataBloqueada interface from database.service.ts
+
 interface MockStorage {
   servicos: Servico[];
   clientes: Cliente[];
   agendamentos: Agendamento[];
-  datas_bloqueadas: string[];
+  datas_bloqueadas: DataBloqueada[];
 }
 
 @Injectable({
@@ -119,7 +121,7 @@ export class MockDatabaseService {
     }
 
     // Verificar se a data está bloqueada
-    if (this.storage.datas_bloqueadas.includes(agendamento.data_agendada)) {
+    if (this.storage.datas_bloqueadas.some(db => db.data === agendamento.data_agendada)) {
       return throwError(() => new Error('Data bloqueada para agendamento'));
     }
 
@@ -298,8 +300,8 @@ export class MockDatabaseService {
   
   // Bloquear data
   bloquearData(data: string, motivo?: string): Observable<{success: boolean}> {
-    if (!this.storage.datas_bloqueadas.includes(data)) {
-      this.storage.datas_bloqueadas.push(data);
+    if (!this.storage.datas_bloqueadas.some(db => db.data === data)) {
+      this.storage.datas_bloqueadas.push({ data, motivo });
       this.saveData();
     }
     return of({success: true}).pipe(delay(800));
@@ -307,12 +309,17 @@ export class MockDatabaseService {
   
   // Desbloquear data
   desbloquearData(data: string): Observable<{success: boolean}> {
-    const index = this.storage.datas_bloqueadas.indexOf(data);
+    const index = this.storage.datas_bloqueadas.findIndex(db => db.data === data);
     if (index !== -1) {
       this.storage.datas_bloqueadas.splice(index, 1);
       this.saveData();
     }
     return of({success: true}).pipe(delay(800));
+  }
+  
+  // Obter datas bloqueadas
+  getDatasBloqueadas(): Observable<DataBloqueada[]> {
+    return of(this.storage.datas_bloqueadas).pipe(delay(800));
   }
   
   // Atualizar status do agendamento

@@ -327,6 +327,17 @@ app.delete('/api/datas-bloqueadas/:data', async (req, res) => {
   }
 });
 
+// GET para listar datas bloqueadas
+app.get('/api/datas-bloqueadas', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT data, motivo FROM datas_bloqueadas ORDER BY data');
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar datas bloqueadas:', err);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
+
 // PATCH para atualizar status do agendamento
 app.patch('/api/agendamentos/:id', async (req, res) => {
   const { id } = req.params;

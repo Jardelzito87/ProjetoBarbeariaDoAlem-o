@@ -444,8 +444,226 @@ button:disabled {
   width: auto;
 }
 
+.status-counters {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  min-width: 100px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s;
+}
+
+.counter:hover {
+  transform: translateY(-5px);
+}
+
+.counter-number {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.counter-label {
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.counter.pendente {
+  background-color: rgba(44, 62, 80, 0.8);
+  border: 1px solid #3498db;
+}
+
+.counter.confirmado {
+  background-color: rgba(39, 174, 96, 0.8);
+  border: 1px solid #2ecc71;
+}
+
+.counter.concluido {
+  background-color: rgba(142, 68, 173, 0.8);
+  border: 1px solid #9b59b6;
+}
+
+.counter.cancelado {
+  background-color: rgba(192, 57, 43, 0.8);
+  border: 1px solid #e74c3c;
+}
+
 .toggle-button:hover {
   background-color: #444;
+}
+
+/* Layout para a seção de bloqueio e avisos */
+.bloqueio-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.bloqueio-form-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+.quadro-avisos {
+  flex: 1;
+  min-width: 300px;
+  background-color: rgba(30, 30, 30, 0.8);
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #444;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.quadro-avisos h3 {
+  color: #b30000;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+.aviso {
+  display: flex;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: rgba(20, 20, 20, 0.6);
+  border-radius: 6px;
+  border-left: 3px solid #b30000;
+}
+
+.aviso:last-child {
+  margin-bottom: 0;
+}
+
+.aviso-icon {
+  font-size: 1.5rem;
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.aviso-content {
+  flex: 1;
+}
+
+.aviso-content h4 {
+  margin: 0 0 5px 0;
+  color: #c0c0c0;
+  font-size: 1.1rem;
+}
+
+.aviso-content p {
+  margin: 0;
+  color: #999;
+  font-size: 0.9rem;
+}
+
+/* Estilos para datas bloqueadas */
+.datas-bloqueadas {
+  margin-top: 30px;
+  border-top: 1px solid #333;
+  padding-top: 20px;
+}
+
+.datas-bloqueadas h3 {
+  color: #b30000;
+  font-size: 1.3rem;
+  margin-bottom: 15px;
+}
+
+.datas-bloqueadas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.data-bloqueada {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(30, 30, 30, 0.8);
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  min-width: 200px;
+}
+
+.data-bloqueada-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.data-bloqueada-valor {
+  font-weight: 500;
+}
+
+.data-bloqueada-motivo {
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 3px;
+  font-style: italic;
+}
+
+.btn-desbloquear {
+  background-color: #555;
+  color: #c0c0c0;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  height: auto;
+  min-width: auto;
+}
+
+.btn-desbloquear:hover {
+  background-color: #666;
+}
+
+/* Estilos para datas bloqueadas no quadro de avisos */
+.datas-bloqueadas-aviso {
+  background-color: rgba(179, 0, 0, 0.1);
+  border-left: 3px solid #e74c3c;
+}
+
+.datas-bloqueadas-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.data-bloqueada-chip-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+.data-bloqueada-chip {
+  background-color: rgba(231, 76, 60, 0.8);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.data-bloqueada-chip-motivo {
+  font-size: 0.8rem;
+  color: #ddd;
+  margin-top: 2px;
+  padding-left: 5px;
+  font-style: italic;
 }
 
 .clientes-container {

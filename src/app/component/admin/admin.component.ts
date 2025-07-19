@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DatabaseService, Agendamento, Servico, Cliente } from '../../services/database.service';
+import { DatabaseService, Agendamento, Servico, Cliente, DataBloqueada } from '../../services/database.service';
 
 @Component({
   selector: 'app-admin',
@@ -20,8 +20,17 @@ export class AdminComponent implements OnInit {
   mensagemTipo = '';
   bloqueioForm!: FormGroup;
   dataHoje: string;
-  filtroAtual: string = 'todos';
+  filtroAtual: string = 'pendentes';
   mostrarClientes = false;
+  
+  // Contadores de agendamentos por status
+  contadorPendentes = 0;
+  contadorConfirmados = 0;
+  contadorFeitos = 0;
+  contadorCancelados = 0;
+  
+  // Datas bloqueadas
+  datasBloqueadas: DataBloqueada[] = [];
 
   constructor(private dbService: DatabaseService, private fb: FormBuilder) {
     // Define a data de hoje no formato YYYY-MM-DD
@@ -33,7 +42,20 @@ export class AdminComponent implements OnInit {
     this.carregarServicos();
     this.carregarAgendamentos();
     this.carregarClientes();
+    this.carregarDatasBloqueadas();
     this.initForm();
+  }
+  
+  carregarDatasBloqueadas(): void {
+    this.dbService.getDatasBloqueadas().subscribe({
+      next: (datas: DataBloqueada[]) => {
+        this.datasBloqueadas = datas;
+        console.log('Datas bloqueadas:', this.datasBloqueadas);
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar datas bloqueadas:', err);
+      }
+    });
   }
   
   carregarClientes(): void {
@@ -102,6 +124,9 @@ export class AdminComponent implements OnInit {
           // Por último por hora (mais cedo primeiro)
           return a.hora_agendada.localeCompare(b.hora_agendada);
         });
+        
+        // Contar agendamentos por status
+        this.contarAgendamentosPorStatus();
         
         // Aplicar filtro atual
         this.aplicarFiltro(this.filtroAtual);
@@ -180,13 +205,20 @@ export class AdminComponent implements OnInit {
     }
   }
 
+  contarAgendamentosPorStatus(): void {
+    this.contadorPendentes = this.agendamentos.filter(a => a.status === 'pendente').length;
+    this.contadorConfirmados = this.agendamentos.filter(a => a.status === 'confirmado').length;
+    this.contadorFeitos = this.agendamentos.filter(a => a.status === 'concluido').length;
+    this.contadorCancelados = this.agendamentos.filter(a => a.status === 'cancelado' || a.status === 'não compareceu').length;
+  }
+  
   atualizarStatus(agendamento: Agendamento, novoStatus: string): void {
     this.carregando = true;
     console.log('Atualizando status:', agendamento.id, 'para', novoStatus);
     
     // Atualizar no banco de dados
     this.dbService.atualizarStatusAgendamento(agendamento.id!, novoStatus).subscribe({
-      next: (agendamentoAtualizado) => {
+      next: (agendamentoAtualizado: Agendamento) => {
         console.log('Status atualizado com sucesso:', agendamentoAtualizado);
         
         // Atualizar o agendamento na lista local
@@ -199,6 +231,9 @@ export class AdminComponent implements OnInit {
           };
         }
         
+        // Atualizar contadores
+        this.contarAgendamentosPorStatus();
+        
         this.mensagem = `Status atualizado para ${this.getStatusLabel(novoStatus)}`;
         this.mensagemTipo = 'sucesso';
         
@@ -207,7 +242,7 @@ export class AdminComponent implements OnInit {
         
         this.carregando = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao atualizar status:', err);
         this.mensagem = 'Erro ao atualizar status';
         this.mensagemTipo = 'erro';
@@ -230,11 +265,30 @@ export class AdminComponent implements OnInit {
         this.mensagem = 'Data bloqueada com sucesso';
         this.mensagemTipo = 'sucesso';
         this.bloqueioForm.reset();
+        this.carregarDatasBloqueadas(); // Recarregar datas bloqueadas
         this.carregando = false;
       },
       error: (err) => {
         console.error('Erro ao bloquear data:', err);
         this.mensagem = 'Erro ao bloquear data';
+        this.mensagemTipo = 'erro';
+        this.carregando = false;
+      }
+    });
+  }
+  
+  desbloquearData(data: string): void {
+    this.carregando = true;
+    this.dbService.desbloquearData(data).subscribe({
+      next: () => {
+        this.mensagem = 'Data desbloqueada com sucesso';
+        this.mensagemTipo = 'sucesso';
+        this.carregarDatasBloqueadas(); // Recarregar datas bloqueadas
+        this.carregando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao desbloquear data:', err);
+        this.mensagem = 'Erro ao desbloquear data';
         this.mensagemTipo = 'erro';
         this.carregando = false;
       }

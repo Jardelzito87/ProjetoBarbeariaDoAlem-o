@@ -36,6 +36,11 @@ export interface Disponibilidade {
   disponivel: boolean;
 }
 
+export interface DataBloqueada {
+  data: string;
+  motivo?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -77,6 +82,11 @@ export class DatabaseService {
   // Desbloquear data
   desbloquearData(data: string): Observable<{success: boolean}> {
     return this.http.delete<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas/${data}`);
+  }
+  
+  // Obter datas bloqueadas
+  getDatasBloqueadas(): Observable<DataBloqueada[]> {
+    return this.http.get<DataBloqueada[]>(`${this.apiUrl}/datas-bloqueadas`);
   }
   
   // Atualizar status do agendamento

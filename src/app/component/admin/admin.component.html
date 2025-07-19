@@ -18,25 +18,90 @@
   </div>
   
   <div class="admin-content" *ngIf="!carregando">
-    <div class="admin-section">
-      <h2>Bloquear Data</h2>
-      <form [formGroup]="bloqueioForm" (ngSubmit)="bloquearData()">
-        <div class="form-group">
-          <label for="data">Data a Bloquear</label>
-          <input type="date" id="data" formControlName="data" [min]="dataHoje">
+    <div class="admin-section bloqueio-section">
+      <div class="bloqueio-container">
+        <div class="bloqueio-form-container">
+          <h2>Bloquear Data</h2>
+          <form [formGroup]="bloqueioForm" (ngSubmit)="bloquearData()">
+            <div class="form-group">
+              <label for="data">Data a Bloquear</label>
+              <input type="date" id="data" formControlName="data" [min]="dataHoje">
+            </div>
+            
+            <div class="form-group">
+              <label for="motivo">Motivo (opcional)</label>
+              <input type="text" id="motivo" formControlName="motivo" placeholder="Ex: Feriado, Manutenção">
+            </div>
+            
+            <button type="submit" [disabled]="bloqueioForm.invalid">Bloquear Data</button>
+          </form>
+          
+          <div class="datas-bloqueadas" *ngIf="datasBloqueadas.length > 0">
+            <h3>Datas Bloqueadas</h3>
+            <div class="datas-bloqueadas-lista">
+              <div class="data-bloqueada" *ngFor="let dataBloqueada of datasBloqueadas">
+                <div class="data-bloqueada-info">
+                  <span class="data-bloqueada-valor">{{ formatarData(dataBloqueada.data) }}</span>
+                  <span class="data-bloqueada-motivo" *ngIf="dataBloqueada.motivo">{{ dataBloqueada.motivo }}</span>
+                </div>
+                <button class="btn-desbloquear" (click)="desbloquearData(dataBloqueada.data)">
+                  <span class="btn-icon">🔓</span> Desbloquear
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
         
-        <div class="form-group">
-          <label for="motivo">Motivo (opcional)</label>
-          <input type="text" id="motivo" formControlName="motivo" placeholder="Ex: Feriado, Manutenção">
+        <div class="quadro-avisos">
+          <h3>Quadro de Avisos</h3>
+          
+          <!-- Datas Bloqueadas no Quadro de Avisos -->
+          <div class="aviso datas-bloqueadas-aviso" *ngIf="datasBloqueadas.length > 0">
+            <div class="aviso-icon">🚫</div>
+            <div class="aviso-content">
+              <h4>Datas Bloqueadas</h4>
+              <div class="datas-bloqueadas-chips">
+                <div class="data-bloqueada-chip-container" *ngFor="let dataBloqueada of datasBloqueadas">
+                  <span class="data-bloqueada-chip">{{ formatarData(dataBloqueada.data) }}</span>
+                  <span class="data-bloqueada-chip-motivo" *ngIf="dataBloqueada.motivo">{{ dataBloqueada.motivo }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Mensagem quando não há datas bloqueadas -->
+          <div class="aviso" *ngIf="datasBloqueadas.length === 0">
+            <div class="aviso-icon">✅</div>
+            <div class="aviso-content">
+              <h4>Sem Bloqueios</h4>
+              <p>Não há datas bloqueadas no momento.</p>
+            </div>
+          </div>
         </div>
-        
-        <button type="submit" [disabled]="bloqueioForm.invalid">Bloquear Data</button>
-      </form>
+      </div>
     </div>
     
     <div class="admin-section">
       <h2>Clientes</h2>
+      <div class="status-counters">
+        <div class="counter pendente">
+          <span class="counter-number">{{ contadorPendentes }}</span>
+          <span class="counter-label">Pendentes</span>
+        </div>
+        <div class="counter confirmado">
+          <span class="counter-number">{{ contadorConfirmados }}</span>
+          <span class="counter-label">Confirmados</span>
+        </div>
+        <div class="counter concluido">
+          <span class="counter-number">{{ contadorFeitos }}</span>
+          <span class="counter-label">Feitos</span>
+        </div>
+        <div class="counter cancelado">
+          <span class="counter-number">{{ contadorCancelados }}</span>
+          <span class="counter-label">Cancelados</span>
+        </div>
+      </div>
+      
       <button class="toggle-button" (click)="toggleMostrarClientes()">
         {{ mostrarClientes ? 'Ocultar Clientes' : 'Mostrar Clientes' }}
       </button>
