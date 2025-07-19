@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DatabaseService, Agendamento, Servico, Cliente, DataBloqueada } from '../../services/database.service';
+import { DatabaseService, Agendamento, Servico, Cliente, DataBloqueada, LogAgendamento } from '../../services/database.service';
 
 @Component({
   selector: 'app-admin',
@@ -31,6 +31,10 @@ export class AdminComponent implements OnInit {
   
   // Datas bloqueadas
   datasBloqueadas: DataBloqueada[] = [];
+  
+  // Logs de agendamentos
+  logsAgendamentos: LogAgendamento[] = [];
+  mostrarLogs = false;
 
   constructor(private dbService: DatabaseService, private fb: FormBuilder) {
     // Define a data de hoje no formato YYYY-MM-DD
@@ -43,7 +47,20 @@ export class AdminComponent implements OnInit {
     this.carregarAgendamentos();
     this.carregarClientes();
     this.carregarDatasBloqueadas();
+    this.carregarLogsAgendamentos();
     this.initForm();
+  }
+  
+  carregarLogsAgendamentos(): void {
+    this.dbService.getLogsAgendamentos().subscribe({
+      next: (logs: LogAgendamento[]) => {
+        this.logsAgendamentos = logs;
+        console.log('Logs de agendamentos carregados:', this.logsAgendamentos.length);
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar logs de agendamentos:', err);
+      }
+    });
   }
   
   carregarDatasBloqueadas(): void {
@@ -72,6 +89,10 @@ export class AdminComponent implements OnInit {
   
   toggleMostrarClientes(): void {
     this.mostrarClientes = !this.mostrarClientes;
+  }
+  
+  toggleMostrarLogs(): void {
+    this.mostrarLogs = !this.mostrarLogs;
   }
 
   initForm(): void {
@@ -233,6 +254,9 @@ export class AdminComponent implements OnInit {
         
         // Atualizar contadores
         this.contarAgendamentosPorStatus();
+        
+        // Recarregar logs de agendamentos
+        this.carregarLogsAgendamentos();
         
         this.mensagem = `Status atualizado para ${this.getStatusLabel(novoStatus)}`;
         this.mensagemTipo = 'sucesso';

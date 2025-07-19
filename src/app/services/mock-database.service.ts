@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Servico, Cliente, Agendamento, DataBloqueada } from './database.service';
+import { Servico, Cliente, Agendamento, DataBloqueada, LogAgendamento } from './database.service';
 
 // Interface para simular o armazenamento persistente
 // Using DataBloqueada interface from database.service.ts
@@ -11,6 +11,7 @@ interface MockStorage {
   clientes: Cliente[];
   agendamentos: Agendamento[];
   datas_bloqueadas: DataBloqueada[];
+  logs_agendamentos: LogAgendamento[];
 }
 
 @Injectable({
@@ -70,7 +71,8 @@ export class MockDatabaseService {
           status: 'pendente'
         }
       ],
-      datas_bloqueadas: []
+      datas_bloqueadas: [],
+      logs_agendamentos: []
     };
     
     this.nextClienteId = 4;
@@ -211,6 +213,22 @@ export class MockDatabaseService {
     };
     
     this.storage.agendamentos.push(newAgendamento);
+    
+    // Registrar log de criação do agendamento
+    const log: LogAgendamento = {
+      id: this.storage.logs_agendamentos.length + 1,
+      agendamento_id: newAgendamento.id!,
+      status_anterior: null,
+      status_novo: 'pendente',
+      alterado_por: 'sistema',
+      criado_em: new Date().toISOString(),
+      data_agendada: newAgendamento.data_agendada,
+      hora_agendada: newAgendamento.hora_agendada,
+      cliente_nome: newAgendamento.cliente_nome || ''
+    };
+    
+    this.storage.logs_agendamentos.push(log);
+    
     this.saveData();
     return of(newAgendamento).pipe(delay(800));
   }
@@ -322,6 +340,11 @@ export class MockDatabaseService {
     return of(this.storage.datas_bloqueadas).pipe(delay(800));
   }
   
+  // Obter logs de agendamentos
+  getLogsAgendamentos(): Observable<LogAgendamento[]> {
+    return of(this.storage.logs_agendamentos).pipe(delay(800));
+  }
+  
   // Atualizar status do agendamento
   atualizarStatusAgendamento(id: number, status: string): Observable<Agendamento> {
     console.log('Mock: Atualizando agendamento', id, 'para status', status);
@@ -334,9 +357,30 @@ export class MockDatabaseService {
       return throwError(() => new Error('Agendamento não encontrado'));
     }
     
+    // Guardar o status anterior
+    const statusAnterior = this.storage.agendamentos[indice].status;
+    
     // Atualizar o status
     this.storage.agendamentos[indice].status = status;
     console.log('Status atualizado com sucesso para:', status);
+    
+    // Registrar log da alteração
+    const agendamento = this.storage.agendamentos[indice];
+    const clienteLog = this.storage.clientes.find(c => c.id === agendamento.cliente_id);
+    
+    const log: LogAgendamento = {
+      id: this.storage.logs_agendamentos.length + 1,
+      agendamento_id: id,
+      status_anterior: statusAnterior || null,
+      status_novo: status,
+      alterado_por: 'sistema',
+      criado_em: new Date().toISOString(),
+      data_agendada: agendamento.data_agendada,
+      hora_agendada: agendamento.hora_agendada,
+      cliente_nome: clienteLog?.nome || 'Cliente #' + agendamento.cliente_id
+    };
+    
+    this.storage.logs_agendamentos.push(log);
     
     // Salvar no localStorage
     this.saveData();

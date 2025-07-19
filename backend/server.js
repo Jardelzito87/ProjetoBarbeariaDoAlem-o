@@ -338,6 +338,24 @@ app.get('/api/datas-bloqueadas', async (req, res) => {
   }
 });
 
+// GET para listar logs de agendamentos
+app.get('/api/logs-agendamentos', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT l.*, a.data_agendada, a.hora_agendada, c.nome as cliente_nome
+      FROM logs_agendamentos l
+      JOIN agendamentos a ON l.agendamento_id = a.id
+      JOIN clientes c ON a.cliente_id = c.id
+      ORDER BY l.criado_em DESC
+      LIMIT 100
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar logs de agendamentos:', err);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
+
 // PATCH para atualizar status do agendamento
 app.patch('/api/agendamentos/:id', async (req, res) => {
   const { id } = req.params;

@@ -82,6 +82,44 @@
     </div>
     
     <div class="admin-section">
+      <h2>Histórico de Alterações</h2>
+      <button class="toggle-button" (click)="toggleMostrarLogs()">
+        {{ mostrarLogs ? 'Ocultar Histórico' : 'Mostrar Histórico' }}
+      </button>
+      
+      <div *ngIf="mostrarLogs" class="logs-container">
+        <div *ngIf="logsAgendamentos.length === 0" class="empty-state">
+          <p>Nenhum registro de alteração encontrado</p>
+        </div>
+        
+        <table *ngIf="logsAgendamentos.length > 0" class="logs-table">
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Cliente</th>
+              <th>Agendamento</th>
+              <th>Alteração</th>
+              <th>Alterado por</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of logsAgendamentos">
+              <td>{{ log.criado_em | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ log.cliente_nome }}</td>
+              <td>{{ formatarData(log.data_agendada) }} {{ formatarHora(log.hora_agendada) }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(log.status_anterior || '')">{{ getStatusLabel(log.status_anterior || '-') }}</span>
+                <span class="status-arrow">→</span>
+                <span class="status-badge" [ngClass]="getStatusClass(log.status_novo)">{{ getStatusLabel(log.status_novo) }}</span>
+              </td>
+              <td>{{ log.alterado_por }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="admin-section">
       <h2>Clientes</h2>
       <div class="status-counters">
         <div class="counter pendente">

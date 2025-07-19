@@ -41,6 +41,18 @@ export interface DataBloqueada {
   motivo?: string;
 }
 
+export interface LogAgendamento {
+  id: number;
+  agendamento_id: number;
+  status_anterior: string | null;
+  status_novo: string;
+  alterado_por: string;
+  criado_em: string;
+  data_agendada: string;
+  hora_agendada: string;
+  cliente_nome: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -97,5 +109,10 @@ export class DatabaseService {
   // Verificar disponibilidade de horários para uma data
   verificarDisponibilidade(data: string): Observable<Disponibilidade[]> {
     return this.http.get<Disponibilidade[]>(`${this.apiUrl}/disponibilidade?data=${data}`);
+  }
+  
+  // Obter logs de agendamentos
+  getLogsAgendamentos(): Observable<LogAgendamento[]> {
+    return this.http.get<LogAgendamento[]>(`${this.apiUrl}/logs-agendamentos`);
   }
 }
