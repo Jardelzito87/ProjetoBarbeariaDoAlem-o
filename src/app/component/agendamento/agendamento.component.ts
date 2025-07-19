@@ -16,6 +16,7 @@ export class AgendamentoComponent implements OnInit {
   mensagemTipo = '';
   carregando = false;
   agendamentoForm!: FormGroup;
+  dataMinima: string;
 
   cliente: Cliente = {
     nome: '',
@@ -31,7 +32,11 @@ export class AgendamentoComponent implements OnInit {
     observacoes: ''
   };
 
-  constructor(private dbService: DatabaseService, private fb: FormBuilder) {}
+  constructor(private dbService: DatabaseService, private fb: FormBuilder) {
+    // Define a data mínima como hoje no formato YYYY-MM-DD
+    const hoje = new Date();
+    this.dataMinima = hoje.toISOString().split('T')[0];
+  }
 
   ngOnInit(): void {
     this.carregarServicos();
@@ -150,21 +155,80 @@ export class AgendamentoComponent implements OnInit {
     return null;
   }
 
-  // Validador personalizado para permitir apenas números no telefone
-  onlyNumbersValidator(control: AbstractControl): ValidationErrors | null {
+  // Validador avançado para telefone
+  telefoneValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
     
-    const hasNonNumbers = /[^0-9]/.test(value.replace(/[\s()-]/g, ''));
-    return hasNonNumbers ? { containsNonNumbers: true } : null;
+    // Remove caracteres não numéricos para validar apenas os dígitos
+    const numeroLimpo = value.replace(/[\s()-]/g, '');
+    
+    // Verifica se contém apenas números
+    if (!/^\d+$/.test(numeroLimpo)) {
+      return { containsNonNumbers: true };
+    }
+    
+    // Verifica se tem o tamanho correto (11 dígitos para celular brasileiro)
+    if (numeroLimpo.length !== 11) {
+      return { tamanhoInvalido: true };
+    }
+    
+    // Verifica se há repetições excessivas de dígitos
+    if (/([0-9])\1{4,}/.test(numeroLimpo)) {
+      return { repeticaoExcessiva: true };
+    }
+    
+    // Verifica se todos os dígitos são iguais
+    if (new Set(numeroLimpo).size === 1) {
+      return { todosDigitosIguais: true };
+    }
+    
+    // Verifica sequências crescentes ou decrescentes longas
+    const sequenciaCrescente = '01234567890';
+    const sequenciaDecrescente = '98765432109';
+    
+    for (let i = 0; i <= 6; i++) { // Verifica sequências de 5 dígitos
+      const seqCres = sequenciaCrescente.substring(i, i + 5);
+      const seqDecr = sequenciaDecrescente.substring(i, i + 5);
+      
+      if (numeroLimpo.includes(seqCres) || numeroLimpo.includes(seqDecr)) {
+        return { sequenciaSimples: true };
+      }
+    }
+    
+    // Verifica DDD válido (simplificado)
+    const ddd = numeroLimpo.substring(0, 2);
+    if (ddd === '00' || ddd === '01' || parseInt(ddd) > 99) {
+      return { dddInvalido: true };
+    }
+    
+    return null;
+  }
+  
+  // Validador para evitar datas passadas
+  dataFuturaValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) return null;
+    
+    const dataEscolhida = new Date(value);
+    dataEscolhida.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas as datas
+    
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas as datas
+    
+    if (dataEscolhida < hoje) {
+      return { dataPassada: true };
+    }
+    
+    return null;
   }
 
   initForm(): void {
     this.agendamentoForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(35), this.noNumbersValidator, this.nomeCompletoValidator]],
-      telefone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/)]],
+      telefone: ['', [Validators.required, Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/), this.telefoneValidator]],
       email: ['', [Validators.required, Validators.email]],
-      data_agendada: ['', [Validators.required]],
+      data_agendada: ['', [Validators.required, this.dataFuturaValidator]],
       hora_agendada: ['', [Validators.required]],
       servico_id: ['', [Validators.required]],
       observacoes: ['']
@@ -270,6 +334,11 @@ export class AgendamentoComponent implements OnInit {
     if (field.hasError('email')) return 'E-mail inválido';
     if (field.hasError('containsNumbers')) return 'Não pode conter números';
     if (field.hasError('pattern')) return 'Formato inválido. Use (XX) XXXXX-XXXX';
+    if (field.hasError('tamanhoInvalido')) return 'O telefone deve ter 11 dígitos';
+    if (field.hasError('repeticaoExcessiva')) return 'Telefone inválido: muitos dígitos repetidos';
+    if (field.hasError('todosDigitosIguais')) return 'Telefone inválido: todos os dígitos são iguais';
+    if (field.hasError('sequenciaSimples')) return 'Telefone inválido: sequência numérica simples';
+    if (field.hasError('dddInvalido')) return 'DDD inválido';
     if (field.hasError('doisSobrenomes')) return 'Digite nome e dois sobrenomes completos';
     if (field.hasError('abreviacao')) return 'Cada parte do nome deve ter pelo menos 2 letras';
     if (field.hasError('sobrenomeCurto')) return 'Sobrenomes muito curtos, digite sobrenomes completos';
@@ -282,6 +351,7 @@ export class AgendamentoComponent implements OnInit {
     if (field.hasError('sequenciaAleatoria')) return 'Nome inválido: sequência de letras não parece um nome real';
     if (field.hasError('padraoRepetitivoInterno')) return 'Nome inválido: padrões repetitivos detectados';
     if (field.hasError('nomeInvalido')) return 'Nome inválido, verifique o formato';
+    if (field.hasError('dataPassada')) return 'Não é possível agendar para datas passadas';
     
     return 'Campo inválido';
   }
