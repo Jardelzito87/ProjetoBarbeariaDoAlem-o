@@ -4,6 +4,7 @@ import { QuemSomosComponent } from './component/quem-somos/quem-somos.component'
 import { GaleriaFotosComponent } from './component/galeria-fotos/galeria-fotos.component';
 import { AgendamentoComponent } from './component/agendamento/agendamento.component';
 import { ContatoComponent } from './component/contato/contato.component';
+import { AdminComponent } from './component/admin/admin.component';
 import { NaoEncontradosComponent } from './component/nao-encontrados/nao-encontrados.component';
 
 export const routes: Routes = [
@@ -13,5 +14,6 @@ export const routes: Routes = [
     {path:'galeria-fotos', component: GaleriaFotosComponent},//rota do componente galeria de fotos
     {path:'agendamento', component: AgendamentoComponent},//rota do componente agendamento
     {path:'contato', component: ContatoComponent},   //rota do componente contatos
+    {path:'admin', component: AdminComponent},      //rota do componente admin
     {path:'**', component: NaoEncontradosComponent},//rota para redirecionar paginas nao encontrada
 ];

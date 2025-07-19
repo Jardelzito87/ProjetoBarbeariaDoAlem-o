@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { DatabaseService, Servico, Cliente, Agendamento } from '../../services/database.service';
+import { SERVICOS_FIXOS } from './servicos-fixos';
 
 @Component({
   selector: 'app-agendamento',
@@ -11,7 +12,8 @@ import { DatabaseService, Servico, Cliente, Agendamento } from '../../services/d
   styleUrl: './agendamento.component.css'
 })
 export class AgendamentoComponent implements OnInit {
-  servicos: Servico[] = [];
+  // Usar serviços fixos diretamente
+  servicos: Servico[] = SERVICOS_FIXOS;
   mensagem = '';
   mensagemTipo = '';
   carregando = false;
@@ -39,8 +41,30 @@ export class AgendamentoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.carregarServicos();
     this.initForm();
+    console.log('Serviços disponíveis:', this.servicos);
+  }
+
+  // Função para verificar se a data selecionada é domingo
+  verificarDomingo(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const dataStr = target.value;
+    
+    if (dataStr) {
+      const [ano, mes, dia] = dataStr.split('-').map(Number);
+      const data = new Date(ano, mes - 1, dia);
+      const diaDaSemana = data.getDay();
+      
+      console.log(`Data selecionada: ${dataStr}, dia da semana: ${diaDaSemana}`);
+      
+      // Se for domingo (0), limpar o campo e mostrar alerta
+      if (diaDaSemana === 0) {
+        target.value = '';
+        this.agendamentoForm.get('data_agendada')?.setValue('');
+        this.mensagem = 'Não realizamos atendimentos aos domingos. Por favor, escolha outro dia.';
+        this.mensagemTipo = 'erro';
+      }
+    }
   }
 
   // Validador personalizado para permitir apenas letras e espaços no nome
@@ -205,19 +229,29 @@ export class AgendamentoComponent implements OnInit {
     return null;
   }
   
-  // Validador para evitar datas passadas
+  // Validador para evitar datas passadas e domingos
   dataFuturaValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
     
-    const dataEscolhida = new Date(value);
-    dataEscolhida.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas as datas
+    // Criar a data a partir da string no formato YYYY-MM-DD
+    const [ano, mes, dia] = value.split('-').map(Number);
+    const dataEscolhida = new Date(ano, mes - 1, dia); // Meses em JS são 0-indexed
     
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0); // Zera as horas para comparar apenas as datas
     
+    // Verificar se é data passada
     if (dataEscolhida < hoje) {
       return { dataPassada: true };
+    }
+    
+    // Verificar se é domingo (0 = domingo, 1 = segunda, ..., 6 = sábado)
+    const diaDaSemana = dataEscolhida.getDay();
+    console.log(`Data escolhida: ${value}, dia da semana: ${diaDaSemana} (0=domingo, 1=segunda, ...)`);
+    
+    if (diaDaSemana === 0) {
+      return { domingo: true };
     }
     
     return null;
@@ -232,22 +266,6 @@ export class AgendamentoComponent implements OnInit {
       hora_agendada: ['', [Validators.required]],
       servico_id: ['', [Validators.required]],
       observacoes: ['']
-    });
-  }
-
-  carregarServicos(): void {
-    this.carregando = true;
-    this.dbService.getServicos().subscribe({
-      next: (data) => {
-        this.servicos = data;
-        this.carregando = false;
-      },
-      error: (err) => {
-        console.error('Erro ao carregar serviços:', err);
-        this.mensagem = 'O grimório de serviços está temporariamente inacessível. Os espíritos estão trabalhando para resolver o problema.';
-        this.mensagemTipo = 'erro';
-        this.carregando = false;
-      }
     });
   }
 
@@ -352,6 +370,7 @@ export class AgendamentoComponent implements OnInit {
     if (field.hasError('padraoRepetitivoInterno')) return 'Nome inválido: padrões repetitivos detectados';
     if (field.hasError('nomeInvalido')) return 'Nome inválido, verifique o formato';
     if (field.hasError('dataPassada')) return 'Não é possível agendar para datas passadas';
+    if (field.hasError('domingo')) return 'Não realizamos atendimentos aos domingos';
     
     return 'Campo inválido';
   }

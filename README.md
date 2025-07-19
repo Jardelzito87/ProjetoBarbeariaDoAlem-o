@@ -1,59 +1,105 @@
-# ProjetoAngular
+# Barbearia do Além
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
+Sistema de agendamentos para a Barbearia do Além, desenvolvido com Angular e Node.js.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+- Node.js (v14 ou superior)
+- Angular CLI (v19.2.6)
+- PostgreSQL (via Neon)
+
+## Estrutura do Projeto
+
+- `src/` - Código fonte do frontend Angular
+- `backend/` - Código fonte do backend Node.js
+
+## Configuração do Banco de Dados
+
+O projeto utiliza PostgreSQL hospedado no Neon.
+
+1. Configure as variáveis de ambiente no arquivo `backend/.env`
+2. Execute o script de configuração do banco de dados:
 
 ```bash
-ng serve
+cd backend
+npm run setup-db
+cd ..
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Instalação
 
-## Code scaffolding
+1. Instale as dependências do frontend:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+```bash
+npm install
+```
+
+2. Instale as dependências do backend:
+
+```bash
+cd backend
+npm install
+cd ..
+```
+
+## Executando o Projeto
+
+### Desenvolvimento
+
+Para executar o frontend e o backend simultaneamente:
+
+```bash
+npm run dev
+```
+
+Ou execute-os separadamente:
+
+- Frontend: `npm start` (acessível em http://localhost:4200)
+- Backend: `cd backend && npm start` (acessível em http://localhost:3000)
+
+### Produção
+
+Para construir o projeto para produção:
+
+```bash
+npm run build
+```
+
+## Recursos
+
+- Agendamento de serviços
+- Cadastro de clientes
+- Gerenciamento de horários
+- Interface temática de "além"
+
+## Tecnologias Utilizadas
+
+- Frontend: Angular 19, Bootstrap 5
+- Backend: Node.js, Express
+- Banco de Dados: PostgreSQL (Neon)
+
+## Desenvolvimento
+
+### Gerando Novos Componentes
 
 ```bash
 ng generate component component-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Para uma lista completa de comandos disponíveis:
 
 ```bash
 ng generate --help
 ```
 
-## Building
+### Testes
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Para executar testes unitários:
 
 ```bash
-ng test
+npm test
 ```
 
-## Running end-to-end tests
+## Recursos Adicionais
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Para mais informações sobre o Angular CLI, visite a [Documentação do Angular CLI](https://angular.dev/tools/cli).

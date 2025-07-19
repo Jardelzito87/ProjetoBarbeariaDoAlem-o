@@ -1,0 +1,9 @@
+@echo off
+echo Iniciando o sistema da Barbearia do Além em modo mock...
+
+echo Configurando para usar o serviço mock...
+powershell -Command "(Get-Content -Path '%~dp0\src\app\app.config.ts') -replace 'const useMockService = false', 'const useMockService = true' | Set-Content -Path '%~dp0\src\app\app.config.ts'"
+
+echo Iniciando o frontend...
+cd %~dp0
+npm start

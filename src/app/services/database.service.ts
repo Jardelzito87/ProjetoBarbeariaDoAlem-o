@@ -26,11 +26,16 @@ export interface Agendamento {
   status?: string;
 }
 
+export interface Disponibilidade {
+  horario: string;
+  disponivel: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class DatabaseService {
-  private apiUrl = '/api'; // This would be replaced with your actual API endpoint
+  private apiUrl = 'http://localhost:3000/api'; // URL do backend
 
   constructor(private http: HttpClient) { }
 
@@ -47,5 +52,30 @@ export class DatabaseService {
   // Agendamentos
   createAgendamento(agendamento: Agendamento): Observable<Agendamento> {
     return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
+  }
+  
+  // Listar agendamentos
+  getAgendamentos(): Observable<Agendamento[]> {
+    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos`);
+  }
+  
+  // Bloquear data
+  bloquearData(data: string, motivo?: string): Observable<{success: boolean}> {
+    return this.http.post<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas`, { data, motivo });
+  }
+  
+  // Desbloquear data
+  desbloquearData(data: string): Observable<{success: boolean}> {
+    return this.http.delete<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas/${data}`);
+  }
+  
+  // Atualizar status do agendamento
+  atualizarStatusAgendamento(id: number, status: string): Observable<Agendamento> {
+    return this.http.patch<Agendamento>(`${this.apiUrl}/agendamentos/${id}`, { status });
+  }
+  
+  // Verificar disponibilidade de horários para uma data
+  verificarDisponibilidade(data: string): Observable<Disponibilidade[]> {
+    return this.http.get<Disponibilidade[]>(`${this.apiUrl}/disponibilidade?data=${data}`);
   }
 }

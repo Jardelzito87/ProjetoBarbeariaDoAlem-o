@@ -3,6 +3,9 @@ const { Pool } = require('pg');
 const cors = require('cors');
 require('dotenv').config();
 
+// Importar módulo de disponibilidade
+// const disponibilidadeRoutes = require('./disponibilidade');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -173,6 +176,32 @@ app.post('/api/agendamentos', async (req, res) => {
       console.log('Horário já ocupado');
       return res.status(400).json({ error: 'Horário já está ocupado' });
     }
+    
+    // Verificar se o cliente já tem agendamento no mesmo dia
+    console.log('Verificando se o cliente já tem agendamento no mesmo dia:', cliente_id, data_agendada);
+    const agendamentoClienteMesmoDia = await pool.query(
+      "SELECT * FROM agendamentos WHERE cliente_id = $1 AND data_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
+      [cliente_id, data_agendada]
+    );
+    if (agendamentoClienteMesmoDia.rows.length > 0) {
+      console.log('Cliente já possui agendamento neste dia');
+      return res.status(400).json({ error: 'Você já possui um agendamento neste dia. Escolha outra data.' });
+    }
+    
+    // Verificar se já atingiu o limite de 7 agendamentos por dia (1 em cada horário)
+    console.log('Verificando limite de agendamentos para o dia:', data_agendada);
+    const agendamentosNoDia = await pool.query(
+      "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
+      [data_agendada]
+    );
+    
+    const totalAgendamentos = parseInt(agendamentosNoDia.rows[0].total);
+    console.log(`Total de agendamentos para ${data_agendada}: ${totalAgendamentos}`);
+    
+    if (totalAgendamentos >= 7) {
+      console.log('Limite de agendamentos para este dia atingido');
+      return res.status(400).json({ error: 'Limite de agendamentos para este dia atingido. Por favor, escolha outra data.' });
+    }
 
     // Inserir agendamento
     console.log('Inserindo novo agendamento:', { cliente_id, servico_id, data_agendada, hora_agendada });
@@ -197,6 +226,42 @@ app.post('/api/agendamentos', async (req, res) => {
     console.error('Erro ao criar agendamento:', err);
     console.error('Detalhes do erro:', err.detail || err.message);
     res.status(500).json({ error: 'Erro interno no servidor', details: err.detail || err.message });
+  }
+});
+
+// GET para verificar disponibilidade de horários
+app.get('/api/disponibilidade', async (req, res) => {
+  const { data } = req.query;
+  
+  if (!data) {
+    return res.status(400).json({ error: 'Data é obrigatória' });
+  }
+  
+  try {
+    // Definir horários disponíveis
+    const horarios = [
+      '09:00:00', '10:00:00', '11:00:00', '14:00:00', '15:00:00', '16:00:00', '17:00:00'
+    ];
+    
+    // Buscar agendamentos para a data especificada
+    const agendamentosResult = await pool.query(
+      "SELECT hora_agendada FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
+      [data]
+    );
+    
+    // Mapear horários ocupados
+    const horariosOcupados = agendamentosResult.rows.map(row => row.hora_agendada);
+    
+    // Criar lista de disponibilidade
+    const disponibilidade = horarios.map(horario => ({
+      horario,
+      disponivel: !horariosOcupados.includes(horario)
+    }));
+    
+    res.json(disponibilidade);
+  } catch (err) {
+    console.error('Erro ao verificar disponibilidade:', err);
+    res.status(500).json({ error: 'Erro ao verificar disponibilidade' });
   }
 });
 

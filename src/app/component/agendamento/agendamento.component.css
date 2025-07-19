@@ -263,6 +263,21 @@ input::placeholder, textarea::placeholder {
   font-style: italic;
 }
 
+.domingo-aviso {
+  color: #ff6666;
+  font-weight: bold;
+}
+
+.regras-agendamento {
+  color: #ff6666;
+  font-weight: bold;
+  font-size: 0.95rem;
+  text-align: center;
+  margin-top: 10px;
+  border-top: 1px dashed #444;
+  padding-top: 10px;
+}
+
 select {
   appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg fill='%23b30000' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");

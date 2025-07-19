@@ -1,0 +1,85 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Painel de Controle do Além</h1>
+    <div class="divider">
+      <span class="divider-icon">⚡</span>
+    </div>
+    <p class="admin-subtitle">Gerencie os agendamentos e bloqueie datas</p>
+  </div>
+  
+  <div *ngIf="mensagem" class="mensagem" [ngClass]="mensagemTipo">
+    <div class="mensagem-icon">{{ mensagemTipo === 'sucesso' ? '✓' : '✗' }}</div>
+    <div class="mensagem-texto">{{ mensagem }}</div>
+  </div>
+  
+  <div *ngIf="carregando" class="loading">
+    <div class="loading-icon"></div>
+    <span>Invocando...</span>
+  </div>
+  
+  <div class="admin-content" *ngIf="!carregando">
+    <div class="admin-section">
+      <h2>Bloquear Data</h2>
+      <form [formGroup]="bloqueioForm" (ngSubmit)="bloquearData()">
+        <div class="form-group">
+          <label for="data">Data a Bloquear</label>
+          <input type="date" id="data" formControlName="data" [min]="dataHoje">
+        </div>
+        
+        <div class="form-group">
+          <label for="motivo">Motivo (opcional)</label>
+          <input type="text" id="motivo" formControlName="motivo" placeholder="Ex: Feriado, Manutenção">
+        </div>
+        
+        <button type="submit" [disabled]="bloqueioForm.invalid">Bloquear Data</button>
+      </form>
+    </div>
+    
+    <div class="admin-section">
+      <h2>Agendamentos</h2>
+      
+      <div *ngIf="agendamentos.length === 0" class="empty-state">
+        <p>Nenhum agendamento encontrado</p>
+      </div>
+      
+      <div *ngIf="agendamentos.length > 0" class="agendamentos-list">
+        <div class="agendamento-card" *ngFor="let agendamento of agendamentos">
+          <div class="agendamento-header" [ngClass]="agendamento.status">
+            <span class="agendamento-id">#{{ agendamento.id }}</span>
+            <span class="agendamento-status">{{ agendamento.status }}</span>
+          </div>
+          
+          <div class="agendamento-body">
+            <div class="agendamento-info">
+              <p><strong>Cliente ID:</strong> {{ agendamento.cliente_id }}</p>
+              <p><strong>Serviço:</strong> {{ getNomeServico(agendamento.servico_id) }}</p>
+              <p><strong>Data:</strong> {{ formatarData(agendamento.data_agendada) }}</p>
+              <p><strong>Hora:</strong> {{ agendamento.hora_agendada }}</p>
+              <p *ngIf="agendamento.observacoes"><strong>Observações:</strong> {{ agendamento.observacoes }}</p>
+            </div>
+            
+            <div class="agendamento-actions">
+              <button *ngIf="agendamento.status === 'pendente'" 
+                      (click)="atualizarStatus(agendamento, 'confirmado')" 
+                      class="btn-confirm">
+                Confirmar
+              </button>
+              
+              <button *ngIf="agendamento.status === 'pendente' || agendamento.status === 'confirmado'" 
+                      (click)="atualizarStatus(agendamento, 'concluido')" 
+                      class="btn-complete">
+                Concluir
+              </button>
+              
+              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluido'" 
+                      (click)="atualizarStatus(agendamento, 'cancelado')" 
+                      class="btn-cancel">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
