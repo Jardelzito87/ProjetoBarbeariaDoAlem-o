@@ -21,42 +21,61 @@ export class MockDatabaseService {
   private nextAgendamentoId: number;
 
   constructor() {
-    // Tentar carregar dados do localStorage
-    const savedData = localStorage.getItem('barbeariaDoAlemData');
+    // Limpar localStorage para resolver problemas de dados corrompidos
+    localStorage.removeItem('barbeariaDoAlemData');
     
-    if (savedData) {
-      // Se existirem dados salvos, carregá-los
-      this.storage = JSON.parse(savedData);
-      
-      // Encontrar o próximo ID disponível para clientes
-      this.nextClienteId = this.storage.clientes.length > 0 ?
-        Math.max(...this.storage.clientes.map(c => c.id || 0)) + 1 : 1;
-      
-      // Encontrar o próximo ID disponível para agendamentos
-      this.nextAgendamentoId = this.storage.agendamentos.length > 0 ?
-        Math.max(...this.storage.agendamentos.map(a => a.id || 0)) + 1 : 1;
-    } else {
-      // Inicializar com dados padrão
-      this.storage = {
-        servicos: [
-          { id: 1, nome: 'Corte Sobrenatural', descricao: 'Transformação completa com técnicas ancestrais. Inclui ritual de purificação capilar', preco: 45.00 },
-          { id: 2, nome: 'Degradê Espectral', descricao: 'Fade perfeito com transições invisíveis. Realizado com tesouras forjadas em metal do além', preco: 55.00 },
-          { id: 3, nome: 'Navalha Demoníaca', descricao: 'Precisão sobrenatural com nossa navalha ritual. Inclui massagem craniana com óleos místicos', preco: 65.00 },
-          { id: 4, nome: 'Barba Maldita', descricao: 'Modelagem completa da barba com produtos infernais. Inclui toalha quente e óleo de barba especial', preco: 40.00 },
-          { id: 5, nome: 'Pacto Completo', descricao: 'Combo de corte e barba com direito a ritual completo. Inclui bebida e tratamento especial', preco: 90.00 },
-          { id: 6, nome: 'Transformação Sombria', descricao: 'Mudança radical de visual com direito a coloração e tratamento capilar das trevas', preco: 120.00 }
-        ],
-        clientes: [],
-        agendamentos: [],
-        datas_bloqueadas: []
-      };
-      
-      this.nextClienteId = 1;
-      this.nextAgendamentoId = 1;
-      
-      // Salvar os dados iniciais
-      this.saveData();
-    }
+    // Inicializar com dados padrão
+    this.storage = {
+      servicos: [
+        { id: 1, nome: 'Corte Sobrenatural', descricao: 'Transformação completa com técnicas ancestrais. Inclui ritual de purificação capilar', preco: 45.00 },
+        { id: 2, nome: 'Degradê Espectral', descricao: 'Fade perfeito com transições invisíveis. Realizado com tesouras forjadas em metal do além', preco: 55.00 },
+        { id: 3, nome: 'Navalha Demoníaca', descricao: 'Precisão sobrenatural com nossa navalha ritual. Inclui massagem craniana com óleos místicos', preco: 65.00 },
+        { id: 4, nome: 'Barba Maldita', descricao: 'Modelagem completa da barba com produtos infernais. Inclui toalha quente e óleo de barba especial', preco: 40.00 },
+        { id: 5, nome: 'Pacto Completo', descricao: 'Combo de corte e barba com direito a ritual completo. Inclui bebida e tratamento especial', preco: 90.00 },
+        { id: 6, nome: 'Transformação Sombria', descricao: 'Mudança radical de visual com direito a coloração e tratamento capilar das trevas', preco: 120.00 }
+      ],
+      clientes: [
+        { id: 1, nome: 'João Silva', email: 'joao@email.com', telefone: '(11) 99999-1111' },
+        { id: 2, nome: 'Maria Souza', email: 'maria@email.com', telefone: '(11) 99999-2222' },
+        { id: 3, nome: 'Pedro Santos', email: 'pedro@email.com', telefone: '(11) 99999-3333' }
+      ],
+      agendamentos: [
+        {
+          id: 1,
+          cliente_id: 1,
+          servico_id: 1,
+          data_agendada: '2023-12-01',
+          hora_agendada: '09:00:00',
+          observacoes: 'Primeira vez',
+          status: 'pendente'
+        },
+        {
+          id: 2,
+          cliente_id: 2,
+          servico_id: 3,
+          data_agendada: '2023-12-01',
+          hora_agendada: '10:00:00',
+          observacoes: 'Cliente regular',
+          status: 'confirmado'
+        },
+        {
+          id: 3,
+          cliente_id: 3,
+          servico_id: 5,
+          data_agendada: '2023-12-02',
+          hora_agendada: '14:00:00',
+          observacoes: 'Alergia a produtos com alcool',
+          status: 'pendente'
+        }
+      ],
+      datas_bloqueadas: []
+    };
+    
+    this.nextClienteId = 4;
+    this.nextAgendamentoId = 4;
+    
+    // Salvar os dados iniciais
+    this.saveData();
   }
   
   // Método para persistir dados no localStorage
@@ -85,6 +104,11 @@ export class MockDatabaseService {
     this.storage.clientes.push(newCliente);
     this.saveData();
     return of(newCliente).pipe(delay(800));
+  }
+  
+  // Listar todos os clientes
+  getClientes(): Observable<Cliente[]> {
+    return of(this.storage.clientes).pipe(delay(800));
   }
 
   // Agendamentos
@@ -129,12 +153,59 @@ export class MockDatabaseService {
     if (agendamentosNoDia.length >= 7) {
       return throwError(() => new Error('Limite de agendamentos para este dia atingido. Por favor, escolha outra data.'));
     }
+    
+    // Buscar informações do cliente
+    const cliente = this.storage.clientes.find(c => c.id === agendamento.cliente_id);
+    
+    // Converter servico_id para número se for string
+    const servicoId = typeof agendamento.servico_id === 'string' ? parseInt(agendamento.servico_id) : agendamento.servico_id;
+    
+    // Obter informações do serviço
+    let servicoNome = '';
+    let servicoPreco = 0;
+    
+    switch(servicoId) {
+      case 1:
+        servicoNome = 'Corte Sobrenatural';
+        servicoPreco = 45.00;
+        break;
+      case 2:
+        servicoNome = 'Degradê Espectral';
+        servicoPreco = 55.00;
+        break;
+      case 3:
+        servicoNome = 'Navalha Demoníaca';
+        servicoPreco = 65.00;
+        break;
+      case 4:
+        servicoNome = 'Barba Maldita';
+        servicoPreco = 40.00;
+        break;
+      case 5:
+        servicoNome = 'Pacto Completo';
+        servicoPreco = 90.00;
+        break;
+      case 6:
+        servicoNome = 'Transformação Sombria';
+        servicoPreco = 120.00;
+        break;
+      default:
+        const servico = this.storage.servicos.find(s => s.id === servicoId);
+        servicoNome = servico?.nome || 'Serviço desconhecido';
+        servicoPreco = servico?.preco || 0;
+    }
 
     // Simulate API delay
     const newAgendamento = { 
       ...agendamento, 
       id: this.nextAgendamentoId++,
-      status: 'pendente'
+      servico_id: servicoId, // Usar o ID convertido para número
+      status: 'pendente',
+      cliente_nome: cliente?.nome || 'Cliente #' + agendamento.cliente_id,
+      cliente_email: cliente?.email || 'email@exemplo.com',
+      cliente_telefone: cliente?.telefone || '(00) 00000-0000',
+      servico_nome: servicoNome,
+      servico_preco: servicoPreco
     };
     
     this.storage.agendamentos.push(newAgendamento);
@@ -144,7 +215,62 @@ export class MockDatabaseService {
   
   // Listar agendamentos
   getAgendamentos(): Observable<Agendamento[]> {
-    return of(this.storage.agendamentos).pipe(delay(800));
+    // Adicionar informações de cliente e serviço aos agendamentos
+    const agendamentosCompletos = this.storage.agendamentos.map(agendamento => {
+      // Buscar informações do cliente
+      const cliente = this.storage.clientes.find(c => c.id === agendamento.cliente_id);
+      
+      // Converter servico_id para número se for string
+      const servicoId = typeof agendamento.servico_id === 'string' ? parseInt(agendamento.servico_id) : agendamento.servico_id;
+      
+      // Obter informações do serviço com valores fixos garantidos
+      let servicoNome = '';
+      let servicoPreco = 0;
+      
+      switch(servicoId) {
+        case 1:
+          servicoNome = 'Corte Sobrenatural';
+          servicoPreco = 45.00;
+          break;
+        case 2:
+          servicoNome = 'Degradê Espectral';
+          servicoPreco = 55.00;
+          break;
+        case 3:
+          servicoNome = 'Navalha Demoníaca';
+          servicoPreco = 65.00;
+          break;
+        case 4:
+          servicoNome = 'Barba Maldita';
+          servicoPreco = 40.00;
+          break;
+        case 5:
+          servicoNome = 'Pacto Completo';
+          servicoPreco = 90.00;
+          break;
+        case 6:
+          servicoNome = 'Transformação Sombria';
+          servicoPreco = 120.00;
+          break;
+        default:
+          const servico = this.storage.servicos.find(s => s.id === servicoId);
+          servicoNome = servico?.nome || 'Serviço desconhecido';
+          servicoPreco = servico?.preco || 0;
+      }
+      
+      // Retornar agendamento com informações adicionais
+      return {
+        ...agendamento,
+        servico_id: servicoId, // Usar o ID convertido para número
+        cliente_nome: cliente?.nome || 'Cliente #' + agendamento.cliente_id,
+        cliente_email: cliente?.email || 'email@exemplo.com',
+        cliente_telefone: cliente?.telefone || '(00) 00000-0000',
+        servico_nome: servicoNome,
+        servico_preco: servicoPreco
+      };
+    });
+    
+    return of(agendamentosCompletos).pipe(delay(800));
   }
   
   // Verificar disponibilidade de horários para uma data
@@ -191,14 +317,73 @@ export class MockDatabaseService {
   
   // Atualizar status do agendamento
   atualizarStatusAgendamento(id: number, status: string): Observable<Agendamento> {
-    const agendamento = this.storage.agendamentos.find(a => a.id === id);
+    console.log('Mock: Atualizando agendamento', id, 'para status', status);
     
-    if (!agendamento) {
+    // Encontrar o agendamento pelo ID
+    const indice = this.storage.agendamentos.findIndex(a => a.id === id);
+    
+    if (indice === -1) {
+      console.error('Agendamento não encontrado:', id);
       return throwError(() => new Error('Agendamento não encontrado'));
     }
     
-    agendamento.status = status;
+    // Atualizar o status
+    this.storage.agendamentos[indice].status = status;
+    console.log('Status atualizado com sucesso para:', status);
+    
+    // Salvar no localStorage
     this.saveData();
-    return of(agendamento).pipe(delay(800));
+    
+    // Retornar o agendamento atualizado
+    const agendamentoAtualizado = this.storage.agendamentos[indice];
+    
+    // Adicionar informações de cliente e serviço
+    const cliente = this.storage.clientes.find((c: Cliente) => c.id === agendamentoAtualizado.cliente_id);
+    
+    // Converter servico_id para número se for string
+    const servicoId = typeof agendamentoAtualizado.servico_id === 'string' ? parseInt(agendamentoAtualizado.servico_id) : agendamentoAtualizado.servico_id;
+    
+    // Obter informações do serviço
+    let servicoNome = '';
+    let servicoPreco = 0;
+    
+    switch(servicoId) {
+      case 1:
+        servicoNome = 'Corte Sobrenatural';
+        servicoPreco = 45.00;
+        break;
+      case 2:
+        servicoNome = 'Degradê Espectral';
+        servicoPreco = 55.00;
+        break;
+      case 3:
+        servicoNome = 'Navalha Demoníaca';
+        servicoPreco = 65.00;
+        break;
+      case 4:
+        servicoNome = 'Barba Maldita';
+        servicoPreco = 40.00;
+        break;
+      case 5:
+        servicoNome = 'Pacto Completo';
+        servicoPreco = 90.00;
+        break;
+      case 6:
+        servicoNome = 'Transformação Sombria';
+        servicoPreco = 120.00;
+        break;
+    }
+    
+    const agendamentoCompleto = {
+      ...agendamentoAtualizado,
+      servico_id: servicoId, // Usar o ID convertido para número
+      cliente_nome: cliente?.nome || 'Cliente #' + agendamentoAtualizado.cliente_id,
+      cliente_email: cliente?.email || 'email@exemplo.com',
+      cliente_telefone: cliente?.telefone || '(00) 00000-0000',
+      servico_nome: servicoNome,
+      servico_preco: servicoPreco
+    };
+    
+    return of(agendamentoCompleto).pipe(delay(800));
   }
 }

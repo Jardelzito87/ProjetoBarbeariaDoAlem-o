@@ -36,45 +36,116 @@
     </div>
     
     <div class="admin-section">
+      <h2>Clientes</h2>
+      <button class="toggle-button" (click)="toggleMostrarClientes()">
+        {{ mostrarClientes ? 'Ocultar Clientes' : 'Mostrar Clientes' }}
+      </button>
+      
+      <div *ngIf="mostrarClientes" class="clientes-container">
+        <div *ngIf="clientes.length === 0" class="empty-state">
+          <p>Nenhum cliente cadastrado</p>
+        </div>
+        
+        <table *ngIf="clientes.length > 0" class="clientes-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Telefone</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cliente of clientes">
+              <td>{{ cliente.id }}</td>
+              <td>{{ cliente.nome }}</td>
+              <td>{{ cliente.email }}</td>
+              <td>{{ cliente.telefone }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div class="admin-section">
       <h2>Agendamentos</h2>
       
-      <div *ngIf="agendamentos.length === 0" class="empty-state">
+      <div class="filtros-container">
+        <button 
+          [ngClass]="{'filtro-ativo': filtroAtual === 'todos'}"
+          (click)="aplicarFiltro('todos')">Todos</button>
+        <button 
+          [ngClass]="{'filtro-ativo': filtroAtual === 'pendentes'}"
+          (click)="aplicarFiltro('pendentes')">Pendentes</button>
+        <button 
+          [ngClass]="{'filtro-ativo': filtroAtual === 'confirmados'}"
+          (click)="aplicarFiltro('confirmados')">Confirmados</button>
+        <button 
+          [ngClass]="{'filtro-ativo': filtroAtual === 'feitos'}"
+          (click)="aplicarFiltro('feitos')">Feitos</button>
+        <button 
+          [ngClass]="{'filtro-ativo': filtroAtual === 'cancelados'}"
+          (click)="aplicarFiltro('cancelados')">Cancelados</button>
+      </div>
+      
+      <div *ngIf="agendamentosFiltrados.length === 0" class="empty-state">
         <p>Nenhum agendamento encontrado</p>
       </div>
       
-      <div *ngIf="agendamentos.length > 0" class="agendamentos-list">
-        <div class="agendamento-card" *ngFor="let agendamento of agendamentos">
-          <div class="agendamento-header" [ngClass]="agendamento.status">
-            <span class="agendamento-id">#{{ agendamento.id }}</span>
-            <span class="agendamento-status">{{ agendamento.status }}</span>
+      <div *ngIf="agendamentosFiltrados.length > 0" class="agendamentos-list">
+        <div class="agendamento-card" *ngFor="let agendamento of agendamentosFiltrados">
+          <div class="agendamento-header" [ngClass]="getStatusClass(agendamento.status || '')">
+            <div class="agendamento-header-left">
+              <span class="agendamento-id">#{{ agendamento.id }}</span>
+              <span class="agendamento-data">{{ formatarData(agendamento.data_agendada) }} - {{ formatarHora(agendamento.hora_agendada) }}</span>
+            </div>
+            <div class="agendamento-status">{{ getStatusLabel(agendamento.status || '') }}</div>
           </div>
           
           <div class="agendamento-body">
             <div class="agendamento-info">
-              <p><strong>Cliente ID:</strong> {{ agendamento.cliente_id }}</p>
-              <p><strong>Serviço:</strong> {{ getNomeServico(agendamento.servico_id) }}</p>
-              <p><strong>Data:</strong> {{ formatarData(agendamento.data_agendada) }}</p>
-              <p><strong>Hora:</strong> {{ agendamento.hora_agendada }}</p>
-              <p *ngIf="agendamento.observacoes"><strong>Observações:</strong> {{ agendamento.observacoes }}</p>
+              <div class="info-section cliente-info">
+                <h3>Informações do Cliente</h3>
+                <p><strong>ID:</strong> {{ agendamento.cliente_id }}</p>
+                <p><strong>Nome:</strong> {{ agendamento.cliente_nome || 'Cliente #' + agendamento.cliente_id }}</p>
+                <p><strong>Email:</strong> {{ agendamento.cliente_email || 'N/A' }}</p>
+                <p><strong>Telefone:</strong> {{ agendamento.cliente_telefone || 'N/A' }}</p>
+              </div>
+              
+              <div class="info-section servico-info">
+                <h3>Serviço Agendado</h3>
+                <p><strong>ID:</strong> {{ agendamento.servico_id }}</p>
+                <p><strong>Serviço:</strong> {{ agendamento.servico_nome || getNomeServico(agendamento.servico_id) }}</p>
+                <p><strong>Preço:</strong> R$ {{ getPrecoServico(agendamento.servico_id).toFixed(2) }}</p>
+                <p><strong>Data:</strong> {{ formatarData(agendamento.data_agendada) }}</p>
+                <p><strong>Horário:</strong> {{ formatarHora(agendamento.hora_agendada) }}</p>
+                <p *ngIf="agendamento.observacoes"><strong>Observações:</strong> {{ agendamento.observacoes }}</p>
+              </div>
             </div>
             
             <div class="agendamento-actions">
               <button *ngIf="agendamento.status === 'pendente'" 
                       (click)="atualizarStatus(agendamento, 'confirmado')" 
                       class="btn-confirm">
-                Confirmar
+                <span class="btn-icon">✓</span> Confirmar
               </button>
               
               <button *ngIf="agendamento.status === 'pendente' || agendamento.status === 'confirmado'" 
                       (click)="atualizarStatus(agendamento, 'concluido')" 
                       class="btn-complete">
-                Concluir
+                <span class="btn-icon">✅</span> Feito
               </button>
               
-              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluido'" 
+              <button *ngIf="agendamento.status === 'confirmado'" 
+                      (click)="atualizarStatus(agendamento, 'não compareceu')" 
+                      class="btn-no-show">
+                <span class="btn-icon">❌</span> Faltou
+              </button>
+              
+              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluido' && agendamento.status !== 'não compareceu'" 
                       (click)="atualizarStatus(agendamento, 'cancelado')" 
                       class="btn-cancel">
-                Cancelar
+                <span class="btn-icon">🗑️</span> Cancelar
               </button>
             </div>
           </div>

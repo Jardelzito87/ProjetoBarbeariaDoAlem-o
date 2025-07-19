@@ -270,12 +270,23 @@ app.get('/api/agendamentos', async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT a.*, c.nome as cliente_nome, c.email as cliente_email, c.telefone as cliente_telefone,
-             s.nome as servico_nome, s.preco as servico_preco
+             s.nome as servico_nome, s.preco as servico_preco, s.descricao as servico_descricao
       FROM agendamentos a
       JOIN clientes c ON a.cliente_id = c.id
       JOIN servicos s ON a.servico_id = s.id
       ORDER BY a.data_agendada DESC, a.hora_agendada ASC
     `);
+    
+    console.log('Agendamentos carregados com sucesso:', result.rows.length);
+    // Verificar se os preços estão sendo retornados corretamente
+    if (result.rows.length > 0) {
+      console.log('Exemplo de agendamento com preço:', {
+        id: result.rows[0].id,
+        servico_nome: result.rows[0].servico_nome,
+        servico_preco: result.rows[0].servico_preco
+      });
+    }
+    
     res.json(result.rows);
   } catch (err) {
     console.error('Erro ao buscar agendamentos:', err);

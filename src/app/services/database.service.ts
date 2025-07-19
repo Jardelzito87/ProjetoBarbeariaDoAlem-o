@@ -24,6 +24,11 @@ export interface Agendamento {
   hora_agendada: string;
   observacoes: string;
   status?: string;
+  cliente_nome?: string;
+  cliente_email?: string;
+  cliente_telefone?: string;
+  servico_nome?: string;
+  servico_preco?: number;
 }
 
 export interface Disponibilidade {
@@ -47,6 +52,11 @@ export class DatabaseService {
   // Clientes
   addCliente(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
+  }
+  
+  // Listar todos os clientes
+  getClientes(): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
   }
 
   // Agendamentos

@@ -1,0 +1,16 @@
+@echo off
+echo Reiniciando o sistema da Barbearia do Além com serviço mock...
+
+echo Configurando para usar o serviço mock...
+powershell -Command "(Get-Content -Path '%~dp0\src\app\app.config.ts') -replace 'const useMockService = false', 'const useMockService = true' | Set-Content -Path '%~dp0\src\app\app.config.ts'"
+
+echo Limpando o cache do navegador...
+echo Por favor, feche todas as janelas do navegador e pressione qualquer tecla para continuar...
+pause > nul
+
+echo Iniciando o frontend...
+cd %~dp0
+npm start
+
+echo Sistema iniciado!
+echo Acesse http://localhost:4200/admin para ver o painel de administração
