@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Barbearia do Além</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #8a2be2;
+            text-align: center;
+        }
+        .container {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .endpoint {
+            background-color: #fff;
+            border-left: 4px solid #8a2be2;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>API da Barbearia do Além</h1>
+    
+    <div class="container">
+        <p>Bem-vindo à API da Barbearia do Além. Esta API fornece endpoints para gerenciar agendamentos, clientes e serviços.</p>
+        
+        <h2>Endpoints Disponíveis:</h2>
+        
+        <div class="endpoint">
+            <h3>Serviços</h3>
+            <p><code>GET /api/servicos</code> - Listar todos os serviços disponíveis</p>
+        </div>
+        
+        <div class="endpoint">
+            <h3>Clientes</h3>
+            <p><code>POST /api/clientes</code> - Criar um novo cliente</p>
+        </div>
+        
+        <div class="endpoint">
+            <h3>Agendamentos</h3>
+            <p><code>GET /api/agendamentos</code> - Listar todos os agendamentos</p>
+            <p><code>POST /api/agendamentos</code> - Criar um novo agendamento</p>
+            <p><code>PATCH /api/agendamentos/:id</code> - Atualizar status de um agendamento</p>
+        </div>
+        
+        <div class="endpoint">
+            <h3>Datas Bloqueadas</h3>
+            <p><code>POST /api/datas-bloqueadas</code> - Bloquear uma data</p>
+            <p><code>DELETE /api/datas-bloqueadas/:data</code> - Desbloquear uma data</p>
+        </div>
+    </div>
+    
+    <p style="text-align: center; margin-top: 20px;">Para acessar o frontend, visite: <a href="http://localhost:4200">http://localhost:4200</a></p>
+</body>
+</html>
