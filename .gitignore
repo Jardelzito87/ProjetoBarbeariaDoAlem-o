@@ -40,3 +40,18 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# ===========================================
+# ARQUIVOS SENSÍVEIS - BARBEARIA DO ALÉM
+# ===========================================
+
+# Arquivo de configuração do banco (NUNCA COMMITAR)
+backend/.env
+
+# Scripts de inicialização gerados dinamicamente
+start-completo.bat
+
+# Logs e backups temporários
+*.log
+*.backup
+*.tmp

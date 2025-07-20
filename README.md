@@ -1,45 +1,67 @@
-# Barbearia do Além
+# 🎭 Barbearia do Além
 
-Sistema de agendamentos para a Barbearia do Além, desenvolvido com Angular e Node.js.
+Sistema de agendamentos para a Barbearia do Além, desenvolvido com Angular e Node.js com autenticação JWT.
 
-## Requisitos
+## ⚡ Setup Rápido (Após Clonar)
+
+```bash
+# Execute apenas este comando:
+setup-projeto.bat
+
+# Depois execute para iniciar:
+start-completo.bat
+```
+
+**⚠️ IMPORTANTE**: Se houver erro de banco, edite `backend/.env` com suas credenciais do Neon.
+
+## 🚀 Acesso ao Sistema
+
+- **Site**: http://localhost:4200
+- **Login Admin**: http://localhost:4200/login
+- **Painel Admin**: http://localhost:4200/admin
+
+### 🔑 Credenciais Padrão
+- **Email**: `admin@barbeariadoalem.com`
+- **Senha**: `admin123`
+
+## 📋 Requisitos
 
 - Node.js (v14 ou superior)
 - Angular CLI (v19.2.6)
-- PostgreSQL (via Neon)
+- Conta no Neon PostgreSQL (grátis)
 
-## Estrutura do Projeto
+## 🏗️ Estrutura do Projeto
 
-- `src/` - Código fonte do frontend Angular
-- `backend/` - Código fonte do backend Node.js
+- `src/` - Frontend Angular com sistema de login
+- `backend/` - Backend Node.js + Express + JWT
+- `backend/.env` - Configurações do banco (não commitado)
+- `backend/.env.example` - Template de configuração
 
-## Configuração do Banco de Dados
+## 🛠️ Configuração Manual (se necessário)
 
-O projeto utiliza PostgreSQL hospedado no Neon.
+### 1. Configurar Banco de Dados Neon
 
-1. Configure as variáveis de ambiente no arquivo `backend/.env`
-2. Execute o script de configuração do banco de dados:
+1. Crie uma conta em https://neon.tech
+2. Crie um banco chamado `barbeariadoalem_db`
+3. Copie a connection string
+4. Cole no arquivo `backend/.env`
+
+### 2. Instalar Dependências
+
+```bash
+# Frontend
+npm install
+
+# Backend
+cd backend
+npm install
+```
+
+### 3. Configurar Login
 
 ```bash
 cd backend
-npm run setup-db
-cd ..
-```
-
-## Instalação
-
-1. Instale as dependências do frontend:
-
-```bash
-npm install
-```
-
-2. Instale as dependências do backend:
-
-```bash
-cd backend
-npm install
-cd ..
+node setup-login.js
 ```
 
 ## Executando o Projeto
