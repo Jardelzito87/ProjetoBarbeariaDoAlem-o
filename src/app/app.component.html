@@ -13,7 +13,7 @@
         <li><a routerLink="/galeria-fotos">Galeria de fotos</a></li>
         <li><a routerLink="/agendamento">Agendamento</a></li>
         <li><a routerLink="/contato">Contato</a></li>
-        <li><a routerLink="/login">Admin</a></li>
+        <li><a (click)="openAdminLogin()" style="cursor: pointer;">Admin</a></li>
       </ul>
     </nav>
     <div class="ghost-icon ghost-right">
@@ -27,6 +27,9 @@
 <main>
   <router-outlet></router-outlet>
 </main>
+
+<!-- Modal de Login do Admin -->
+<app-login></app-login>
 
 <footer class="footer-barbearia">
   <p>© 2025 Barbearia do Além | Senac Botucatu | Todos os direitos reservados</p>

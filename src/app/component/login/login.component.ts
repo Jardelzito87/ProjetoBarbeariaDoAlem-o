@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { LoginModalService } from '../../services/login-modal.service';
 
 @Component({
   selector: 'app-login',
@@ -10,27 +12,43 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm!: FormGroup;
   carregando = false;
   mensagem = '';
   mensagemTipo = '';
   mostrarSenha = false;
+  isModalOpen = false;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private loginModalService: LoginModalService
   ) {}
 
   ngOnInit(): void {
-    console.log('🚀 Inicializando componente de login...');
+    console.log('🚀 Inicializando componente de login modal...');
     
-    // Sempre inicializar o formulário primeiro
+    // Inicializar formulário
     this.initForm();
     
-    // Depois verificar status de autenticação
-    this.checkAuthenticationStatus();
+    // Escutar mudanças do modal
+    this.subscription.add(
+      this.loginModalService.isOpen$.subscribe(isOpen => {
+        this.isModalOpen = isOpen;
+        if (isOpen) {
+          // Reset do formulário quando abre o modal
+          this.resetForm();
+          this.checkAuthenticationStatus();
+        }
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   private checkAuthenticationStatus(): void {
@@ -99,6 +117,29 @@ export class LoginComponent implements OnInit {
     this.mostrarSenha = !this.mostrarSenha;
   }
 
+  // Métodos para controle do modal
+  closeModal(): void {
+    this.loginModalService.closeModal();
+  }
+
+  closeOnBackdrop(event: Event): void {
+    if (event.target === event.currentTarget) {
+      this.closeModal();
+    }
+  }
+
+  resetForm(): void {
+    console.log('🔄 Resetando formulário...');
+    this.loginForm.patchValue({
+      email: '',
+      senha: ''
+    });
+    this.mensagem = '';
+    this.mensagemTipo = '';
+    this.carregando = false;
+    this.mostrarSenha = false;
+  }
+
   onSubmit(): void {
     // Verificar novamente se já está logado antes de tentar fazer login
     if (this.authService.isAuthenticated) {
@@ -123,10 +164,11 @@ export class LoginComponent implements OnInit {
         this.mensagem = 'Login realizado com sucesso!';
         this.mensagemTipo = 'sucesso';
         
-        // Aguardar um momento e redirecionar
+        // Aguardar um momento, fechar modal e redirecionar
         setTimeout(() => {
+          this.closeModal();
           this.router.navigate(['/admin']);
-        }, 1000);
+        }, 1500);
         
         this.carregando = false;
       },

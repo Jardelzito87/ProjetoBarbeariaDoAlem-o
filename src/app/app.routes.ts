@@ -16,7 +16,6 @@ export const routes: Routes = [
     {path:'galeria-fotos', component: GaleriaFotosComponent},//rota do componente galeria de fotos
     {path:'agendamento', component: AgendamentoComponent},//rota do componente agendamento
     {path:'contato', component: ContatoComponent},   //rota do componente contatos
-    {path:'login', component: LoginComponent},      //rota do componente login
     {path:'admin', component: AdminComponent, canActivate: [AuthGuard]},      //rota do componente admin (protegida)
     {path:'**', component: NaoEncontradosComponent},//rota para redirecionar paginas nao encontrada
 ];

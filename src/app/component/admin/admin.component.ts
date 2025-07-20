@@ -425,13 +425,13 @@ export class AdminComponent implements OnInit {
     this.carregando = true;
     this.authService.logout().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         console.error('Erro no logout:', error);
         // Mesmo com erro, fazer logout local
         this.authService.clearLocalData();
-        this.router.navigate(['/login']);
+        this.router.navigate(['/home']);
       },
       complete: () => {
         this.carregando = false;
