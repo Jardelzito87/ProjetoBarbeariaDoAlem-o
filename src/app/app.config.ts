@@ -6,8 +6,9 @@ import { MockDatabaseService } from './services/mock-database.service';
 
 import { routes } from './app.routes';
 
-// Configurado para usar apenas o banco de dados Neon
-const useMockService = false; // Usando apenas o serviço real com PostgreSQL Neon
+// Configuração do modo de dados
+// Agora usando o banco de dados Neon PostgreSQL real
+const useMockService = false; // false = usa o banco Neon PostgreSQL
 
 export const appConfig: ApplicationConfig = {
   providers: [

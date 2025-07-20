@@ -244,7 +244,7 @@
               </button>
               
               <button *ngIf="agendamento.status === 'pendente' || agendamento.status === 'confirmado'" 
-                      (click)="atualizarStatus(agendamento, 'concluido')" 
+                      (click)="atualizarStatus(agendamento, 'concluído')" 
                       class="btn-complete">
                 <span class="btn-icon">✅</span> Feito
               </button>
@@ -255,7 +255,7 @@
                 <span class="btn-icon">❌</span> Faltou
               </button>
               
-              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluido' && agendamento.status !== 'não compareceu'" 
+              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluído' && agendamento.status !== 'não compareceu'" 
                       (click)="atualizarStatus(agendamento, 'cancelado')" 
                       class="btn-cancel">
                 <span class="btn-icon">🗑️</span> Cancelar

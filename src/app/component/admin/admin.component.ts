@@ -190,7 +190,7 @@ export class AdminComponent implements OnInit {
         } else if (filtro === 'confirmados') {
           return a.status === 'confirmado';
         } else if (filtro === 'feitos') {
-          return a.status === 'concluido';
+          return a.status === 'concluído';
         } else if (filtro === 'cancelados') {
           return a.status === 'cancelado' || a.status === 'não compareceu';
         }
@@ -241,7 +241,7 @@ export class AdminComponent implements OnInit {
   contarAgendamentosPorStatus(): void {
     this.contadorPendentes = this.agendamentos.filter(a => a.status === 'pendente').length;
     this.contadorConfirmados = this.agendamentos.filter(a => a.status === 'confirmado').length;
-    this.contadorFeitos = this.agendamentos.filter(a => a.status === 'concluido').length;
+    this.contadorFeitos = this.agendamentos.filter(a => a.status === 'concluído').length;
     this.contadorCancelados = this.agendamentos.filter(a => a.status === 'cancelado' || a.status === 'não compareceu').length;
   }
   
@@ -349,7 +349,7 @@ export class AdminComponent implements OnInit {
     switch(status) {
       case 'pendente': return 'status-pendente';
       case 'confirmado': return 'status-confirmado';
-      case 'concluido': return 'status-concluido';
+      case 'concluído': return 'status-concluido';
       case 'cancelado': return 'status-cancelado';
       case 'não compareceu': return 'status-nao-compareceu';
       default: return '';
@@ -360,7 +360,7 @@ export class AdminComponent implements OnInit {
     switch(status) {
       case 'pendente': return 'Pendente';
       case 'confirmado': return 'Confirmado';
-      case 'concluido': return 'Concluído';
+      case 'concluído': return 'Concluído';
       case 'cancelado': return 'Cancelado';
       case 'não compareceu': return 'Não Compareceu';
       default: return status;
