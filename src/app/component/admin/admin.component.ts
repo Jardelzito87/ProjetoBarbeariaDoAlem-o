@@ -16,6 +16,8 @@ export class AdminComponent implements OnInit {
   servicos: Servico[] = [];
   clientes: Cliente[] = [];
   carregando = false;
+  carregandoClientes = false;
+  carregandoLogs = false;
   mensagem = '';
   mensagemTipo = '';
   bloqueioForm!: FormGroup;
@@ -52,13 +54,18 @@ export class AdminComponent implements OnInit {
   }
   
   carregarLogsAgendamentos(): void {
+    this.carregandoLogs = true;
     this.dbService.getLogsAgendamentos().subscribe({
       next: (logs: LogAgendamento[]) => {
         this.logsAgendamentos = logs;
         console.log('Logs de agendamentos carregados:', this.logsAgendamentos.length);
+        this.carregandoLogs = false;
       },
       error: (err: any) => {
         console.error('Erro ao carregar logs de agendamentos:', err);
+        this.carregandoLogs = false;
+        this.mensagem = 'Erro ao carregar histórico de alterações';
+        this.mensagemTipo = 'erro';
       }
     });
   }
@@ -76,13 +83,18 @@ export class AdminComponent implements OnInit {
   }
   
   carregarClientes(): void {
+    this.carregandoClientes = true;
     this.dbService.getClientes().subscribe({
       next: (data) => {
         this.clientes = data;
         console.log('Clientes carregados:', this.clientes);
+        this.carregandoClientes = false;
       },
       error: (err) => {
         console.error('Erro ao carregar clientes:', err);
+        this.carregandoClientes = false;
+        this.mensagem = 'Erro ao carregar clientes';
+        this.mensagemTipo = 'erro';
       }
     });
   }
@@ -320,8 +332,12 @@ export class AdminComponent implements OnInit {
   }
 
   formatarData(data: string): string {
-    const partes = data.split('-');
-    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    if (!data) return '';
+    const dataObj = new Date(data);
+    const dia = dataObj.getDate().toString().padStart(2, '0');
+    const mes = (dataObj.getMonth() + 1).toString().padStart(2, '0');
+    const ano = dataObj.getFullYear();
+    return `${dia}/${mes}/${ano}`;
   }
   
   formatarHora(hora: string): string {

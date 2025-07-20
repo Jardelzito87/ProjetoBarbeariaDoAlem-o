@@ -6,8 +6,8 @@ import { MockDatabaseService } from './services/mock-database.service';
 
 import { routes } from './app.routes';
 
-// Para alternar entre o serviço real e o mock, basta comentar/descomentar as linhas abaixo
-const useMockService = true; // Defina como true para usar o mock, false para usar o serviço real (PostgreSQL)
+// Configurado para usar apenas o banco de dados Neon
+const useMockService = false; // Usando apenas o serviço real com PostgreSQL Neon
 
 export const appConfig: ApplicationConfig = {
   providers: [

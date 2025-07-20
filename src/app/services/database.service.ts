@@ -68,13 +68,12 @@ export class DatabaseService {
   }
 
   // Clientes
-  addCliente(cliente: Cliente): Observable<Cliente> {
-    return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
-  }
-  
-  // Listar todos os clientes
   getClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
+  }
+  
+  addCliente(cliente: Cliente): Observable<Cliente> {
+    return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
   }
 
   // Agendamentos

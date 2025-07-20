@@ -88,11 +88,16 @@
       </button>
       
       <div *ngIf="mostrarLogs" class="logs-container">
-        <div *ngIf="logsAgendamentos.length === 0" class="empty-state">
+        <div *ngIf="carregandoLogs" class="loading-container">
+          <div class="loading-icon"></div>
+          <span>Carregando histórico...</span>
+        </div>
+
+        <div *ngIf="!carregandoLogs && logsAgendamentos.length === 0" class="empty-state">
           <p>Nenhum registro de alteração encontrado</p>
         </div>
         
-        <table *ngIf="logsAgendamentos.length > 0" class="logs-table">
+        <table *ngIf="!carregandoLogs && logsAgendamentos.length > 0" class="logs-table">
           <thead>
             <tr>
               <th>Data/Hora</th>
@@ -145,7 +150,12 @@
       </button>
       
       <div *ngIf="mostrarClientes" class="clientes-container">
-        <div *ngIf="clientes.length === 0" class="empty-state">
+        <div *ngIf="carregandoClientes" class="loading-container">
+          <div class="loading-icon"></div>
+          <span>Carregando clientes...</span>
+        </div>
+        
+        <div *ngIf="!carregandoClientes && clientes.length === 0" class="empty-state">
           <p>Nenhum cliente cadastrado</p>
         </div>
         

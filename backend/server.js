@@ -95,6 +95,41 @@ app.get('/api/servicos-teste', (req, res) => {
   res.json(servicosTeste);
 });
 
+// GET para listar clientes
+app.get('/api/clientes', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM clientes ORDER BY nome');
+    console.log('Clientes encontrados:', result.rows.length);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar clientes:', err);
+    res.status(500).json({ error: 'Erro ao buscar clientes' });
+  }
+});
+
+// GET para listar logs de agendamentos
+app.get('/api/logs-agendamentos', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT l.*,
+             a.data_agendada,
+             a.hora_agendada,
+             c.nome as cliente_nome,
+             TO_CHAR(l.criado_em, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as criado_em
+      FROM logs_agendamentos l
+      JOIN agendamentos a ON l.agendamento_id = a.id
+      JOIN clientes c ON a.cliente_id = c.id
+      ORDER BY l.criado_em DESC
+    `);
+    
+    console.log('Logs encontrados:', result.rows.length);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar logs:', err);
+    res.status(500).json({ error: 'Erro ao buscar logs de agendamentos' });
+  }
+});
+
 // POST para criar cliente
 app.post('/api/clientes', async (req, res) => {
   console.log('Recebido POST para /api/clientes:', req.body);
@@ -276,8 +311,21 @@ app.get('/api/disponibilidade', async (req, res) => {
 app.get('/api/agendamentos', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT a.*, c.nome as cliente_nome, c.email as cliente_email, c.telefone as cliente_telefone,
-             s.nome as servico_nome, s.preco as servico_preco, s.descricao as servico_descricao
+      SELECT 
+        a.id,
+        a.cliente_id,
+        a.servico_id,
+        TO_CHAR(a.data_agendada, 'YYYY-MM-DD') as data_agendada,
+        a.hora_agendada,
+        a.observacoes,
+        a.status,
+        a.alterado_em,
+        c.nome as cliente_nome,
+        c.email as cliente_email,
+        c.telefone as cliente_telefone,
+        s.nome as servico_nome,
+        s.preco as servico_preco,
+        s.descricao as servico_descricao
       FROM agendamentos a
       JOIN clientes c ON a.cliente_id = c.id
       JOIN servicos s ON a.servico_id = s.id
@@ -382,11 +430,13 @@ app.patch('/api/agendamentos/:id', async (req, res) => {
   }
 
   try {
-    // Obter o status atual do agendamento
-    const agendamentoAtual = await pool.query(
-      'SELECT status FROM agendamentos WHERE id = $1',
-      [id]
-    );
+    // Obter o status atual e informações do agendamento
+    const agendamentoAtual = await pool.query(`
+      SELECT a.*, c.nome as cliente_nome, c.email as cliente_email, c.telefone as cliente_telefone
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+      WHERE a.id = $1
+    `, [id]);
 
     if (agendamentoAtual.rows.length === 0) {
       return res.status(404).json({ error: 'Agendamento não encontrado' });
@@ -395,8 +445,8 @@ app.patch('/api/agendamentos/:id', async (req, res) => {
     const statusAnterior = agendamentoAtual.rows[0].status;
 
     // Atualizar o status do agendamento
-    const result = await pool.query(
-      'UPDATE agendamentos SET status = $1, alterado_em = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+    await pool.query(
+      'UPDATE agendamentos SET status = $1, alterado_em = CURRENT_TIMESTAMP WHERE id = $2',
       [status, id]
     );
 
@@ -408,7 +458,29 @@ app.patch('/api/agendamentos/:id', async (req, res) => {
       [id, statusAnterior, status, alterado_por]
     );
 
-    res.json(result.rows[0]);
+    // Buscar o agendamento atualizado com todas as informações
+    const agendamentoAtualizado = await pool.query(`
+      SELECT 
+        a.id,
+        a.cliente_id,
+        a.servico_id,
+        TO_CHAR(a.data_agendada, 'YYYY-MM-DD') as data_agendada,
+        a.hora_agendada,
+        a.observacoes,
+        a.status,
+        a.alterado_em,
+        c.nome as cliente_nome, 
+        c.email as cliente_email, 
+        c.telefone as cliente_telefone,
+        s.nome as servico_nome, 
+        s.preco as servico_preco
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+      JOIN servicos s ON a.servico_id = s.id
+      WHERE a.id = $1
+    `, [id]);
+
+    res.json(agendamentoAtualizado.rows[0]);
   } catch (err) {
     console.error('Erro ao atualizar status do agendamento:', err);
     console.error('Detalhes do erro:', err.detail || err.message);
