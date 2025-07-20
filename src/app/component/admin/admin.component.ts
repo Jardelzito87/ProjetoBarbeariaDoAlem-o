@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { DatabaseService, Agendamento, Servico, Cliente, DataBloqueada, LogAgendamento } from '../../services/database.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -37,14 +39,24 @@ export class AdminComponent implements OnInit {
   // Logs de agendamentos
   logsAgendamentos: LogAgendamento[] = [];
   mostrarLogs = false;
+  
+  // Autenticação
+  adminLogado: any = null;
+  exibindoMenuUsuario = false;
 
-  constructor(private dbService: DatabaseService, private fb: FormBuilder) {
+  constructor(
+    private dbService: DatabaseService, 
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     // Define a data de hoje no formato YYYY-MM-DD
     const hoje = new Date();
     this.dataHoje = hoje.toISOString().split('T')[0];
   }
 
   ngOnInit(): void {
+    this.adminLogado = this.authService.getAdminLogado();
     this.carregarServicos();
     this.carregarAgendamentos();
     this.carregarClientes();
@@ -190,7 +202,7 @@ export class AdminComponent implements OnInit {
         } else if (filtro === 'confirmados') {
           return a.status === 'confirmado';
         } else if (filtro === 'feitos') {
-          return a.status === 'concluído';
+          return a.status === 'concluido';
         } else if (filtro === 'cancelados') {
           return a.status === 'cancelado' || a.status === 'não compareceu';
         }
@@ -241,18 +253,29 @@ export class AdminComponent implements OnInit {
   contarAgendamentosPorStatus(): void {
     this.contadorPendentes = this.agendamentos.filter(a => a.status === 'pendente').length;
     this.contadorConfirmados = this.agendamentos.filter(a => a.status === 'confirmado').length;
-    this.contadorFeitos = this.agendamentos.filter(a => a.status === 'concluído').length;
+    this.contadorFeitos = this.agendamentos.filter(a => a.status === 'concluido').length;
     this.contadorCancelados = this.agendamentos.filter(a => a.status === 'cancelado' || a.status === 'não compareceu').length;
   }
   
   atualizarStatus(agendamento: Agendamento, novoStatus: string): void {
     this.carregando = true;
-    console.log('Atualizando status:', agendamento.id, 'para', novoStatus);
+    console.log('🔄 Iniciando atualização de status...');
+    console.log('📋 Dados:', { agendamentoId: agendamento.id, statusAtual: agendamento.status, novoStatus });
+    
+    // Verificar se tem token válido
+    const token = localStorage.getItem('admin-token');
+    if (!token) {
+      console.error('❌ Token não encontrado');
+      this.mensagem = 'Erro de autenticação. Faça login novamente.';
+      this.mensagemTipo = 'erro';
+      this.carregando = false;
+      return;
+    }
     
     // Atualizar no banco de dados
     this.dbService.atualizarStatusAgendamento(agendamento.id!, novoStatus).subscribe({
       next: (agendamentoAtualizado: Agendamento) => {
-        console.log('Status atualizado com sucesso:', agendamentoAtualizado);
+        console.log('✅ Status atualizado com sucesso:', agendamentoAtualizado);
         
         // Atualizar o agendamento na lista local
         const index = this.agendamentos.findIndex(a => a.id === agendamento.id);
@@ -262,6 +285,9 @@ export class AdminComponent implements OnInit {
             servico_nome: this.getNomeServico(agendamentoAtualizado.servico_id),
             servico_preco: this.getPrecoServico(agendamentoAtualizado.servico_id)
           };
+          console.log('📝 Lista local atualizada');
+        } else {
+          console.warn('⚠️ Agendamento não encontrado na lista local');
         }
         
         // Atualizar contadores
@@ -279,8 +305,20 @@ export class AdminComponent implements OnInit {
         this.carregando = false;
       },
       error: (err: any) => {
-        console.error('Erro ao atualizar status:', err);
-        this.mensagem = 'Erro ao atualizar status';
+        console.error('❌ Erro ao atualizar status:', err);
+        console.error('📊 Status HTTP:', err.status);
+        console.error('📄 Mensagem:', err.error);
+        
+        if (err.status === 401) {
+          this.mensagem = 'Sessão expirada. Faça login novamente.';
+          this.authService.clearLocalData();
+          this.router.navigate(['/login']);
+        } else if (err.status === 400) {
+          this.mensagem = `Erro: ${err.error.error || 'Status inválido'}`;
+        } else {
+          this.mensagem = `Erro ao atualizar status: ${err.error?.error || 'Erro interno'}`;
+        }
+        
         this.mensagemTipo = 'erro';
         this.carregando = false;
       }
@@ -349,7 +387,7 @@ export class AdminComponent implements OnInit {
     switch(status) {
       case 'pendente': return 'status-pendente';
       case 'confirmado': return 'status-confirmado';
-      case 'concluído': return 'status-concluido';
+      case 'concluido': return 'status-concluido';
       case 'cancelado': return 'status-cancelado';
       case 'não compareceu': return 'status-nao-compareceu';
       default: return '';
@@ -360,10 +398,44 @@ export class AdminComponent implements OnInit {
     switch(status) {
       case 'pendente': return 'Pendente';
       case 'confirmado': return 'Confirmado';
-      case 'concluído': return 'Concluído';
+      case 'concluido': return 'Concluído';
       case 'cancelado': return 'Cancelado';
       case 'não compareceu': return 'Não Compareceu';
       default: return status;
     }
+  }
+  
+  // ============= MÉTODOS DE AUTENTICAÇÃO =============
+  
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    const userMenu = document.querySelector('.user-menu');
+    
+    if (userMenu && !userMenu.contains(target)) {
+      this.exibindoMenuUsuario = false;
+    }
+  }
+  
+  toggleMenuUsuario(): void {
+    this.exibindoMenuUsuario = !this.exibindoMenuUsuario;
+  }
+  
+  logout(): void {
+    this.carregando = true;
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error('Erro no logout:', error);
+        // Mesmo com erro, fazer logout local
+        this.authService.clearLocalData();
+        this.router.navigate(['/login']);
+      },
+      complete: () => {
+        this.carregando = false;
+      }
+    });
   }
 }

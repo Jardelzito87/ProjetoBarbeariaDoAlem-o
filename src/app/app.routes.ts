@@ -5,7 +5,9 @@ import { GaleriaFotosComponent } from './component/galeria-fotos/galeria-fotos.c
 import { AgendamentoComponent } from './component/agendamento/agendamento.component';
 import { ContatoComponent } from './component/contato/contato.component';
 import { AdminComponent } from './component/admin/admin.component';
+import { LoginComponent } from './component/login/login.component';
 import { NaoEncontradosComponent } from './component/nao-encontrados/nao-encontrados.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {path:'',component: HomeComponent},                  //rota principal
@@ -14,6 +16,7 @@ export const routes: Routes = [
     {path:'galeria-fotos', component: GaleriaFotosComponent},//rota do componente galeria de fotos
     {path:'agendamento', component: AgendamentoComponent},//rota do componente agendamento
     {path:'contato', component: ContatoComponent},   //rota do componente contatos
-    {path:'admin', component: AdminComponent},      //rota do componente admin
+    {path:'login', component: LoginComponent},      //rota do componente login
+    {path:'admin', component: AdminComponent, canActivate: [AuthGuard]},      //rota do componente admin (protegida)
     {path:'**', component: NaoEncontradosComponent},//rota para redirecionar paginas nao encontrada
 ];

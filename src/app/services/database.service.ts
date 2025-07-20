@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -62,12 +62,21 @@ export class DatabaseService {
 
   constructor(private http: HttpClient) { }
 
-  // Serviços
+  // Obter headers de autenticação
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('admin-token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  // Serviços (rota pública)
   getServicos(): Observable<Servico[]> {
     return this.http.get<Servico[]>(`${this.apiUrl}/servicos`);
   }
 
-  // Clientes
+  // Clientes (rota pública para leitura)
   getClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
   }
@@ -78,41 +87,41 @@ export class DatabaseService {
 
   // Agendamentos
   createAgendamento(agendamento: Agendamento): Observable<Agendamento> {
-    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
+    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento, { headers: this.getAuthHeaders() });
   }
   
   // Listar agendamentos
   getAgendamentos(): Observable<Agendamento[]> {
-    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos`);
+    return this.http.get<Agendamento[]>(`${this.apiUrl}/agendamentos`, { headers: this.getAuthHeaders() });
   }
   
   // Bloquear data
   bloquearData(data: string, motivo?: string): Observable<{success: boolean}> {
-    return this.http.post<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas`, { data, motivo });
+    return this.http.post<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas`, { data, motivo }, { headers: this.getAuthHeaders() });
   }
   
   // Desbloquear data
   desbloquearData(data: string): Observable<{success: boolean}> {
-    return this.http.delete<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas/${data}`);
+    return this.http.delete<{success: boolean}>(`${this.apiUrl}/datas-bloqueadas/${data}`, { headers: this.getAuthHeaders() });
   }
   
   // Obter datas bloqueadas
   getDatasBloqueadas(): Observable<DataBloqueada[]> {
-    return this.http.get<DataBloqueada[]>(`${this.apiUrl}/datas-bloqueadas`);
+    return this.http.get<DataBloqueada[]>(`${this.apiUrl}/datas-bloqueadas`, { headers: this.getAuthHeaders() });
   }
   
   // Atualizar status do agendamento
   atualizarStatusAgendamento(id: number, status: string): Observable<Agendamento> {
-    return this.http.patch<Agendamento>(`${this.apiUrl}/agendamentos/${id}`, { status });
+    return this.http.patch<Agendamento>(`${this.apiUrl}/agendamentos/${id}`, { status }, { headers: this.getAuthHeaders() });
   }
   
   // Verificar disponibilidade de horários para uma data
   verificarDisponibilidade(data: string): Observable<Disponibilidade[]> {
-    return this.http.get<Disponibilidade[]>(`${this.apiUrl}/disponibilidade?data=${data}`);
+    return this.http.get<Disponibilidade[]>(`${this.apiUrl}/disponibilidade?data=${data}`, { headers: this.getAuthHeaders() });
   }
   
   // Obter logs de agendamentos
   getLogsAgendamentos(): Observable<LogAgendamento[]> {
-    return this.http.get<LogAgendamento[]>(`${this.apiUrl}/logs-agendamentos`);
+    return this.http.get<LogAgendamento[]>(`${this.apiUrl}/logs-agendamentos`, { headers: this.getAuthHeaders() });
   }
 }

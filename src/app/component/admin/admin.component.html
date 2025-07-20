@@ -1,4 +1,34 @@
 <div class="admin-container">
+  <!-- Cabeçalho com informações do usuário -->
+  <div class="user-header">
+    <div class="user-info">
+      <span class="welcome-text">🎭 Bem-vindo, <strong>{{ adminLogado?.nome || 'Admin' }}</strong>!</span>
+    </div>
+    <div class="user-menu">
+      <button 
+        class="user-button" 
+        (click)="toggleMenuUsuario()"
+        [attr.aria-expanded]="exibindoMenuUsuario"
+      >
+        <span class="user-avatar">👤</span>
+        <span class="user-name">{{ adminLogado?.nome || 'Admin' }}</span>
+        <span class="dropdown-arrow" [class.rotated]="exibindoMenuUsuario">▼</span>
+      </button>
+      
+      <div class="user-dropdown" [class.active]="exibindoMenuUsuario">
+        <div class="dropdown-item">
+          <span class="item-icon">📧</span>
+          <span>{{ adminLogado?.email }}</span>
+        </div>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item logout-btn" (click)="logout()">
+          <span class="item-icon">🚪</span>
+          <span>Sair</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="admin-header">
     <h1>Painel de Controle do Além</h1>
     <div class="divider">
@@ -244,7 +274,7 @@
               </button>
               
               <button *ngIf="agendamento.status === 'pendente' || agendamento.status === 'confirmado'" 
-                      (click)="atualizarStatus(agendamento, 'concluído')" 
+                      (click)="atualizarStatus(agendamento, 'concluido')" 
                       class="btn-complete">
                 <span class="btn-icon">✅</span> Feito
               </button>
@@ -255,7 +285,7 @@
                 <span class="btn-icon">❌</span> Faltou
               </button>
               
-              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluído' && agendamento.status !== 'não compareceu'" 
+              <button *ngIf="agendamento.status !== 'cancelado' && agendamento.status !== 'concluido' && agendamento.status !== 'não compareceu'" 
                       (click)="atualizarStatus(agendamento, 'cancelado')" 
                       class="btn-cancel">
                 <span class="btn-icon">🗑️</span> Cancelar
