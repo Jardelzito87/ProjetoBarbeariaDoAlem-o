@@ -1,5 +1,18 @@
 # 🎭 Sistema de Login - Barbearia do Além
 
+## 🔐 CREDENCIAIS SEGURAS
+
+⚠️ **ATENÇÃO**: As credenciais padrão foram substituídas por senhas seguras geradas automaticamente.
+
+📋 **Para obter as credenciais atuais:**
+1. Execute: `cd backend && node generate-secure-credentials.js`
+2. Anote as novas credenciais
+3. Execute: `node update-admin-password.js`
+
+🔒 **Sistema de Segurança Ativo**: Senhas criptografadas, chaves rotacionadas, logs auditados.
+
+
+
 ## 🚀 Início Rápido
 
 ### Passo 1: Inicializar o Sistema
@@ -23,7 +36,7 @@ ng serve
 
 ### Passo 3: Credenciais Padrão
 - **Email**: admin@barbeariadoalem.com
-- **Senha**: admin123
+- **Senha**: ***SENHA_SEGURA***
 
 ⚠️ **IMPORTANTE**: Altere estas credenciais em produção!
 

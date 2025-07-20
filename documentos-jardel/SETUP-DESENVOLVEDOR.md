@@ -43,7 +43,7 @@ O erro mais comum é: `ECONNREFUSED ::1:5432`
 ## 🎯 Credenciais Padrão
 
 - **Email**: `admin@barbeariadoalem.com`
-- **Senha**: `admin123`
+- **Senha**: `***SENHA_SEGURA***`
 
 ## 📝 URLs Importantes
 

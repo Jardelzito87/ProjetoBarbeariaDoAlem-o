@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
 
 /* Galeria de fotos - grid alinhado e responsivo */
 .gallery-container {
@@ -427,7 +429,6 @@
     background: #ffe9b3;
     transition: background 0.2s;
 }
-@import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
 
 .texto-container {
     text-align: center;

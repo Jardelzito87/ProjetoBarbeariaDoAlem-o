@@ -1,4 +1,10 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# ===========================================
+# PROJETO BARBEARIA DO ALÉM - GITIGNORE
+# ===========================================
+
+# ===========================================
+# ANGULAR & NODE.JS
+# ===========================================
 
 # Compiled output
 /dist
@@ -6,19 +12,25 @@
 /out-tsc
 /bazel-out
 
-# Node
+# Node modules
 /node_modules
+/frontend/node_modules
+/backend/node_modules
 npm-debug.log
 yarn-error.log
 
-# IDEs and editors
-.idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# Angular cache
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# ===========================================
+# IDEs & EDITORES  
+# ===========================================
 
 # Visual Studio Code
 .vscode/*
@@ -28,30 +40,94 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
-/coverage
-/libpeerconnection.log
-testem.log
-/typings
+# Outros IDEs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# System files
-.DS_Store
+# ===========================================
+# SISTEMA OPERACIONAL
+# ===========================================
+
+# Windows
 Thumbs.db
+*.lnk
+
+# macOS  
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
 
 # ===========================================
-# ARQUIVOS SENSÍVEIS - BARBEARIA DO ALÉM
+# SEGURANÇA & CONFIGURAÇÕES SENSÍVEIS
 # ===========================================
 
-# Arquivo de configuração do banco (NUNCA COMMITAR)
+# Variáveis de ambiente (CRÍTICO - NUNCA COMMITAR)
+.env
 backend/.env
+frontend/.env
+*.env.local
+*.env.production
 
-# Scripts de inicialização gerados dinamicamente
-start-completo.bat
+# Credenciais de acesso (ALTAMENTE SENSÍVEL)  
+*.credentials.*
+.credentials.json
+backend/.credentials.json
+backend/credentials.json
 
-# Logs e backups temporários
+# Chaves de criptografia e certificados
+*.key
+*.pem  
+*.p12
+*.pfx
+.keys/
+backend/.keys/
+backend/keys/
+
+# Sessões e tokens
+backend/sessions/
+backend/.sessions/
+.session*
+*.session
+
+# ===========================================
+# ARQUIVOS TEMPORÁRIOS & LOGS
+# ===========================================
+
+# Logs de aplicação
 *.log
+logs/
+backend/logs/
+frontend/logs/
+
+# Backups e arquivos temporários
 *.backup
 *.tmp
+*.temp
+*~
+.cache/
+
+# Scripts gerados dinamicamente
+start-completo.bat
+*.generated.*
+
+# ===========================================
+# ARQUIVOS DE BUILD & DEPLOY
+# ===========================================
+
+# Build outputs específicos
+build/
+dist/
+.next/
+.vercel/
+
+# Arquivos de deploy
+.env.production.local
+.env.development.local

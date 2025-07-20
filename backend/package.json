@@ -1,16 +1,20 @@
 {
   "name": "barbearia-do-alem-backend",
-  "version": "1.0.0",
-  "description": "Backend para o sistema de agendamentos da Barbearia do Além",
-  "main": "server.js",
+  "version": "2.0.0",
+  "description": "Backend para o sistema de agendamentos da Barbearia do Além - Estrutura Reorganizada",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "setup-db": "node setup-db.js",
-    "setup-neon": "node setup-db-neon.js",
-    "test-connection": "node test-connection.js",
-    "check-tables": "node check-tables.js",
-    "init-data": "node initialize-data.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "setup-db": "node database/setup-db.js",
+    "setup-neon": "node database/setup-db-neon.js", 
+    "test-connection": "node tests/test-connection.js",
+    "check-tables": "node database/check-tables.js",
+    "init-data": "node database/initialize-data.js",
+    "generate-credentials": "node security/generate-secure-credentials.js",
+    "update-password": "node security/update-admin-password.js",
+    "test-api": "node tests/teste-api-simples.js",
+    "maintenance": "node scripts/correcao-final-status.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

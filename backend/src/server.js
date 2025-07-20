@@ -1,32 +1,28 @@
 const express = require('express');
-const { Pool } = require('pg');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
 const path = require('path');
 
-// Configurar dotenv com caminho específico
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+// Garantir que dotenv seja carregado
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
-// Importar módulo de disponibilidade
-// const disponibilidadeRoutes = require('./disponibilidade');
+// Importar configurações centralizadas
+const config = require('../config');
+const db = require('./database');
 
 const app = express();
 
-// Configurar CORS para permitir acesso da Vercel
-app.use(cors({
-  origin: ['http://localhost:4200', 'https://barbearia-do-alem.vercel.app'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Configurar CORS usando configurações centralizadas
+app.use(cors(config.cors));
 
 app.use(express.json());
-app.use(express.static('public')); // Servir arquivos estáticos da pasta public
+app.use(express.static(config.paths.public)); // Servir arquivos estáticos
 
-// Configurar sessões
+// Configurar sessões usando configurações centralizadas
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'barbearia-do-alem-secret-key-2025',
+  secret: config.security.sessionSecret,
   resave: false,
   saveUninitialized: false,
   cookie: { 
@@ -35,31 +31,49 @@ app.use(session({
   }
 }));
 
-// JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || 'barbearia-jwt-secret-2025';
-
-// Rota raiz
+// Rota raiz - Redirecionar para frontend
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  // Se for uma requisição do navegador, redirecionar para o frontend
+  if (req.headers.accept && req.headers.accept.includes('text/html')) {
+    res.redirect('http://localhost:4200');
+  } else {
+    // Se for uma requisição de API, retornar JSON com info da API
+    res.json({
+      name: 'Barbearia do Além API',
+      version: '2.0.0',
+      status: 'online',
+      endpoints: {
+        frontend: 'http://localhost:4200',
+        admin: 'http://localhost:4200/admin',
+        login: 'http://localhost:4200/login',
+        docs: 'http://localhost:3000/docs'
+      },
+      api: {
+        servicos: 'GET /api/servicos',
+        agendamentos: 'GET /api/agendamentos',
+        clientes: 'POST /api/clientes',
+        auth: 'POST /api/admin/login'
+      }
+    });
+  }
 });
 
-// Configurar conexão PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+// Rota para documentação da API
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(config.paths.public, 'api-docs.html'));
 });
 
 // Testar conexão ao iniciar
 async function testConnection() {
   try {
-    const client = await pool.connect();
-    console.log('Conexão com o banco de dados estabelecida com sucesso!');
-    client.release();
-    return true;
+    const isConnected = await db.testConnection();
+    if (isConnected) {
+      console.log('✅ Conexão com o banco de dados estabelecida!');
+      return true;
+    }
+    return false;
   } catch (err) {
-    console.error('Erro ao conectar ao banco de dados:', err);
+    console.error('❌ Erro ao conectar ao banco de dados:', err);
     return false;
   }
 }
@@ -70,13 +84,13 @@ async function limparSessoesAtivas() {
     console.log('🔄 Limpando todas as sessões ativas devido ao reinício do servidor...');
     
     // Contar sessões ativas antes da limpeza
-    const countResult = await pool.query(
+    const countResult = await db.query(
       'SELECT COUNT(*) as total FROM sessoes_admin WHERE expira_em > CURRENT_TIMESTAMP'
     );
     const sessoesAtivas = parseInt(countResult.rows[0].total);
     
     // Limpar todas as sessões (ativas e expiradas)
-    const deleteResult = await pool.query('DELETE FROM sessoes_admin');
+    const deleteResult = await db.query('DELETE FROM sessoes_admin');
     
     if (sessoesAtivas > 0) {
       console.log(`✅ ${sessoesAtivas} sessão(ões) ativa(s) foram invalidadas`);
@@ -101,7 +115,7 @@ function verificarAuth(req, res, next) {
   }
   
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, config.security.jwtSecret);
     req.admin = decoded;
     next();
   } catch (err) {
@@ -121,7 +135,7 @@ app.post('/api/admin/login', async (req, res) => {
   
   try {
     // Buscar administrador
-    const adminResult = await pool.query(
+    const adminResult = await db.query(
       'SELECT * FROM administradores WHERE email = $1 AND ativo = true',
       [email]
     );
@@ -138,7 +152,7 @@ app.post('/api/admin/login', async (req, res) => {
     
     if (!senhaValida) {
       // Log da tentativa falhada
-      await pool.query(
+      await db.query(
         'INSERT INTO logs_login (admin_id, ip_address, user_agent, sucesso) VALUES ($1, $2, $3, false)',
         [admin.id, ipAddress, userAgent]
       );
@@ -146,7 +160,7 @@ app.post('/api/admin/login', async (req, res) => {
     }
 
     // Verificar se já existe uma sessão ativa para este admin
-    const sessaoAtivaResult = await pool.query(
+    const sessaoAtivaResult = await db.query(
       'SELECT * FROM sessoes_admin WHERE admin_id = $1 AND expira_em > CURRENT_TIMESTAMP',
       [admin.id]
     );
@@ -156,7 +170,7 @@ app.post('/api/admin/login', async (req, res) => {
       const sessaoAtiva = sessaoAtivaResult.rows[0];
       
       // Log da tentativa de login duplo
-      await pool.query(
+      await db.query(
         'INSERT INTO logs_login (admin_id, ip_address, user_agent, sucesso) VALUES ($1, $2, $3, false)',
         [admin.id, ipAddress, userAgent]
       );
@@ -172,7 +186,7 @@ app.post('/api/admin/login', async (req, res) => {
     }
 
     // Limpar sessões expiradas do admin antes de criar nova
-    await pool.query(
+    await db.query(
       'DELETE FROM sessoes_admin WHERE admin_id = $1 AND expira_em <= CURRENT_TIMESTAMP',
       [admin.id]
     );
@@ -185,18 +199,18 @@ app.post('/api/admin/login', async (req, res) => {
         nome: admin.nome,
         nivelAcesso: admin.nivel_acesso 
       },
-      JWT_SECRET,
+      config.security.jwtSecret,
       { expiresIn: '24h' }
     );
     
     // Atualizar último login
-    await pool.query(
+    await db.query(
       'UPDATE administradores SET ultimo_login = CURRENT_TIMESTAMP WHERE id = $1',
       [admin.id]
     );
     
     // Log da tentativa bem-sucedida
-    await pool.query(
+    await db.query(
       'INSERT INTO logs_login (admin_id, ip_address, user_agent, sucesso) VALUES ($1, $2, $3, true)',
       [admin.id, ipAddress, userAgent]
     );
@@ -210,7 +224,7 @@ app.post('/api/admin/login', async (req, res) => {
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex').substring(0, 64);
 
     // Armazenar sessão na tabela sessoes_admin
-    await pool.query(
+    await db.query(
       'INSERT INTO sessoes_admin (admin_id, token, ip_address, user_agent, expira_em) VALUES ($1, $2, $3, $4, $5)',
       [admin.id, tokenHash, ipAddress, userAgent, expiraEm]
     );
@@ -248,7 +262,7 @@ app.post('/api/admin/logout', verificarAuth, async (req, res) => {
     const adminId = req.admin.adminId;
     
     // Remover sessão da tabela sessoes_admin
-    await pool.query(
+    await db.query(
       'DELETE FROM sessoes_admin WHERE admin_id = $1',
       [adminId]
     );
@@ -270,7 +284,7 @@ app.post('/api/admin/logout', verificarAuth, async (req, res) => {
 // GET - Verificar status de autenticação
 app.get('/api/admin/status', verificarAuth, async (req, res) => {
   try {
-    const adminResult = await pool.query(
+    const adminResult = await db.query(
       'SELECT id, nome, email, nivel_acesso, ultimo_login FROM administradores WHERE id = $1',
       [req.admin.adminId]
     );
@@ -292,7 +306,7 @@ app.get('/api/admin/status', verificarAuth, async (req, res) => {
 // GET para listar serviços
 app.get('/api/servicos', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM servicos');
+    const result = await db.query('SELECT * FROM servicos');
     console.log('Serviços encontrados:', result.rows);
     
     // Se não houver serviços no banco, retornar serviços padrão
@@ -343,7 +357,7 @@ app.get('/api/servicos-teste', (req, res) => {
 // GET para listar clientes
 app.get('/api/clientes', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM clientes ORDER BY nome');
+    const result = await db.query('SELECT * FROM clientes ORDER BY nome');
     console.log('Clientes encontrados:', result.rows.length);
     res.json(result.rows);
   } catch (err) {
@@ -355,7 +369,7 @@ app.get('/api/clientes', async (req, res) => {
 // GET para listar logs de agendamentos
 app.get('/api/logs-agendamentos', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await db.query(`
       SELECT 
         l.id,
         l.agendamento_id,
@@ -398,7 +412,7 @@ app.post('/api/clientes', async (req, res) => {
   try {
     // Verificar se o cliente já existe com o mesmo email
     console.log('Verificando se cliente existe:', email);
-    const clienteExistente = await pool.query(
+    const clienteExistente = await db.query(
       'SELECT * FROM clientes WHERE email = $1',
       [email]
     );
@@ -411,7 +425,7 @@ app.post('/api/clientes', async (req, res) => {
     
     // Inserir novo cliente
     console.log('Inserindo novo cliente:', { nome, email, telefone });
-    const result = await pool.query(
+    const result = await db.query(
       'INSERT INTO clientes (nome, email, telefone) VALUES ($1, $2, $3) RETURNING *',
       [nome, email, telefone]
     );
@@ -438,7 +452,7 @@ app.post('/api/agendamentos', async (req, res) => {
   try {
     // Verificar se o cliente existe
     console.log('Verificando se o cliente existe:', cliente_id);
-    const clienteExiste = await pool.query('SELECT id FROM clientes WHERE id = $1', [cliente_id]);
+    const clienteExiste = await db.query('SELECT id FROM clientes WHERE id = $1', [cliente_id]);
     if (clienteExiste.rows.length === 0) {
       console.log('Cliente não encontrado');
       return res.status(400).json({ error: 'Cliente não encontrado' });
@@ -446,7 +460,7 @@ app.post('/api/agendamentos', async (req, res) => {
 
     // Verificar se o serviço existe
     console.log('Verificando se o serviço existe:', servico_id);
-    const servicoExiste = await pool.query('SELECT id FROM servicos WHERE id = $1', [servico_id]);
+    const servicoExiste = await db.query('SELECT id FROM servicos WHERE id = $1', [servico_id]);
     if (servicoExiste.rows.length === 0) {
       console.log('Serviço não encontrado');
       return res.status(400).json({ error: 'Serviço não encontrado' });
@@ -454,7 +468,7 @@ app.post('/api/agendamentos', async (req, res) => {
 
     // Verificar se data/hora está bloqueada
     console.log('Verificando se data está bloqueada:', data_agendada);
-    const bloqueio = await pool.query(
+    const bloqueio = await db.query(
       'SELECT * FROM datas_bloqueadas WHERE data = $1',
       [data_agendada]
     );
@@ -465,7 +479,7 @@ app.post('/api/agendamentos', async (req, res) => {
 
     // Verificar se já existe agendamento no mesmo horário
     console.log('Verificando agendamentos existentes para:', data_agendada, hora_agendada);
-    const agendamentoExistente = await pool.query(
+    const agendamentoExistente = await db.query(
       "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
       [data_agendada, hora_agendada]
     );
@@ -476,7 +490,7 @@ app.post('/api/agendamentos', async (req, res) => {
     
     // Verificar se o cliente já tem agendamento no mesmo dia
     console.log('Verificando se o cliente já tem agendamento no mesmo dia:', cliente_id, data_agendada);
-    const agendamentoClienteMesmoDia = await pool.query(
+    const agendamentoClienteMesmoDia = await db.query(
       "SELECT * FROM agendamentos WHERE cliente_id = $1 AND data_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
       [cliente_id, data_agendada]
     );
@@ -487,7 +501,7 @@ app.post('/api/agendamentos', async (req, res) => {
     
     // Verificar se já atingiu o limite de 7 agendamentos por dia (1 em cada horário)
     console.log('Verificando limite de agendamentos para o dia:', data_agendada);
-    const agendamentosNoDia = await pool.query(
+    const agendamentosNoDia = await db.query(
       "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
       [data_agendada]
     );
@@ -502,7 +516,7 @@ app.post('/api/agendamentos', async (req, res) => {
 
     // Inserir agendamento
     console.log('Inserindo novo agendamento:', { cliente_id, servico_id, data_agendada, hora_agendada });
-    const result = await pool.query(
+    const result = await db.query(
       `INSERT INTO agendamentos 
       (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
       VALUES ($1, $2, $3, $4, $5, 'pendente') RETURNING *`,
@@ -510,7 +524,7 @@ app.post('/api/agendamentos', async (req, res) => {
     );
 
     // Registrar log de criação do agendamento
-    await pool.query(
+    await db.query(
       `INSERT INTO logs_agendamentos 
       (agendamento_id, status_anterior, status_novo, alterado_por) 
       VALUES ($1, NULL, 'pendente', 'sistema')`,
@@ -541,7 +555,7 @@ app.get('/api/disponibilidade', async (req, res) => {
     ];
     
     // Buscar agendamentos para a data especificada
-    const agendamentosResult = await pool.query(
+    const agendamentosResult = await db.query(
       "SELECT hora_agendada FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
       [data]
     );
@@ -565,7 +579,7 @@ app.get('/api/disponibilidade', async (req, res) => {
 // GET para listar agendamentos (PROTEGIDA - APENAS ADMIN)
 app.get('/api/agendamentos', verificarAuth, async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await db.query(`
       SELECT 
         a.id,
         a.cliente_id,
@@ -613,7 +627,7 @@ app.post('/api/datas-bloqueadas', async (req, res) => {
   }
 
   try {
-    await pool.query(
+    await db.query(
       'INSERT INTO datas_bloqueadas (data, motivo) VALUES ($1, $2) ON CONFLICT (data) DO NOTHING',
       [data, motivo || null]
     );
@@ -629,7 +643,7 @@ app.delete('/api/datas-bloqueadas/:data', async (req, res) => {
   const { data } = req.params;
 
   try {
-    await pool.query('DELETE FROM datas_bloqueadas WHERE data = $1', [data]);
+    await db.query('DELETE FROM datas_bloqueadas WHERE data = $1', [data]);
     res.json({ success: true });
   } catch (err) {
     console.error('Erro ao desbloquear data:', err);
@@ -640,7 +654,7 @@ app.delete('/api/datas-bloqueadas/:data', async (req, res) => {
 // GET para listar datas bloqueadas
 app.get('/api/datas-bloqueadas', async (req, res) => {
   try {
-    const result = await pool.query('SELECT data, motivo FROM datas_bloqueadas ORDER BY data');
+    const result = await db.query('SELECT data, motivo FROM datas_bloqueadas ORDER BY data');
     res.json(result.rows);
   } catch (err) {
     console.error('Erro ao buscar datas bloqueadas:', err);
@@ -651,7 +665,7 @@ app.get('/api/datas-bloqueadas', async (req, res) => {
 // GET para listar logs de agendamentos
 app.get('/api/logs-agendamentos', async (req, res) => {
   try {
-    const result = await pool.query(`
+    const result = await db.query(`
       SELECT l.*, a.data_agendada, a.hora_agendada, c.nome as cliente_nome
       FROM logs_agendamentos l
       JOIN agendamentos a ON l.agendamento_id = a.id
@@ -691,7 +705,7 @@ app.patch('/api/agendamentos/:id', verificarAuth, async (req, res) => {
   try {
     // Obter o status atual e informações do agendamento
     console.log(`🔍 Buscando agendamento ID: ${id}`);
-    const agendamentoAtual = await pool.query(`
+    const agendamentoAtual = await db.query(`
       SELECT a.*, c.nome as cliente_nome, c.email as cliente_email, c.telefone as cliente_telefone
       FROM agendamentos a
       JOIN clientes c ON a.cliente_id = c.id
@@ -708,7 +722,7 @@ app.patch('/api/agendamentos/:id', verificarAuth, async (req, res) => {
 
     // Atualizar o status do agendamento
     console.log(`💾 Atualizando status do agendamento ${id}`);
-    await pool.query(
+    await db.query(
       'UPDATE agendamentos SET status = $1, alterado_em = CURRENT_TIMESTAMP WHERE id = $2',
       [status, id]
     );
@@ -726,7 +740,7 @@ app.patch('/api/agendamentos/:id', verificarAuth, async (req, res) => {
       cliente_nome: agendamentoAtual.rows[0].cliente_nome
     });
     
-    await pool.query(
+    await db.query(
       `INSERT INTO logs_agendamentos 
       (agendamento_id, status_anterior, status_novo, alterado_por, data_agendada, hora_agendada, cliente_nome) 
       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -744,7 +758,7 @@ app.patch('/api/agendamentos/:id', verificarAuth, async (req, res) => {
 
     // Buscar o agendamento atualizado com todas as informações
     console.log(`🔍 Buscando agendamento atualizado`);
-    const agendamentoAtualizado = await pool.query(`
+    const agendamentoAtualizado = await db.query(`
       SELECT 
         a.id,
         a.cliente_id,
@@ -781,7 +795,7 @@ testConnection().then(async connected => {
     // Limpar todas as sessões ativas ao reiniciar
     await limparSessoesAtivas();
     
-    const PORT = process.env.PORT || 3000;
+    const PORT = config.server.port;
     app.listen(PORT, () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
       console.log('🔐 Sistema de login pronto - todas as sessões anteriores foram invalidadas');
