@@ -117,8 +117,14 @@ app.get('/api/logs-agendamentos', async (req, res) => {
         l.status_anterior,
         l.status_novo,
         l.alterado_por,
-        COALESCE(l.data_agendada, TO_CHAR(a.data_agendada, 'YYYY-MM-DD')) as data_agendada,
-        COALESCE(l.hora_agendada, TO_CHAR(a.hora_agendada, 'HH24:MI:SS')) as hora_agendada,
+        CASE 
+          WHEN l.data_agendada IS NOT NULL THEN TO_CHAR(l.data_agendada, 'YYYY-MM-DD')
+          ELSE TO_CHAR(a.data_agendada, 'YYYY-MM-DD')
+        END as data_agendada,
+        CASE 
+          WHEN l.hora_agendada IS NOT NULL THEN l.hora_agendada::text
+          ELSE TO_CHAR(a.hora_agendada, 'HH24:MI:SS')
+        END as hora_agendada,
         COALESCE(l.cliente_nome, c.nome, 'Cliente removido') as cliente_nome,
         TO_CHAR(l.criado_em, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as criado_em
       FROM logs_agendamentos l
@@ -127,10 +133,9 @@ app.get('/api/logs-agendamentos', async (req, res) => {
       ORDER BY l.criado_em DESC
     `);
     
-    console.log('Logs encontrados:', result.rows.length);
     res.json(result.rows);
   } catch (err) {
-    console.error('Erro ao buscar logs:', err);
+    console.error('Erro ao buscar logs de agendamentos:', err);
     res.status(500).json({ error: 'Erro ao buscar logs de agendamentos' });
   }
 });
