@@ -9,7 +9,8 @@
     "setup-db": "node setup-db.js",
     "setup-neon": "node setup-db-neon.js",
     "test-connection": "node test-connection.js",
-    "check-tables": "node check-tables.js"
+    "check-tables": "node check-tables.js",
+    "init-data": "node initialize-data.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

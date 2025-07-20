@@ -44,7 +44,7 @@ export interface DataBloqueada {
 
 export interface LogAgendamento {
   id: number;
-  agendamento_id: number;
+  agendamento_id: number | null;
   status_anterior: string | null;
   status_novo: string;
   alterado_por: string;

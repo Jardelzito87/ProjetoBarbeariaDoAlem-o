@@ -111,14 +111,19 @@ app.get('/api/clientes', async (req, res) => {
 app.get('/api/logs-agendamentos', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT l.*,
-             a.data_agendada,
-             a.hora_agendada,
-             c.nome as cliente_nome,
-             TO_CHAR(l.criado_em, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as criado_em
+      SELECT 
+        l.id,
+        l.agendamento_id,
+        l.status_anterior,
+        l.status_novo,
+        l.alterado_por,
+        COALESCE(l.data_agendada, TO_CHAR(a.data_agendada, 'YYYY-MM-DD')) as data_agendada,
+        COALESCE(l.hora_agendada, TO_CHAR(a.hora_agendada, 'HH24:MI:SS')) as hora_agendada,
+        COALESCE(l.cliente_nome, c.nome, 'Cliente removido') as cliente_nome,
+        TO_CHAR(l.criado_em, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as criado_em
       FROM logs_agendamentos l
-      JOIN agendamentos a ON l.agendamento_id = a.id
-      JOIN clientes c ON a.cliente_id = c.id
+      LEFT JOIN agendamentos a ON l.agendamento_id = a.id
+      LEFT JOIN clientes c ON a.cliente_id = c.id
       ORDER BY l.criado_em DESC
     `);
     
@@ -453,9 +458,17 @@ app.patch('/api/agendamentos/:id', async (req, res) => {
     // Registrar o log da alteração
     await pool.query(
       `INSERT INTO logs_agendamentos 
-      (agendamento_id, status_anterior, status_novo, alterado_por) 
-      VALUES ($1, $2, $3, $4)`,
-      [id, statusAnterior, status, alterado_por]
+      (agendamento_id, status_anterior, status_novo, alterado_por, data_agendada, hora_agendada, cliente_nome) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        id, 
+        statusAnterior, 
+        status, 
+        alterado_por,
+        agendamentoAtual.rows[0].data_agendada,
+        agendamentoAtual.rows[0].hora_agendada,
+        agendamentoAtual.rows[0].cliente_nome || 'Cliente não identificado'
+      ]
     );
 
     // Buscar o agendamento atualizado com todas as informações

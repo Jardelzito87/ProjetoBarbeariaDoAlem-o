@@ -35,12 +35,15 @@ CREATE TABLE IF NOT EXISTS agendamentos (
 -- Tabela: logs_agendamentos
 CREATE TABLE IF NOT EXISTS logs_agendamentos (
     id SERIAL PRIMARY KEY,
-    agendamento_id INT NOT NULL,
+    agendamento_id INT,
     status_anterior VARCHAR(30) CHECK (status_anterior IN ('pendente', 'confirmado', 'cancelado', 'concluído', 'não compareceu')),
     status_novo VARCHAR(30) CHECK (status_novo IN ('pendente', 'confirmado', 'cancelado', 'concluído', 'não compareceu')),
     alterado_por VARCHAR(100) NOT NULL,
-    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_agendada DATE,
+    hora_agendada TIME,
+    cliente_nome VARCHAR(100),
+    FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE SET NULL
 );
 
 -- Tabela: datas_bloqueadas

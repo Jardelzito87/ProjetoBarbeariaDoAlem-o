@@ -16,14 +16,23 @@ async function setupDatabase() {
     client = await pool.connect();
     console.log('Conexão estabelecida com sucesso!');
     
-    // Ler o arquivo SQL
-    const sql = fs.readFileSync('./init-db.sql', 'utf8');
-    console.log('Arquivo SQL lido com sucesso.');
+    // Ler os arquivos SQL
+    const initSql = fs.readFileSync('./init-db.sql', 'utf8');
+    const migrateSql = fs.readFileSync('./migrate-db.sql', 'utf8');
+    console.log('Arquivos SQL lidos com sucesso.');
     
-    // Executar o script SQL
-    console.log('Executando script SQL...');
-    await client.query(sql);
-    console.log('Script SQL executado com sucesso!');
+    // Executar os scripts SQL
+    console.log('Executando scripts SQL...');
+    
+    // Criar backup dos dados existentes e executar migração
+    console.log('Fazendo backup e migrando dados...');
+    await client.query(migrateSql);
+    
+    // Executar script de inicialização (agora seguro pois dados foram preservados)
+    console.log('Atualizando estrutura do banco...');
+    await client.query(initSql);
+    
+    console.log('Scripts SQL executados com sucesso!');
     
     // Verificar tabelas criadas
     const tables = await client.query(`
