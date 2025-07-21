@@ -131,6 +131,21 @@
   text-decoration-color: #2ecc71; /* Cor do sublinhado única */
 }
 
+/* AGENDAMENTO - Título principal único */
+.agendamento-header h1 {
+  color: #8e44ad; /* Cor única: roxo místico */
+  font-family: 'Creepster', cursive, 'Impact', 'Arial Black';
+  font-size: 3.8rem; /* Tamanho único para agendamento */
+  text-shadow: 
+    0 0 15px rgba(142, 68, 173, 0.6),
+    3px 3px 8px rgba(0, 0, 0, 0.8); /* Sombra roxa única */
+  letter-spacing: 4px; /* Espaçamento único maior */
+  margin-bottom: 20px; /* Margem única */
+  font-weight: 900; /* Peso único */
+  text-transform: uppercase; /* Transformação única */
+  position: relative;
+}
+
 .agendamento-subtitle {
   color: #95a5a6; /* Cor única: cinza azulado */
   font-size: 1.3rem; /* Tamanho único maior */

@@ -57,21 +57,21 @@
   border-bottom: none;
 }
 
-/* CONTATO - Título estiloso único - FIXO no topo */
+/* CONTATO - Título estiloso único */
 .contato-titulo-estiloso {
   text-align: center;
-  font-family: 'Creepster', cursive;
-  color: #ff6b35; /* Cor única: laranja avermelhado */
-  font-size: 2.3rem; /* Tamanho único */
+  font-family: 'Segoe UI', Tahoma, sans-serif; /* Fonte mais simples */
+  color: #ff0000; /* COR VERMELHA */
+  font-size: 2.5rem; /* TAMANHO MAIOR */
   margin: 0;
-  letter-spacing: 1.8px; /* Espaçamento único */
-  text-shadow: 0 3px 14px #000, 0 1px 10px rgba(255, 107, 53, 0.6); /* Sombra laranja única */
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d1b1b 100%); /* Gradiente único */
-  padding: 16px 0 13px 0; /* Padding único */
-  border-radius: 0 0 14px 14px; /* Raio único */
-  border: 3px solid #ff6b35; /* Borda laranja única */
+  letter-spacing: 0.8px; /* Espaçamento mais sutil */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Sombra bem sutil */
+  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%); /* Gradiente muito sutil */
+  padding: 8px 0 6px 0; /* Padding bem reduzido */
+  border-radius: 0; /* Remove border-radius - fica quadrado */
+  border: 1px solid rgba(255, 0, 0, 0.7); /* Borda vermelha */
   border-top: none;
-  box-shadow: 0 5px 25px rgba(255, 107, 53, 0.25); /* Sombra laranja única */
+  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.2); /* Sombra vermelha sutil */
   position: fixed;
   top: 100px; /* ✅ Logo abaixo do header principal (altura do header) */
   left: 0; /* ✅ Alinhado à esquerda */
@@ -81,14 +81,7 @@
 }
 
 .contato-titulo-estiloso::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
-  animation: shine 3s infinite;
+  display: none; /* Remove o efeito de brilho completamente */
 }
 
 @keyframes shine {
@@ -224,13 +217,27 @@ textarea {
     border-bottom: 1px solid rgba(179, 0, 0, 0.3);
 }
 
+/* Container para as seções lado a lado */
+.contato-horario-pagamento {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    padding: 20px 15px;
+    border-bottom: 1px solid rgba(179, 0, 0, 0.3);
+}
+
+.contato-horario-pagamento .contato-secao {
+    flex: 1;
+    text-align: center;
+    min-width: 0; /* Permite que o flex shrink funcione corretamente */
+}
+
 .contato-icon {
     font-size: 1.5rem;
     color: #d4af37;
     width: 30px;
     text-align: center;
     vertical-align: top;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5), 0 0 10px rgba(212, 175, 55, 0.4);
 }
 
 .contato-text {
@@ -244,12 +251,10 @@ textarea {
     font-family: 'Creepster', cursive;
     letter-spacing: 1px;
     font-size: 1.2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
 .contato-value {
     color: #fff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
     font-size: 1.1rem;
 }
 
@@ -273,6 +278,20 @@ textarea {
     justify-content: center;
 }
 
+/* Ajuste para quando as formas de pagamento estão lado a lado com horário */
+.contato-secao .payment-methods {
+    gap: 5px;
+    margin-top: 8px;
+    flex-wrap: nowrap; /* Impede quebra de linha */
+}
+
+.contato-secao .payment-method {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    white-space: nowrap; /* Impede quebra do texto */
+    flex-shrink: 1; /* Permite que os itens diminuam se necessário */
+}
+
 .payment-method {
     display: inline-flex;
     align-items: center;
@@ -289,7 +308,6 @@ textarea {
 .payment-method i {
     margin-right: 8px;
     color: #d4af37;
-    text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
 }
 
 .payment-method:hover {
@@ -331,7 +349,6 @@ textarea {
 
 .payment-method i {
   color: #d4af37;
-  text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
   font-size: 1.1rem;
 }
 
@@ -353,7 +370,12 @@ textarea {
 }
 
 @keyframes flamePulse {
-  0% { text-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
-  50% { text-shadow: 0 0 15px rgba(255, 0, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.6); }
-  100% { text-shadow: 0 0 8px rgba(212, 175, 55, 0.6); }
+  0% { }
+  50% { }
+  100% { }
 }
+
+/* ============================
+   ATUALIZAÇÃO: Título "Contato do Além" mais sutil aplicado
+   Data: 21/07/2025 - Fonte simples, cor dourada suave, sem brilho
+   ============================= */
