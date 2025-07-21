@@ -252,20 +252,23 @@
             <div class="agendamento-info">
               <div class="info-section cliente-info">
                 <h3>Informações do Cliente</h3>
-                <p><strong>ID:</strong> {{ agendamento.cliente_id }}</p>
-                <p><strong>Nome:</strong> {{ agendamento.cliente_nome || 'Cliente #' + agendamento.cliente_id }}</p>
-                <p><strong>Email:</strong> {{ agendamento.cliente_email || 'N/A' }}</p>
-                <p><strong>Telefone:</strong> {{ agendamento.cliente_telefone || 'N/A' }}</p>
+                <div class="info-content">
+                  <p><strong>ID:</strong> <span>{{ agendamento.cliente_id }}</span></p>
+                  <p><strong>Nome:</strong> <span>{{ agendamento.cliente_nome || 'Cliente #' + agendamento.cliente_id }}</span></p>
+                  <p><strong>Email:</strong> <span>{{ agendamento.cliente_email || 'N/A' }}</span></p>
+                  <p><strong>Telefone:</strong> <span>{{ agendamento.cliente_telefone || 'N/A' }}</span></p>
+                </div>
               </div>
               
               <div class="info-section servico-info">
                 <h3>Serviço Agendado</h3>
-                <p><strong>ID:</strong> {{ agendamento.servico_id }}</p>
-                <p><strong>Serviço:</strong> {{ agendamento.servico_nome || getNomeServico(agendamento.servico_id) }}</p>
-                <p><strong>Preço:</strong> R$ {{ getPrecoServico(agendamento.servico_id).toFixed(2) }}</p>
-                <p><strong>Data:</strong> {{ formatarData(agendamento.data_agendada) }}</p>
-                <p><strong>Horário:</strong> {{ formatarHora(agendamento.hora_agendada) }}</p>
-                <p *ngIf="agendamento.observacoes"><strong>Observações:</strong> {{ agendamento.observacoes }}</p>
+                <div class="info-content">
+                  <p><strong>Serviço:</strong> <span>{{ agendamento.servico_nome || getNomeServico(agendamento.servico_id) }}</span></p>
+                  <p><strong>Preço:</strong> <span>R$ {{ getPrecoServico(agendamento.servico_id).toFixed(2) }}</span></p>
+                  <p><strong>Data:</strong> <span>{{ formatarData(agendamento.data_agendada) }}</span></p>
+                  <p><strong>Horário:</strong> <span>{{ formatarHora(agendamento.hora_agendada) }}</span></p>
+                  <p *ngIf="agendamento.observacoes"><strong>Observações:</strong> <span>{{ agendamento.observacoes }}</span></p>
+                </div>
               </div>
             </div>
             

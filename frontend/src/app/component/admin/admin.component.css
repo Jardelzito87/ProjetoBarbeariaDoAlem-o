@@ -413,28 +413,31 @@ button:disabled {
 
 .agendamentos-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
   gap: 20px;
 }
 
 .agendamento-card {
-  background-color: rgba(30, 30, 30, 0.8);
-  border-radius: 8px;
+  background-color: rgba(30, 30, 30, 0.9);
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #333;
+  border: 1px solid #444;
   display: flex;
   flex-direction: column;
+  min-height: 400px;
+  max-height: 500px;
 }
 
 .agendamento-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  border-color: #b30000;
 }
 
 .agendamento-body {
-  padding: 20px;
+  padding: 18px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -516,23 +519,65 @@ button:disabled {
   color: white;
 }
 
-.agendamento-body {
-  padding: 20px;
-}
-
 .agendamento-info {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 20px;
   flex-grow: 1;
+  align-items: stretch;
 }
 
 .info-section {
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 6px;
-  border-left: 3px solid #b30000;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #b30000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 200px;
+}
+
+/* Específico para informações de cliente */
+.cliente-info {
+  border-left-color: #27ae60;
+}
+
+/* Específico para informações de serviço */
+.servico-info {
+  border-left-color: #e67e22;
+}
+
+.info-section h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: #f39c12;
+  border-bottom: 1px solid rgba(243, 156, 18, 0.4);
+  padding-bottom: 8px;
+  font-family: 'Creepster', cursive;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-align: center;
+  font-weight: 600;
+  flex-shrink: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Título específico para cliente */
+.cliente-info h3 {
+  color: #27ae60;
+  border-bottom-color: rgba(39, 174, 96, 0.4);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Título específico para serviço */
+.servico-info h3 {
+  color: #e67e22;
+  border-bottom-color: rgba(230, 126, 34, 0.4);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .info-section .admin-h3 {
@@ -548,8 +593,51 @@ button:disabled {
 }
 
 .info-section p {
-  margin: 8px 0;
-  font-size: 0.95rem;
+  margin: 6px 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1px 0;
+}
+
+.info-section p strong {
+  color: #f39c12;
+  font-weight: 600;
+  min-width: 65px;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  margin-right: 8px;
+}
+
+.info-section p span {
+  flex: 1;
+  text-align: left;
+  color: #f0f0f0;
+  font-weight: 500;
+  word-break: break-word;
+  padding-left: 0;
+}
+
+/* Strong específico para cliente */
+.cliente-info p strong {
+  color: #27ae60;
+}
+
+/* Strong específico para serviço */
+.servico-info p strong {
+  color: #e67e22;
+}
+
+/* Container para o conteúdo das informações */
+.info-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
 }
 
 .agendamento-actions {
@@ -924,10 +1012,37 @@ button:disabled {
 @media (max-width: 768px) {
   .agendamentos-list {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .agendamento-info {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .info-section {
+    min-height: auto;
+    padding: 14px;
+  }
+  
+  .info-section h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  
+  .info-section p {
+    margin: 5px 0;
+    padding: 2px 0;
+  }
+  
+  .info-section p strong {
+    min-width: 70px;
+    font-size: 0.8rem;
+  }
+  
+  .info-section p span {
+    font-size: 0.85rem;
+    padding-left: 8px;
   }
   
   .agendamento-actions {
@@ -938,5 +1053,43 @@ button:disabled {
   button {
     flex: 1 1 auto;
     min-width: 120px;
+  }
+}
+
+/* Media query adicional para telas muito pequenas */
+@media (max-width: 480px) {
+  .agendamentos-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .agendamento-card {
+    min-height: auto;
+    max-height: none;
+  }
+  
+  .agendamento-body {
+    padding: 14px;
+  }
+  
+  .info-section {
+    padding: 12px;
+  }
+  
+  .info-section p {
+    margin: 4px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  
+  .info-section p strong {
+    min-width: auto;
+    font-size: 0.75rem;
+  }
+  
+  .info-section p span {
+    text-align: left;
+    font-size: 0.8rem;
+    padding-left: 0;
   }
 }
