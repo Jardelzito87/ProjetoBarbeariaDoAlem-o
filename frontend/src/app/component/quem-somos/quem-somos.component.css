@@ -30,15 +30,15 @@
 }
 
 /* QUEM SOMOS - Título principal único */
-.quem-somos-h1 {
-    color: #e74c3c; /* Cor única: vermelho mais vivo */
+.header-section h1 {
+    color: #e74c3c;
     font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-    font-size: 3.2rem; /* Tamanho único maior */
-    text-shadow: 3px 3px 6px rgba(231, 76, 60, 0.4); /* Sombra vermelha única */
-    letter-spacing: 2.5px; /* Espaçamento único */
-    margin-bottom: 1.2rem; /* Margem única */
-    font-weight: 800; /* Peso único */
-    text-transform: capitalize; /* Transformação única */
+    font-size: 3.2rem;
+    text-shadow: 3px 3px 6px rgba(231, 76, 60, 0.4);
+    letter-spacing: 2.5px;
+    margin-bottom: 1.2rem;
+    font-weight: 800;
+    text-transform: capitalize;
 }
 
 .divider {
@@ -63,16 +63,16 @@
 }
 
 /* QUEM SOMOS - Título secundário único */
-.quem-somos-h2 {
-    color: #f39c12; /* Cor única: laranja dourado */
+.content-section h2 {
+    color: #f39c12;
     font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-    border-bottom: 2px solid #f39c12; /* Borda laranja única */
-    padding-bottom: 0.7rem; /* Padding único */
-    margin-top: 2.5rem; /* Margem única */
-    margin-bottom: 1.8rem; /* Margem única */
-    text-shadow: 2px 2px 4px rgba(243, 156, 18, 0.3); /* Sombra laranja única */
-    font-size: 2.1rem; /* Tamanho único */
-    letter-spacing: 1.5px; /* Espaçamento único */
+    border-bottom: 2px solid #f39c12;
+    padding-bottom: 0.7rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1.8rem;
+    text-shadow: 2px 2px 4px rgba(243, 156, 18, 0.3);
+    font-size: 2.1rem;
+    letter-spacing: 1.5px;
 }
 
 p {
