@@ -251,6 +251,99 @@
     color: #ccc;
 }
 
+/* Seção de Depoimentos & Agendamento - Tabela estilo Excel */
+.depoimentos-agendamento-tabela-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0 48px 0;
+    padding: 0 20px;
+}
+
+.tabela-depoimentos-agendamento {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    background: #181818;
+    color: #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    margin: 0 auto;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    border: 2px solid #d4af37;
+}
+
+.tabela-depoimentos-agendamento th, .tabela-depoimentos-agendamento td {
+    padding: 24px 20px;
+    border: 1px solid #333;
+    text-align: left;
+    font-size: 1rem;
+    vertical-align: top;
+}
+
+.tabela-depoimentos-agendamento th {
+    background: linear-gradient(90deg, #d4af37 0%, #b30000 100%);
+    color: #181818;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: none;
+    border-color: #d4af37;
+    text-align: center;
+}
+
+.tabela-depoimentos-agendamento td {
+    background: #222;
+    color: #eee;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 30px 25px;
+}
+
+.tabela-depoimentos-agendamento tr:hover td {
+    background: #333;
+    transition: background 0.3s;
+}
+
+/* Primeira coluna - Depoimentos */
+.tabela-depoimentos-agendamento td:nth-child(1) {
+    font-style: italic;
+    color: #fff;
+    font-size: 1.1rem;
+    border-right: 2px solid #d4af37;
+    width: 50%;
+}
+
+/* Segunda coluna - Agendamento */
+.tabela-depoimentos-agendamento td:nth-child(2) {
+    text-align: center;
+    color: #eee;
+    width: 50%;
+}
+
+/* Botão de agendamento dentro da tabela */
+.tabela-depoimentos-agendamento .btn-agendar {
+    display: inline-block;
+    background: linear-gradient(90deg, #d4af37 60%, #b30000 100%);
+    color: #181818;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(212, 175, 55, 0.2);
+    margin-top: 12px;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+    border: 2px solid #d4af37;
+}
+
+.tabela-depoimentos-agendamento .btn-agendar:hover {
+    background: linear-gradient(90deg, #b30000 60%, #d4af37 100%);
+    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(179, 0, 0, 0.3);
+}
+
 /* Container de texto e slogans */
 .texto-container {
     text-align: center;
