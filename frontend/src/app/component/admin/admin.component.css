@@ -156,16 +156,14 @@
   margin-bottom: 40px;
 }
 
-.admin-header .admin-h1 {
-  color: #1abc9c; /* Cor única: turquesa */
+.admin-header h1 {
+  color: #8B0000; /* Vermelho sangue */
   font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
   font-size: 3.5rem; /* Tamanho único maior */
-  text-shadow: 4px 4px 8px rgba(26, 188, 156, 0.4); /* Sombra turquesa única */
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
   letter-spacing: 3.2px; /* Espaçamento único maior */
   margin-bottom: 20px; /* Margem única */
   font-weight: 900; /* Peso único */
-  text-decoration: overline; /* Decoração única - linha superior */
-  text-decoration-color: #16a085; /* Cor da linha única */
 }
 
 .admin-subtitle {
