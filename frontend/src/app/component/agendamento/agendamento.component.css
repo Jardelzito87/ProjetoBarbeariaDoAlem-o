@@ -1,3 +1,110 @@
+/* ==============================
+   ESTILOS ESPECÍFICOS DE AGENDAMENTO
+   ============================== */
+
+/* Tabela Depoimentos & Agendamento estilo Excel */
+.depoimentos-agendamento-tabela-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 56px 0 32px 0;
+}
+
+.tabela-depoimentos-agendamento {
+  border-collapse: collapse;
+  min-width: 600px;
+  background: #181818;
+  box-shadow: 0 4px 24px rgba(255,0,0,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 3px solid #b30000;
+}
+
+.tabela-depoimentos-agendamento th {
+  background: #b30000;
+  color: #fff;
+  font-family: 'Creepster', cursive;
+  font-size: 1.3rem;
+  padding: 18px 0;
+  border-bottom: 2px solid #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px #000;
+}
+
+.tabela-depoimentos-agendamento td {
+  font-size: 1.1rem;
+  color: #fff;
+  padding: 24px 32px;
+  border-bottom: 1px solid #b30000;
+  vertical-align: middle;
+  background: #222;
+  text-shadow: 0 2px 8px #000;
+}
+
+.tabela-depoimentos-agendamento tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-depoimentos-agendamento a.btn-agendar {
+  display: inline-block;
+  background: linear-gradient(90deg, #b30000 60%, #fff 100%);
+  color: #181818;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 10px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(255,0,0,0.15);
+  margin-top: 16px;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.tabela-depoimentos-agendamento a.btn-agendar:hover {
+  background: linear-gradient(90deg, #fff 60%, #b30000 100%);
+  color: #b30000;
+  transform: scale(1.05);
+}
+
+/* Tabela de Cortes */
+.tabela-cortes {
+    width: 100%;
+    max-width: 700px;
+    border-collapse: collapse;
+    background: #fff;
+    color: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    margin: 0 auto;
+    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+}
+
+.tabela-cortes th, .tabela-cortes td {
+    padding: 16px 12px;
+    border: 1px solid #e0e0e0;
+    text-align: left;
+    font-size: 1rem;
+}
+
+.tabela-cortes th {
+    background: #eab543;
+    color: #222;
+    font-size: 1.08rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.tabela-cortes tr:nth-child(even) td {
+    background: #f9f9f9;
+}
+
+.tabela-cortes tr:hover td {
+    background: #ffe9b3;
+    transition: background 0.2s;
+}
+
+/* ==============================
+   ESTILOS ORIGINAIS DO COMPONENTE
+   ============================== */
+
 .agendamento-container {
   max-width: 900px;
   margin: 0 auto;

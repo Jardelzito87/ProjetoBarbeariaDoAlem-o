@@ -1,3 +1,413 @@
+/* ==============================
+   ESTILOS ESPECÍFICOS DO HOME
+   ============================== */
+
+/* Apresentação Principal */
+.apresentacao-barbearia {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px 40px 20px;
+    background: rgba(34,34,34,0.8);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    margin-bottom: 30px;
+}
+
+.apresentacao-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 900px;
+    width: 100%;
+}
+
+.imagem-apresentacao {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 50%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px rgba(179,0,0,0.3);
+    border: 5px solid #d4af37;
+    margin-bottom: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.imagem-apresentacao:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 20px rgba(179,0,0,0.5);
+}
+
+.apresentacao-conteudo h2 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.bemvindo-titulo {
+    text-align: center;
+    font-family: 'Creepster', cursive;
+    color: #d4af37;
+    font-size: 2.7rem;
+    margin-bottom: 24px;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+}
+
+.apresentacao-conteudo p {
+    font-size: 1.1rem;
+    color: #eee;
+}
+
+/* Título estiloso Bem-vindo à Barbearia do Além */
+.bemvindo-titulo-estiloso {
+  text-align: center;
+  font-family: 'Creepster', cursive;
+  color: #fff;
+  font-size: 2.7rem;
+  margin: 38px 0 18px 0;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 16px #000, 0 0px 12px #b30000;
+  background: #181818;
+  padding: 14px 0 10px 0;
+  border-radius: 14px;
+}
+
+/* Seção de Serviços */
+.servicos-titulo {
+  text-align: center;
+  font-family: 'Creepster', cursive;
+  color: #d4af37;
+  font-size: 2.7rem;
+  margin: 64px 0 32px 0;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+}
+
+.servicos-destaque {
+  display: flex;
+  flex-direction: row;
+  gap: 48px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  background: linear-gradient(90deg, #181818 80%, #222 100%);
+  border: 3px solid #d4af37;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.12);
+  padding: 48px 0;
+  margin-bottom: 48px;
+}
+
+.servico-card {
+  background: #222;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(212, 175, 55, 0.15);
+  border: 2px solid #d4af37;
+  padding: 24px 18px 18px 18px;
+  text-align: center;
+  width: 260px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.servico-card:hover {
+  transform: scale(1.07);
+  box-shadow: 0 8px 32px rgba(179, 0, 0, 0.18);
+}
+
+.servico-img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  border: 4px solid #111;
+  box-shadow: 0 0 24px 4px #111, 0 2px 16px 2px #000;
+}
+
+.servico-card h3 {
+  color: #d4af37;
+  font-family: 'Creepster', cursive;
+  font-size: 1.5rem;
+  margin-top: 8px;
+  text-shadow: 0 2px 8px #222;
+  white-space: nowrap;
+}
+
+/* Seção de Cortes */
+.cortes-titulo-alem {
+    text-align: center;
+    font-family: 'Creepster', cursive;
+    color: #d4af37;
+    font-size: 2.3rem;
+    margin: 30px 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+    background: rgba(24, 24, 24, 0.8);
+    padding: 15px 0;
+    border-radius: 12px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.galeria-cortes {
+    display: flex;
+    flex-direction: row;
+    gap: 28px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+    margin-top: 12px;
+    flex-wrap: nowrap;
+}
+
+.galeria-img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    border: 3px solid #eab543;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.galeria-img:hover {
+    transform: scale(1.08) rotate(-2deg);
+    box-shadow: 0 8px 24px rgba(179,0,0,0.25);
+    border-color: #b30000;
+}
+
+/* Dashboard e Tabela de Preços - Estilo Excel temático */
+.dashboard-cortes {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0 48px 0;
+    padding: 0 20px;
+}
+
+.tabela-cortes {
+    width: 100%;
+    max-width: 900px;
+    border-collapse: collapse;
+    background: #181818;
+    color: #eee;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    margin: 0 auto;
+    font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+    overflow: hidden;
+    border: 2px solid #d4af37;
+}
+
+.tabela-cortes th, .tabela-cortes td {
+    padding: 16px 20px;
+    border: 1px solid #333;
+    text-align: left;
+    font-size: 1rem;
+    vertical-align: top;
+}
+
+.tabela-cortes th {
+    background: linear-gradient(90deg, #d4af37 0%, #b30000 100%);
+    color: #181818;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: none;
+    border-color: #d4af37;
+}
+
+.tabela-cortes td {
+    background: #222;
+    color: #eee;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.tabela-cortes tr:nth-child(even) td {
+    background: #1a1a1a;
+}
+
+.tabela-cortes tr:hover td {
+    background: #333;
+    color: #d4af37;
+    transition: background 0.3s, color 0.3s;
+    transform: scale(1.01);
+}
+
+.tabela-cortes td:nth-child(2) {
+    color: #d4af37;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-align: center;
+}
+
+.tabela-cortes td:nth-child(3) {
+    font-style: italic;
+    color: #ccc;
+}
+
+/* Container de texto e slogans */
+.texto-container {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    background: rgba(24, 24, 24, 0.7);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.slogan-principal {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #d4af37;
+    margin-bottom: 20px;
+    text-shadow: 1px 2px 4px #000;
+    letter-spacing: 1px;
+    font-family: 'Creepster', cursive;
+}
+
+.slogan-sangue {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #9a0000;
+    margin-bottom: 25px;
+    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000;
+    letter-spacing: 2px;
+    font-family: 'Creepster', cursive;
+    animation: pulseSangue 2s infinite;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 8px;
+    border-bottom: 2px solid #ff0000;
+}
+
+@keyframes pulseSangue {
+    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000; }
+    50% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 2px 2px 10px #000; }
+    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000; }
+}
+
+.descricao-servico {
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.descricao-ambiente {
+    font-size: 1.2rem;
+    color: #eee;
+    margin-bottom: 25px;
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.efeito-sangue {
+    color: #b30000;
+    font-family: 'Creepster', cursive, 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    text-shadow: 2px 4px 6px #000, 0 0 8px #b30000;
+    letter-spacing: 2px;
+    margin: 25px 0 10px 0;
+    padding: 5px 0;
+}
+
+.apresentacao-destaque {
+    color: #d4af37;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 15px 0;
+    text-align: center;
+    text-shadow: 1px 1px 4px #222;
+}
+
+/* Depoimentos e Agendamento */
+.depoimentos-agendamento-titulo {
+  text-align: center;
+  font-family: 'Creepster', cursive;
+  color: #d4af37;
+  font-size: 2.5rem;
+  margin: 56px 0 24px 0;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 12px #222, 0 0px 8px #b30000;
+}
+
+.depoimentos-agendamento-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 48px;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 56px auto 32px auto;
+  border: 3px solid #d4af37;
+  border-radius: 24px;
+  background: linear-gradient(90deg, #181818 80%, #222 100%);
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.12);
+  flex-wrap: nowrap;
+}
+
+.depoimentos-card, .agendamento-card {
+  background: #181818;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  padding: 32px 28px 28px 28px;
+  min-width: 320px;
+  max-width: 400px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.depoimentos-card h2, .agendamento-card h2 {
+  font-family: 'Creepster', cursive;
+  color: #d4af37;
+  font-size: 2.2rem;
+  margin-bottom: 18px;
+  letter-spacing: 2px;
+}
+
+.depoimentos-card blockquote {
+  font-size: 1.15rem;
+  color: #fff;
+  background: #222;
+  border-left: 4px solid #d4af37;
+  margin: 0 0 16px 0;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.08);
+}
+
+.agendamento-card .btn-agendar {
+  display: inline-block;
+  background: linear-gradient(90deg, #d4af37 60%, #b30000 100%);
+  color: #181818;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 12px 32px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(212, 175, 55, 0.15);
+  margin-top: 24px;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.agendamento-card .btn-agendar:hover {
+  background: linear-gradient(90deg, #b30000 60%, #d4af37 100%);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+/* ==============================
+   ESTILOS ORIGINAIS DO COMPONENTE
+   ============================== */
+
 .home-container {
     display: flex;
     flex-direction: column;

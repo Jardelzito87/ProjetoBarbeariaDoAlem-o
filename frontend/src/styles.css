@@ -1,818 +1,153 @@
 
+/* Importa fonte temática de Halloween para elementos especiais */
 @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
 
+/* ==============================
+   ESTILOS GLOBAIS DA APLICAÇÃO
+   ============================== */
 
-/* Galeria de fotos - grid alinhado e responsivo */
-.gallery-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 0;
-}
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 32px;
-  justify-items: center;
-  align-items: start;
-}
-.gallery-item {
-  background: #181818;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
-  padding: 18px 12px 12px 12px;
-  text-align: center;
-  width: 100%;
-  max-width: 320px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.gallery-item:hover {
-  transform: scale(1.04);
-  box-shadow: 0 8px 32px rgba(255,0,0,0.12);
-}
-.gallery-item img {
-  width: 160px;
-  height: 120px;
-  width: 140px;
-  height: 105px;
-  box-shadow: 0 2px 12px rgba(255,0,0,0.10);
-  border: 2px solid #b30000;
-  background: #181818;
-}
-.gallery-item p {
-  color: #fff;
-  font-size: 1.05rem;
-  margin-top: 10px;
-  font-family: 'Creepster', cursive;
-}
-/* Título estiloso Bem-vindo à Barbearia do Além */
-.bemvindo-titulo-estiloso {
-  text-align: center;
-  font-family: 'Creepster', cursive;
-  color: #fff;
-  font-size: 2.7rem;
-  margin: 38px 0 18px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 16px #000, 0 0px 12px #b30000;
-  background: #181818;
-  padding: 14px 0 10px 0;
-  border-radius: 14px;
-}
-/* Informações de contato estilosas */
-.contato-card {
-  max-width: 600px;
-  margin: 30px auto;
-  background: linear-gradient(135deg, rgba(24, 24, 24, 0.95) 0%, rgba(40, 0, 0, 0.9) 100%);
-  border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(179, 0, 0, 0.3);
-  overflow: hidden;
-  border: 2px solid #b30000;
-  position: relative;
-}
-
-.contato-card::before {
-  content: '';
-  position: absolute;
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  background: radial-gradient(ellipse at center, rgba(179, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.home-contato {
-  position: relative;
-  padding: 20px 0;
-}
-
-.home-contato::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(179, 0, 0, 0) 0%, rgba(179, 0, 0, 0.8) 50%, rgba(179, 0, 0, 0) 100%);
-}
-
-.contato-info {
-  padding: 20px;
-}
-
-.contato-row {
-  display: flex;
-  align-items: center;
-  padding: 15px 0;
-  border-bottom: 1px solid rgba(179, 0, 0, 0.2);
-}
-
-.contato-row:last-child {
-  border-bottom: none;
-}
-
-.contato-icon {
-  flex: 0 0 60px;
-  text-align: center;
-}
-
-.contato-icon i {
-  font-size: 28px;
-  color: #ffe600;
-  text-shadow: 0 2px 8px #000, 0 0 10px rgba(179, 0, 0, 0.5);
-  animation: pulseIcon 2s infinite;
-}
-
-@keyframes pulseIcon {
-  0% { text-shadow: 0 2px 8px #000, 0 0 10px rgba(179, 0, 0, 0.5); }
-  50% { text-shadow: 0 2px 8px #000, 0 0 15px rgba(179, 0, 0, 0.8); }
-  100% { text-shadow: 0 2px 8px #000, 0 0 10px rgba(179, 0, 0, 0.5); }
-}
-
-.contato-text {
-  flex: 1;
-}
-
-.contato-label {
-  font-family: 'Creepster', cursive;
-  color: #ffe600;
-  font-size: 1.3rem;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7), 0 0 8px rgba(179, 0, 0, 0.5);
-}
-
-.contato-value {
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 500;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
-}
-/* Título estiloso do contato */
-.contato-titulo-estiloso {
-  text-align: center;
-  font-family: 'Creepster', cursive;
-  color: #ffe600;
-  font-size: 2.5rem;
-  margin: 32px 0 18px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 12px #000, 0 0 12px #b30000;
-  background: linear-gradient(135deg, #181818 0%, #300 100%);
-  padding: 15px 0 12px 0;
-  border-radius: 12px;
-  border: 2px solid #b30000;
-  box-shadow: 0 4px 20px rgba(179, 0, 0, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.contato-titulo-estiloso::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 230, 0, 0.2), transparent);
-  animation: shine 3s infinite;
-}
-
-@keyframes shine {
-  0% { left: -100%; }
-  100% { left: 100%; }
-}
-/* Imagens do contato lado a lado */
-.contato-imagens {
-  display: flex;
-  flex-direction: row;
-  gap: 32px;
-  justify-content: center;
-  align-items: center;
-  margin: 32px 0 24px 0;
-}
-.contato-img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3), 0 0 10px rgba(179, 0, 0, 0.2);
-  border: 3px solid #b30000;
-  transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
-  filter: brightness(0.9) contrast(1.1);
-}
-.contato-img:hover {
-  transform: scale(1.07) rotate(-2deg);
-  box-shadow: 0 8px 30px rgba(255,0,0,0.3), 0 0 15px rgba(179, 0, 0, 0.4);
-  filter: brightness(1.1) contrast(1.2) saturate(1.1);
-  border-color: #ff0000;
-}
-/* Tabela Depoimentos & Agendamento estilo Excel */
-.depoimentos-agendamento-tabela-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: 56px 0 32px 0;
-}
-.tabela-depoimentos-agendamento {
-  border-collapse: collapse;
-  min-width: 600px;
-  background: #181818;
-  box-shadow: 0 4px 24px rgba(255,0,0,0.15);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 3px solid #b30000;
-}
-.tabela-depoimentos-agendamento th {
-  background: #b30000;
-  color: #fff;
-  font-family: 'Creepster', cursive;
-  font-size: 1.3rem;
-  padding: 18px 0;
-  border-bottom: 2px solid #fff;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px #000;
-}
-.tabela-depoimentos-agendamento td {
-  font-size: 1.1rem;
-  color: #fff;
-  padding: 24px 32px;
-  border-bottom: 1px solid #b30000;
-  vertical-align: middle;
-  background: #222;
-  text-shadow: 0 2px 8px #000;
-}
-.tabela-depoimentos-agendamento tr:last-child td {
-  border-bottom: none;
-}
-.tabela-depoimentos-agendamento a.btn-agendar {
-  display: inline-block;
-  background: linear-gradient(90deg, #b30000 60%, #fff 100%);
-  color: #181818;
-  font-weight: bold;
-  font-size: 1.1rem;
-  padding: 10px 28px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 2px 12px rgba(255,0,0,0.15);
-  margin-top: 16px;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-}
-.tabela-depoimentos-agendamento a.btn-agendar:hover {
-  background: linear-gradient(90deg, #fff 60%, #b30000 100%);
-  color: #b30000;
-  transform: scale(1.05);
-}
-/* Título do bloco Depoimentos & Agendamento */
-.depoimentos-agendamento-titulo {
-  text-align: center;
-  font-family: 'Creepster', cursive;
-  color: #ffe600;
-  font-size: 2.5rem;
-  margin: 56px 0 24px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 12px #222, 0 0px 8px #b30000;
-}
-.servicos-titulo {
-  text-align: center;
-  font-family: 'Creepster', cursive;
-  color: #ffe600;
-  font-size: 2.7rem;
-  margin: 64px 0 32px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
-}
-.servicos-destaque {
-  display: flex;
-  flex-direction: row;
-  gap: 48px;
-  justify-content: center;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  background: linear-gradient(90deg, #181818 80%, #222 100%);
-  border: 3px solid #ffe600;
-  border-radius: 24px;
-  box-shadow: 0 8px 32px rgba(255,230,0,0.12);
-  padding: 48px 0;
-  margin-bottom: 48px;
-}
-.servico-card {
-  background: #222;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(255,230,0,0.15);
-  border: 2px solid #ffe600;
-  padding: 24px 18px 18px 18px;
-  text-align: center;
-  width: 260px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.servico-card:hover {
-  transform: scale(1.07);
-  box-shadow: 0 8px 32px rgba(255,0,0,0.18);
-}
-.servico-img {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-bottom: 16px;
-  border: 4px solid #111;
-  box-shadow: 0 0 24px 4px #111, 0 2px 16px 2px #000;
-}
-.servico-card h3 {
-  color: #ffe600;
-  font-family: 'Creepster', cursive;
-  font-size: 1.5rem;
-  margin-top: 8px;
-  text-shadow: 0 2px 8px #222;
-  white-space: nowrap;
-}
-.servicos-destaque {
-    display: flex;
-    flex-direction: row;
-    gap: 36px;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    margin-bottom: 32px;
-}
-.cortes-titulo-alem {
-    text-align: center;
-    font-family: 'Creepster', cursive;
-    color: #ffe600;
-    font-size: 2.3rem;
-    margin: 30px 0;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
-    background: rgba(24, 24, 24, 0.8);
-    padding: 15px 0;
-    border-radius: 12px;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-.galeria-cortes {
-    display: flex;
-    flex-direction: row;
-    gap: 28px;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 24px;
-    margin-top: 12px;
-    flex-wrap: nowrap;
-}
-.galeria-img {
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-}
-
-/* Efeito igual ao logo para imagens dos serviços */
-.servico-img-logo {
-  border: 4px solid #111;
-  box-shadow: 0 0 24px 4px #111, 0 2px 16px 2px #000;
-  position: relative;
-}
-.servico-img-logo::after {
-  content: '';
-  display: block;
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 16px;
-  background: radial-gradient(ellipse at center, #111 60%, transparent 100%);
-  opacity: 0.7;
-  filter: blur(2px);
-    border: 3px solid #eab543;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.galeria-img:hover {
-    transform: scale(1.08) rotate(-2deg);
-    box-shadow: 0 8px 24px rgba(179,0,0,0.25);
-    border-color: #b30000;
-}
-.tabela-cortes {
-    width: 100%;
-    max-width: 700px;
-    border-collapse: collapse;
-    background: #fff;
-    color: #222;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-    margin: 0 auto;
-    font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
-}
-.tabela-cortes th, .tabela-cortes td {
-    padding: 16px 12px;
-    border: 1px solid #e0e0e0;
-    text-align: left;
-    font-size: 1rem;
-}
-.tabela-cortes th {
-    background: #eab543;
-    color: #222;
-    font-size: 1.08rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-}
-.tabela-cortes tr:nth-child(even) td {
-    background: #f9f9f9;
-}
-.tabela-cortes tr:hover td {
-    background: #ffe9b3;
-    transition: background 0.2s;
-}
-
-.texto-container {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 15px 20px;
-    background: rgba(24, 24, 24, 0.7);
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-.slogan-principal {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #ffe600;
-    margin-bottom: 20px;
-    text-shadow: 1px 2px 4px #000;
-    letter-spacing: 1px;
-    font-family: 'Creepster', cursive;
-}
-
-.slogan-sangue {
-    font-size: 2.2rem;
-    font-weight: bold;
-    color: #9a0000;
-    margin-bottom: 25px;
-    text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000;
-    letter-spacing: 2px;
-    font-family: 'Creepster', cursive;
-    animation: pulseSangue 2s infinite;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 8px;
-    border-bottom: 2px solid #ff0000;
-}
-
-@keyframes pulseSangue {
-    0% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000; }
-    50% { text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 2px 2px 10px #000; }
-    100% { text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000, 2px 2px 6px #000; }
-}
-
-.descricao-servico {
-    font-size: 1.3rem;
-    color: #fff;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.descricao-ambiente {
-    font-size: 1.2rem;
-    color: #eee;
-    margin-bottom: 25px;
-    font-style: italic;
-    line-height: 1.5;
-}
-
-.efeito-sangue {
-    color: #b30000;
-    font-family: 'Creepster', cursive, 'Poppins', sans-serif;
-    font-size: 1.6rem;
-    text-shadow: 2px 4px 6px #000, 0 0 8px #b30000;
-    letter-spacing: 2px;
-    margin: 25px 0 10px 0;
-    padding: 5px 0;
-}
-
-.apresentacao-destaque {
-    color: #FFD600;
-    font-size: 1.15rem;
-    font-weight: 700;
-    margin: 15px 0;
-    text-align: center;
-    text-shadow: 1px 1px 4px #222;
-}
-
+/* Reset universal - Garante dimensionamento consistente */
 * {
-    box-sizing: border-box;
+    box-sizing: border-box; /* Inclui padding e border no tamanho total */
 }
 
-
+/* Configuração base do corpo da página */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #232526 0%, #414345 100%);
-    color: #eee;
-    min-height: 100vh;
+    margin: 0; /* Remove margem padrão do navegador */
+    padding: 0; /* Remove padding padrão do navegador */
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte principal moderna */
+    background: linear-gradient(135deg, #232526 0%, #414345 100%); /* Gradiente escuro elegante */
+    color: #eee; /* Texto claro para contraste com fundo escuro */
+    min-height: 100vh; /* Altura mínima da tela completa */
 }
 
-/* Inicio - menu */
+/* ==============================
+   HEADER E NAVEGAÇÃO PRINCIPAL
+   ============================== */
 
-/* Header */
+/* Header principal fixo - Sempre visível no topo */
 .header-barbearia {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #222;
-    padding: 24px 0 12px 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
+    display: flex; /* Layout flexível */
+    flex-direction: column; /* Empilha elementos verticalmente */
+    align-items: center; /* Centraliza horizontalmente */
+    background: #222; /* Fundo escuro sólido */
+    padding: 24px 0 12px 0; /* Espaçamento interno assimétrico */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra sutil para profundidade */
+    position: fixed; /* Fixo no topo da tela */
+    top: 0; /* Posicionado no topo */
+    left: 0; /* Alinhado à esquerda */
+    width: 100%; /* Largura total da tela */
+    z-index: 1000; /* Fica acima de outros elementos */
 }
 
+/* Container interno do header - Limita largura máxima */
 .header-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 1200px;
-    position: relative;
+    display: flex; /* Layout flexível */
+    align-items: center; /* Alinha verticalmente ao centro */
+    justify-content: center; /* Centraliza horizontalmente */
+    width: 100%; /* Usa toda largura disponível */
+    max-width: 1200px; /* Largura máxima para telas grandes */
+    position: relative; /* Permite posicionamento absoluto dos filhos */
 }
 
+/* Ícones fantasmas decorativos - Animação flutuante */
 .ghost-icon {
-    position: absolute;
-    animation: float 3s ease-in-out infinite;
+    position: absolute; /* Posicionamento absoluto dentro do container */
+    animation: float 3s ease-in-out infinite; /* Animação de flutuar contínua */
 }
 
+/* Fantasma da esquerda - Posicionamento fixo */
 .ghost-left {
-    left: 20px;
+    left: 20px; /* 20px da borda esquerda */
 }
 
+/* Fantasma da direita - Posicionamento e delay de animação */
 .ghost-right {
-    right: 20px;
-    animation-delay: 1.5s;
+    right: 20px; /* 20px da borda direita */
+    animation-delay: 1.5s; /* Delay para criar movimento dessincronizado */
 }
 
+/* Estilo dos SVGs dos fantasmas */
 .ghost-svg {
-    width: 40px;
-    height: 40px;
-    fill: #ffffff;
-    filter: drop-shadow(0 0 5px #b30000);
+    width: 40px; /* Largura fixa */
+    height: 40px; /* Altura fixa */
+    fill: #ffffff; /* Cor branca */
+    filter: drop-shadow(0 0 5px #b30000); /* Brilho vermelho sombrio */
 }
 
+/* Fantasma da direita espelhado - Olha para direção oposta */
 .ghost-right-svg {
-    transform: scaleX(-1); /* Espelha o fantasma para olhar na direção oposta */
+    transform: scaleX(-1); /* Espelha horizontalmente */
 }
 
+/* Animação de flutuação - Movimento vertical suave */
 @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
+    0% { transform: translateY(0px); } /* Posição inicial */
+    50% { transform: translateY(-10px); } /* Sobe 10px no meio */
+    100% { transform: translateY(0px); } /* Volta à posição inicial */
 }
 
+/* Animação de pulsação - Cresce e diminui (reserva para futuro uso) */
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-.logo-area {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.logo-barbearia {
-    width: 48px;
-    height: 48px;
-    filter: invert(1);
-}
-.header-barbearia h1 {
-    font-size: 2.5rem;
-    font-family: 'Poppins', sans-serif;
-    letter-spacing: 2px;
-    color: #eab543;
-    margin: 0;
+    0% { transform: scale(1); } /* Tamanho normal */
+    50% { transform: scale(1.1); } /* Cresce 10% */
+    100% { transform: scale(1); } /* Volta ao normal */
 }
 
+/* Navegação Principal - Menu de páginas da barbearia */
 nav {
-    margin-top: 12px;
+    margin-top: 12px; /* Espaço entre header e menu */
 }
+
+/* Lista do menu - Layout horizontal com fantasmas */
 .menu-barbearia {
-    display: flex;
-    gap: 32px;
-    list-style: none;
+    display: flex; /* Itens em linha horizontal */
+    gap: 32px; /* Espaçamento entre links do menu */
+    list-style: none; /* Remove marcadores da lista */
     padding: 0;
     margin: 0;
 }
+
+/* Links do menu - Estilo padrão e hover */
 .menu-barbearia li a {
-    color: #eee;
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: 500;
-    transition: color 0.2s;
+    color: #eee; /* Texto claro */
+    text-decoration: none; /* Remove sublinhado */
+    font-size: 1.2rem; /* Tamanho do texto */
+    font-weight: 500; /* Peso médio da fonte */
+    transition: color 0.2s; /* Transição suave no hover */
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 8px; /* Espaço para ícones (se houver) */
 }
+
+/* Efeito hover - Cor dourada tema barbearia */
 .menu-barbearia li a:hover {
-    color: #eab543;
+    color: #eab543; /* Dourado no hover */
 }
 
-/* Apresentação */
-.apresentacao-barbearia {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px 40px 20px;
-    background: rgba(34,34,34,0.8);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    margin-bottom: 30px;
-}
-.apresentacao-conteudo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 32px;
-    max-width: 900px;
-    width: 100%;
-}
-.imagem-apresentacao {
-    width: 240px;
-    height: 240px;
-    object-fit: cover;
-    border-radius: 50%;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px rgba(179,0,0,0.3);
-    border: 5px solid #ffe600;
-    margin-bottom: 10px;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
+/* ==============================
+   LAYOUT PRINCIPAL
+   ============================== */
 
-.imagem-apresentacao:hover {
-    transform: scale(1.05);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 20px rgba(179,0,0,0.5);
-}
-.apresentacao-conteudo h2 {
-    font-size: 2rem;
-    margin-bottom: 12px;
-}
-
-.bemvindo-titulo {
-    text-align: center;
-    font-family: 'Creepster', cursive;
-    color: #ffe600;
-    font-size: 2.7rem;
-    margin-bottom: 24px;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
-}
-.apresentacao-conteudo p {
-    font-size: 1.1rem;
-    color: #eee;
-}
-
+/* Container principal do conteúdo - Área após o header */
 main {
-    min-height: 300px;
-    padding: 24px;
-    margin-top: 100px; /* Espaço para o menu fixo */
+    min-height: 300px; /* Altura mínima para garantir espaço */
+    padding: 24px; /* Espaçamento interno uniforme */
+    margin-top: 100px; /* Compensa altura do header fixo */
 }
 
-/* Rodapé */
+/* ==============================
+   RODAPÉ
+   ============================== */
+
+/* Rodapé da aplicação - Informações finais */
 .footer-barbearia {
-    background: #222;
-    color: #eee;
-    text-align: center;
-    padding: 18px 0;
-    font-size: 1rem;
-    border-top: 2px solid #eab543;
-    margin-top: 32px;
+    background: #222; /* Fundo escuro igual ao header */
+    color: #eee; /* Texto claro */
+    text-align: center; /* Centraliza o texto */
+    padding: 18px 0; /* Espaçamento vertical */
+    font-size: 1rem; /* Tamanho padrão da fonte */
+    border-top: 2px solid #eab543; /* Borda dourada no topo */
+    margin-top: 32px; /* Espaço antes do rodapé */
 }
-
-menu ul{
-    width: auto;
-    display: block;
-    font-size: 0;
-    text-align: center;
-    color: #EEEEEE;
-    background-color: #333333;
-    border: transparent;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    z-index: 999999990;
-    border-radius: 3px;
-.depoimentos-agendamento-wrapper {
-  display: flex;
-  flex-direction: row;
-  gap: 48px;
-  justify-content: center;
-  align-items: flex-start;
-  margin: 56px auto 32px auto;
-  border: 3px solid #ffe600;
-  border-radius: 24px;
-  background: linear-gradient(90deg, #181818 80%, #222 100%);
-  box-shadow: 0 8px 32px rgba(255,230,0,0.12);
-  flex-wrap: nowrap;
-}
-.depoimentos-card, .agendamento-card {
-  background: #181818;
-  border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  padding: 32px 28px 28px 28px;
-  min-width: 320px;
-  max-width: 400px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.depoimentos-card h2, .agendamento-card h2 {
-  font-family: 'Creepster', cursive;
-  color: #ffe600;
-  font-size: 2.2rem;
-  margin-bottom: 18px;
-  letter-spacing: 2px;
-}
-.depoimentos-card blockquote {
-  font-size: 1.15rem;
-  color: #fff;
-  background: #222;
-  border-left: 4px solid #ffe600;
-  margin: 0 0 16px 0;
-  padding: 12px 18px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(255,230,0,0.08);
-}
-.agendamento-card .btn-agendar {
-  display: inline-block;
-  background: linear-gradient(90deg, #ffe600 60%, #b30000 100%);
-  color: #181818;
-  font-weight: bold;
-  font-size: 1.1rem;
-  padding: 12px 32px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 2px 12px rgba(255,230,0,0.15);
-  margin-top: 24px;
-  transition: background 0.2s, color 0.2s, transform 0.2s;
-}
-.agendamento-card .btn-agendar:hover {
-  background: linear-gradient(90deg, #b30000 60%, #ffe600 100%);
-  color: #fff;
-  transform: scale(1.05);
-}
-
-}
-
-menu li{
-    display: inline-block;
-    position: relative;
-    font-size: 0;
-    margin: 0;
-    padding: 0;
-}
-
-menu > ul > li> span, menu > ul> li > a{
-    font-size: 3vh;
-    color: #EEEEEE !important;
-    text-decoration: none;
-    padding: 4vh 2vh;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    display: block;
-    position: relative;
-    transition: all 0.3s;
-    
-}
-
-menu li a{
-    color: #EEEEEE;
-    animation: none;
-    text-decoration: none;    
-}
-
-menu li:hover > span, menu li:hover > a, menu a:hover{
-    color: #333333 !important;
-    background-color: #EEEEEE;
-
-}
-
-/* Fim- menu */
-
-/* Inicio - Footer */
-footer{
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background-color: #333333;
-    color: #f3f3f3;
-    text-align: center;
-}
-/* Fim - Footer */
 

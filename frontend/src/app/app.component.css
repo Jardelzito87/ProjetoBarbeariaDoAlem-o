@@ -1,65 +1,53 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+/* ==============================
+   ESTILOS DO COMPONENTE PRINCIPAL
+   ============================== */
 
+/* Menu alternativo - Estilo simples (se usado) */
 menu {
-    background-color: #333;
-    margin: 0;
-    padding: 1rem;
+    background-color: #333; /* Fundo escuro */
+    margin: 0; /* Remove margem */
+    padding: 1rem; /* Espaçamento interno */
 }
 
+/* Lista do menu alternativo */
 menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+    list-style-type: none; /* Remove marcadores da lista */
+    margin: 0; /* Remove margem */
+    padding: 0; /* Remove padding */
+    display: flex; /* Layout horizontal */
+    justify-content: center; /* Centraliza horizontalmente */
 }
 
+/* Itens do menu alternativo */
 menu li {
-    margin: 0 1rem;
+    margin: 0 1rem; /* Espaçamento horizontal entre itens */
 }
 
+/* Links do menu alternativo */
 menu a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
+    color: white; /* Texto branco */
+    text-decoration: none; /* Remove sublinhado */
+    font-weight: 500; /* Peso médio da fonte */
+    padding: 0.5rem 1rem; /* Espaçamento interno do link */
+    border-radius: 4px; /* Bordas arredondadas */
+    transition: background-color 0.3s; /* Transição suave no hover */
 }
 
+/* Efeito hover do menu alternativo */
 menu a:hover {
-    background-color: #555;
+    background-color: #555; /* Fundo cinza no hover */
 }
 
-main {
-    flex: 1;
-    padding: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-}
+/* NOTA: main é controlado pelo styles.css global */
 
-footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-    margin-top: auto;
-}
-
+/* Títulos principais - Estilo padrão */
 h1 {
-    color: #333;
-    margin-bottom: 1.5rem;
+    color: #333; /* Cor escura para contraste */
+    margin-bottom: 1.5rem; /* Espaço abaixo do título */
 }
 
+/* Container genérico - Centralização de conteúdo */
 .container {
-    max-width: 1000px;
-    margin: 0 auto;
+    max-width: 1000px; /* Largura máxima menor que main */
+    margin: 0 auto; /* Centraliza horizontalmente */
 }
