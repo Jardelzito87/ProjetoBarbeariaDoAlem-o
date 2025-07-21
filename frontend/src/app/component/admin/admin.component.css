@@ -967,6 +967,316 @@ button:disabled {
   margin-top: 20px;
 }
 
+/* Container do cabeçalho do histórico */
+.historico-header-container {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.historico-title-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.historico-title-section h2 {
+  margin-bottom: 15px;
+}
+
+/* Contador de Cortes por Dia */
+.contador-cortes-container {
+  flex: 1;
+  min-width: 300px;
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.9), rgba(20, 20, 20, 0.9));
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid #555;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.contador-cortes-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #b30000, #e67e22, #27ae60, #8e44ad);
+}
+
+.contador-titulo {
+  margin: 0 0 10px 0;
+  font-size: 0.8rem;
+  color: #999;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.1px;
+  font-weight: 400;
+  text-shadow: none;
+  opacity: 0.8;
+}
+
+.contador-cortes-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.contador-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid #444;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.contador-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.contador-card.hoje {
+  border-left: 3px solid #27ae60;
+}
+
+.contador-card.hoje:hover {
+  border-left-color: #2ecc71;
+  background: rgba(39, 174, 96, 0.1);
+}
+
+.contador-card.antecipados {
+  border-left: 3px solid #e67e22;
+}
+
+.contador-card.antecipados:hover {
+  border-left-color: #f39c12;
+  background: rgba(230, 126, 34, 0.1);
+}
+
+.contador-card.semana {
+  border-left: 3px solid #8e44ad;
+}
+
+.contador-card.semana:hover {
+  border-left-color: #9b59b6;
+  background: rgba(142, 68, 173, 0.1);
+}
+
+.contador-card.mes {
+  border-left: 3px solid #b30000;
+}
+
+.contador-card.mes:hover {
+  border-left-color: #dc3545;
+  background: rgba(179, 0, 0, 0.1);
+}
+
+.contador-icon {
+  font-size: 1.2rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.contador-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.contador-numero {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: #f0f0f0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  font-family: 'Arial Black', sans-serif;
+  line-height: 1;
+}
+
+.contador-card[data-zero="true"] .contador-numero {
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.contador-card[data-zero="true"] {
+  opacity: 0.7;
+}
+
+.contador-label {
+  font-size: 0.65rem;
+  color: #bbb;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-top: 1px;
+}
+
+/* Resumo Financeiro */
+.resumo-financeiro {
+  background: rgba(179, 0, 0, 0.1);
+  border: 1px solid rgba(179, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 8px;
+  text-align: center;
+}
+
+/* Estilo para o resumo consolidado */
+.resumo-consolidado {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.resumo-consolidado-title {
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.resumo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  margin: 4px 0;
+}
+
+.resumo-label {
+  color: #bbb;
+}
+
+.resumo-valor {
+  font-weight: bold;
+}
+
+.resumo-valor.total {
+  color: #27ae60;
+}
+
+.resumo-valor.periodo {
+  color: #b30000;
+}
+
+.resumo-valor.cancelados {
+  color: #e74c3c;
+}
+
+.resumo-alert {
+  font-size: 0.7rem;
+  color: #f39c12;
+  margin-top: 6px;
+  text-align: center;
+  font-style: italic;
+}
+
+.receita-estimada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.receita-label {
+  font-size: 0.75rem;
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.receita-valor {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #27ae60;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  font-family: 'Arial Black', sans-serif;
+}
+
+/* Filtros de data para histórico */
+.logs-filtros {
+  background-color: rgba(30, 30, 30, 0.8);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #444;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.filtro-data-container {
+  display: flex;
+  align-items: end;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.filtro-data-container .form-group {
+  margin-bottom: 0;
+  min-width: 180px;
+}
+
+.filtro-data-container label {
+  font-size: 0.9rem;
+  color: #c0c0c0;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.filtro-data-input {
+  background-color: rgba(40, 40, 40, 0.9);
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  min-width: 160px;
+}
+
+.filtro-data-input:focus {
+  border-color: #b30000;
+  box-shadow: 0 0 10px rgba(179, 0, 0, 0.3);
+  outline: none;
+}
+
+.filtro-data-input::-webkit-calendar-picker-indicator {
+  background-color: #b30000;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.filtro-data-input::-webkit-calendar-picker-indicator:hover {
+  background-color: #900000;
+}
+
+.btn-limpar-filtro {
+  background-color: #555;
+  color: #c0c0c0;
+  border: 1px solid #666;
+  height: 42px;
+  padding: 0 15px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-limpar-filtro:hover {
+  background-color: #666;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .logs-table {
   width: 100%;
   border-collapse: collapse;
@@ -1053,6 +1363,68 @@ button:disabled {
   button {
     flex: 1 1 auto;
     min-width: 120px;
+  }
+  
+  /* Responsivo para filtros de data */
+  .filtro-data-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .filtro-data-container .form-group {
+    min-width: 100%;
+  }
+  
+  .filtro-data-input {
+    min-width: 100%;
+  }
+  
+  .btn-limpar-filtro {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Responsivo para contador de cortes */
+  .historico-header-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .contador-cortes-container {
+    min-width: 100%;
+    padding: 8px;
+  }
+  
+  .contador-cortes-cards {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 5px;
+  }
+  
+  .contador-card {
+    padding: 6px;
+    gap: 4px;
+  }
+  
+  .contador-icon {
+    font-size: 1rem;
+  }
+  
+  .contador-numero {
+    font-size: 1.1rem;
+  }
+  
+  .contador-label {
+    font-size: 0.6rem;
+  }
+  
+  .receita-estimada {
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .receita-valor {
+    font-size: 0.9rem;
   }
 }
 

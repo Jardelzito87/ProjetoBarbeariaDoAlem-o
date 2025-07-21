@@ -115,22 +115,127 @@
     </div>
     
     <div class="admin-section">
-      <h2>Histórico de Alterações</h2>
-      <button class="toggle-button" (click)="toggleMostrarLogs()">
-        {{ mostrarLogs ? 'Ocultar Histórico' : 'Mostrar Histórico' }}
-      </button>
+      <div class="historico-header-container">
+        <div class="historico-title-section">
+          <h2>Histórico de Alterações</h2>
+          <button class="toggle-button" (click)="toggleMostrarLogs()">
+            {{ mostrarLogs ? 'Ocultar Histórico' : 'Mostrar Histórico' }}
+          </button>
+        </div>
+        
+        <!-- Contador de Cortes por Dia -->
+        <div class="contador-cortes-container">
+          <h3 class="contador-titulo">Relatório de Cortes por Período</h3>
+          <div class="contador-cortes-cards">
+            <div class="contador-card hoje" [attr.data-zero]="cortesHoje === 0" title="Cortes realizados apenas hoje">
+              <div class="contador-icon">🗓️</div>
+              <div class="contador-info">
+                <span class="contador-numero">{{ cortesHoje }}</span>
+                <span class="contador-label">Hoje</span>
+              </div>
+            </div>
+            
+            <div class="contador-card antecipados" [attr.data-zero]="cortesAntecipados === 0" title="Agendamentos que foram antecipados e já realizados">
+              <div class="contador-icon">⚡</div>
+              <div class="contador-info">
+                <span class="contador-numero">{{ cortesAntecipados }}</span>
+                <span class="contador-label">Antecipados</span>
+              </div>
+            </div>
+            
+            <div class="contador-card semana" [attr.data-zero]="cortesSemanaPassada === 0" title="Cortes realizados na semana passada">
+              <div class="contador-icon">�</div>
+              <div class="contador-info">
+                <span class="contador-numero">{{ cortesSemanaPassada }}</span>
+                <span class="contador-label">Semana Passada</span>
+              </div>
+            </div>
+            
+            <div class="contador-card mes" [attr.data-zero]="cortesMes === 0" title="Total de cortes concluídos (incluindo antecipações)">
+              <div class="contador-icon">🏆</div>
+              <div class="contador-info">
+                <span class="contador-numero">{{ cortesMes }}</span>
+                <span class="contador-label">Concluídos</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="resumo-financeiro">
+            <div class="receita-estimada">
+              <span class="receita-label">💰 Receita Estimada (Mês):</span>
+              <span class="receita-valor">R$ {{ receitaEstimadaMes | number:'1.2-2' }}</span>
+            </div>
+            
+            <!-- Resumo consolidado dos cortes -->
+            <div style="margin-top: 12px; padding: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px;">
+              <div style="font-size: 0.8rem; color: #e2e8f0; text-align: center; margin-bottom: 8px;">
+                <strong>� Resumo Geral de Cortes</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                <span style="color: #bbb;">Total de Agendamentos Concluídos:</span>
+                <span style="color: #27ae60; font-weight: bold;">{{ contadorFeitos }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-top: 4px;">
+                <span style="color: #bbb;">Cortes Finalizados (Total):</span>
+                <span style="color: #b30000; font-weight: bold;">{{ cortesMes }}</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; margin-top: 4px;">
+                <span style="color: #bbb;">Total de Cortes Cancelados:</span>
+                <span class="resumo-valor cancelados">{{ totalCancelados }}</span>
+              </div>
+              <div *ngIf="contadorFeitos === cortesMes" style="font-size: 0.7rem; color: #27ae60; margin-top: 6px; text-align: center; font-style: italic;">
+                ✅ Todos os agendamentos foram processados
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       
       <div *ngIf="mostrarLogs" class="logs-container">
+        <!-- Filtros de Data -->
+        <div class="logs-filtros">
+          <div class="filtro-data-container">
+            <div class="form-group">
+              <label for="dataInicio">Data Início:</label>
+              <input 
+                type="date" 
+                id="dataInicio" 
+                [(ngModel)]="filtroDataInicio"
+                (change)="aplicarFiltroData()"
+                class="filtro-data-input"
+              >
+            </div>
+            <div class="form-group">
+              <label for="dataFim">Data Fim:</label>
+              <input 
+                type="date" 
+                id="dataFim" 
+                [(ngModel)]="filtroDataFim"
+                (change)="aplicarFiltroData()"
+                class="filtro-data-input"
+              >
+            </div>
+            <button 
+              class="btn-limpar-filtro" 
+              (click)="limparFiltroData()"
+              title="Limpar filtros de data"
+            >
+              <span class="btn-icon">🗑️</span>
+              Limpar
+            </button>
+          </div>
+        </div>
+
         <div *ngIf="carregandoLogs" class="loading-container">
           <div class="loading-icon"></div>
           <span>Carregando histórico...</span>
         </div>
 
-        <div *ngIf="!carregandoLogs && logsAgendamentos.length === 0" class="empty-state">
+        <div *ngIf="!carregandoLogs && logsAgendamentosFiltrados.length === 0" class="empty-state">
           <p>Nenhum registro de alteração encontrado</p>
         </div>
         
-        <table *ngIf="!carregandoLogs && logsAgendamentos.length > 0" class="logs-table">
+        <table *ngIf="!carregandoLogs && logsAgendamentosFiltrados.length > 0" class="logs-table">
           <thead>
             <tr>
               <th>Data/Hora</th>
@@ -141,7 +246,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let log of logsAgendamentos">
+            <tr *ngFor="let log of logsAgendamentosFiltrados">
               <td>{{ log.criado_em | date:'dd/MM/yyyy HH:mm' }}</td>
               <td>{{ log.cliente_nome }}</td>
               <td>{{ formatarData(log.data_agendada) }} {{ formatarHora(log.hora_agendada) }}</td>
@@ -158,7 +263,7 @@
     </div>
     
     <div class="admin-section">
-      <h2>Clientes</h2>
+      <h2>Status dos Agendamentos</h2>
       <div class="status-counters">
         <div class="counter pendente">
           <span class="counter-number">{{ contadorPendentes }}</span>
@@ -168,9 +273,12 @@
           <span class="counter-number">{{ contadorConfirmados }}</span>
           <span class="counter-label">Confirmados</span>
         </div>
-        <div class="counter concluido">
+        <div class="counter concluido" title="Total de agendamentos finalizados (todos os períodos)">
           <span class="counter-number">{{ contadorFeitos }}</span>
-          <span class="counter-label">Feitos</span>
+          <span class="counter-label">Concluídos</span>
+          <div style="font-size: 0.7rem; color: rgba(255,255,255,0.7); margin-top: 4px;">
+            (Total Geral)
+          </div>
         </div>
         <div class="counter cancelado">
           <span class="counter-number">{{ contadorCancelados }}</span>

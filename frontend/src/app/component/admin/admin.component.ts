@@ -38,7 +38,21 @@ export class AdminComponent implements OnInit {
   
   // Logs de agendamentos
   logsAgendamentos: LogAgendamento[] = [];
+  logsAgendamentosFiltrados: LogAgendamento[] = [];
   mostrarLogs = false;
+  
+  // Filtros de data para histórico
+  filtroDataInicio: string = '';
+  filtroDataFim: string = '';
+  
+  // Contador de cortes por período
+  cortesHoje: number = 0;
+  cortesAntecipados: number = 0; // Mudança: ao invés de "ontem", contar antecipados
+  cortesSemanaPassada: number = 0; // Mudança: contar semana passada ao invés da atual
+  cortesMes: number = 0;
+  totalConcluidos: number = 0; // Novo contador para depuração
+  totalCancelados: number = 0; // Novo contador para cancelados
+  receitaEstimadaMes: number = 0;
   
   // Autenticação
   adminLogado: any = null;
@@ -62,6 +76,7 @@ export class AdminComponent implements OnInit {
     this.carregarClientes();
     this.carregarDatasBloqueadas();
     this.carregarLogsAgendamentos();
+    this.calcularContadorCortes();
     this.initForm();
   }
   
@@ -70,6 +85,7 @@ export class AdminComponent implements OnInit {
     this.dbService.getLogsAgendamentos().subscribe({
       next: (logs: LogAgendamento[]) => {
         this.logsAgendamentos = logs;
+        this.logsAgendamentosFiltrados = [...logs]; // Inicializa com todos os logs
         console.log('Logs de agendamentos carregados:', this.logsAgendamentos.length);
         this.carregandoLogs = false;
       },
@@ -172,6 +188,9 @@ export class AdminComponent implements OnInit {
         
         // Contar agendamentos por status
         this.contarAgendamentosPorStatus();
+        
+        // Calcular contadores de cortes (deve ser executado APÓS contarAgendamentosPorStatus)
+        this.calcularContadorCortes();
         
         // Aplicar filtro atual
         this.aplicarFiltro(this.filtroAtual);
@@ -290,8 +309,11 @@ export class AdminComponent implements OnInit {
           console.warn('⚠️ Agendamento não encontrado na lista local');
         }
         
-        // Atualizar contadores
+        // Atualizar contadores por status
         this.contarAgendamentosPorStatus();
+        
+        // Atualizar contadores de cortes (deve ser executado APÓS contarAgendamentosPorStatus)
+        this.calcularContadorCortes();
         
         // Recarregar logs de agendamentos
         this.carregarLogsAgendamentos();
@@ -403,6 +425,105 @@ export class AdminComponent implements OnInit {
       case 'não compareceu': return 'Não Compareceu';
       default: return status;
     }
+  }
+  
+  // ============= MÉTODOS DE FILTROS DE DATA =============
+  
+  aplicarFiltroData(): void {
+    let logsFiltrados = [...this.logsAgendamentos];
+    
+    // Filtrar por data de início
+    if (this.filtroDataInicio) {
+      const dataInicio = new Date(this.filtroDataInicio);
+      logsFiltrados = logsFiltrados.filter(log => {
+        const dataLog = new Date(log.criado_em);
+        return dataLog >= dataInicio;
+      });
+    }
+    
+    // Filtrar por data de fim
+    if (this.filtroDataFim) {
+      const dataFim = new Date(this.filtroDataFim);
+      // Adicionar 1 dia para incluir o dia inteiro
+      dataFim.setDate(dataFim.getDate() + 1);
+      logsFiltrados = logsFiltrados.filter(log => {
+        const dataLog = new Date(log.criado_em);
+        return dataLog < dataFim;
+      });
+    }
+    
+    this.logsAgendamentosFiltrados = logsFiltrados;
+  }
+  
+  limparFiltroData(): void {
+    this.filtroDataInicio = '';
+    this.filtroDataFim = '';
+    this.logsAgendamentosFiltrados = [...this.logsAgendamentos];
+  }
+  
+  // ============= MÉTODOS DE CONTADOR DE CORTES =============
+  
+  calcularContadorCortes(): void {
+    if (this.agendamentos.length === 0) return;
+    
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    // Calcular semana passada
+    const inicioSemanaPassada = new Date(hoje);
+    const diaSemana = hoje.getDay();
+    const diasParaSegundaPassada = diaSemana === 0 ? -13 : -6 - diaSemana; // 7 dias a mais para pegar semana anterior
+    inicioSemanaPassada.setDate(hoje.getDate() + diasParaSegundaPassada);
+    
+    const fimSemanaPassada = new Date(inicioSemanaPassada);
+    fimSemanaPassada.setDate(inicioSemanaPassada.getDate() + 6); // Domingo da semana passada
+    
+    const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    
+    // Filtrar apenas agendamentos concluídos
+    const cortesFeitos = this.agendamentos.filter(agendamento => 
+      agendamento.status === 'concluido'
+    );
+    
+    // Filtrar agendamentos cancelados (cancelado + não compareceu)
+    const cortesCancelados = this.agendamentos.filter(agendamento => 
+      agendamento.status === 'cancelado' || agendamento.status === 'não compareceu'
+    );
+    
+    // Atualizar contador total para comparação
+    this.totalConcluidos = cortesFeitos.length;
+    this.totalCancelados = cortesCancelados.length;
+    
+    // Contar cortes por período
+    this.cortesHoje = cortesFeitos.filter(corte => {
+      const dataCorte = new Date(corte.data_agendada);
+      dataCorte.setHours(0, 0, 0, 0);
+      return dataCorte.getTime() === hoje.getTime();
+    }).length;
+    
+    // NOVA LÓGICA: Contar agendamentos antecipados
+    // Agendamentos concluídos cuja data original ainda não chegou
+    this.cortesAntecipados = cortesFeitos.filter(corte => {
+      const dataOriginal = new Date(corte.data_agendada);
+      dataOriginal.setHours(0, 0, 0, 0);
+      // Se a data original é no futuro mas já está concluído = foi antecipado
+      return dataOriginal.getTime() > hoje.getTime();
+    }).length;
+    
+    // NOVA LÓGICA: Contar cortes da semana passada
+    this.cortesSemanaPassada = cortesFeitos.filter(corte => {
+      const dataCorte = new Date(corte.data_agendada);
+      dataCorte.setHours(0, 0, 0, 0);
+      return dataCorte >= inicioSemanaPassada && dataCorte <= fimSemanaPassada;
+    }).length;
+    
+    // CORREÇÃO: Para o contador do mês, considerar todos os agendamentos concluídos
+    // independente da data original, já que alguns podem ter sido antecipados
+    this.cortesMes = cortesFeitos.length; // Todos os cortes concluídos no período
+    
+    // Calcular receita estimada do mês baseada no total de cortes concluídos
+    this.receitaEstimadaMes = this.cortesMes * 30;
   }
   
   // ============= MÉTODOS DE AUTENTICAÇÃO =============
