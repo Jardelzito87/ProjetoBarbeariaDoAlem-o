@@ -156,20 +156,27 @@
   margin-bottom: 40px;
 }
 
-.admin-header h1 {
-  color: #b30000;
+.admin-header .admin-h1 {
+  color: #1abc9c; /* Cor única: turquesa */
   font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-  font-size: 3rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  letter-spacing: 2px;
-  margin-bottom: 15px;
+  font-size: 3.5rem; /* Tamanho único maior */
+  text-shadow: 4px 4px 8px rgba(26, 188, 156, 0.4); /* Sombra turquesa única */
+  letter-spacing: 3.2px; /* Espaçamento único maior */
+  margin-bottom: 20px; /* Margem única */
+  font-weight: 900; /* Peso único */
+  text-decoration: overline; /* Decoração única - linha superior */
+  text-decoration-color: #16a085; /* Cor da linha única */
 }
 
 .admin-subtitle {
-  color: #c0c0c0;
-  font-size: 1.2rem;
-  margin-top: 10px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  color: #34495e; /* Cor única: azul acinzentado */
+  font-size: 1.4rem; /* Tamanho único maior */
+  margin-top: 15px; /* Margem única */
+  text-shadow: 2px 2px 5px rgba(52, 73, 94, 0.3); /* Sombra azul única */
+  font-style: oblique; /* Estilo único - oblíquo */
+  font-weight: 500; /* Peso único */
+  letter-spacing: 0.8px; /* Espaçamento único */
+  text-transform: lowercase; /* Transformação única */
 }
 
 .divider {
@@ -237,16 +244,18 @@
   color: #ff6666;
 }
 
-.loading {
+.admin-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
-  font-size: 1.2rem;
-  color: #b30000;
+  padding: 45px; /* Padding único */
+  font-size: 1.3rem; /* Tamanho único */
+  color: #e67e22; /* Cor única: laranja queimado */
   font-family: 'Creepster', cursive;
-  letter-spacing: 1px;
+  letter-spacing: 1.3px; /* Espaçamento único */
+  font-weight: 600; /* Peso único */
+  text-transform: uppercase; /* Transformação única */
 }
 
 .loading-icon {
@@ -278,14 +287,17 @@
   margin-bottom: 30px;
 }
 
-.admin-section h2 {
-  color: #b30000;
+.admin-section .admin-h2 {
+  color: #8e44ad; /* Cor única: roxo escuro */
   font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-  font-size: 1.8rem;
-  margin-bottom: 25px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  letter-spacing: 1px;
+  font-size: 2.1rem; /* Tamanho único maior */
+  margin-bottom: 30px; /* Margem única */
+  text-shadow: 2px 2px 5px rgba(142, 68, 173, 0.4); /* Sombra roxa única */
+  letter-spacing: 1.5px; /* Espaçamento único */
   text-align: center;
+  font-variant: small-caps; /* Variante única - small caps */
+  border-bottom: 3px double #8e44ad; /* Borda dupla única */
+  padding-bottom: 8px; /* Padding único */
 }
 
 .filtros-container {
@@ -519,13 +531,16 @@ button:disabled {
   border-left: 3px solid #b30000;
 }
 
-.info-section h3 {
+.info-section .admin-h3 {
   margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-  color: #b30000;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
+  margin-bottom: 12px; /* Margem única */
+  font-size: 1.2rem; /* Tamanho único */
+  color: #f39c12; /* Cor única: laranja dourado */
+  border-bottom: 2px dotted #f39c12; /* Borda pontilhada única */
+  padding-bottom: 8px; /* Padding único */
+  font-family: 'Creepster', cursive; /* Fonte única */
+  letter-spacing: 0.5px; /* Espaçamento único */
+  text-transform: capitalize; /* Transformação única */
 }
 
 .info-section p {
@@ -671,13 +686,17 @@ button:disabled {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.quadro-avisos h3 {
-  color: #b30000;
-  font-size: 1.3rem;
-  margin-bottom: 20px;
+.quadro-avisos .admin-avisos-h3 {
+  color: #2ecc71; /* Cor única: verde brilhante */
+  font-size: 1.4rem; /* Tamanho único */
+  margin-bottom: 25px; /* Margem única */
   text-align: center;
-  border-bottom: 1px solid #444;
-  padding-bottom: 10px;
+  border-bottom: 3px solid #2ecc71; /* Borda verde única */
+  padding-bottom: 12px; /* Padding único */
+  font-family: 'Creepster', cursive; /* Fonte única */
+  letter-spacing: 1px; /* Espaçamento único */
+  text-transform: lowercase; /* Transformação única */
+  font-style: italic; /* Estilo único */
 }
 
 .aviso {
@@ -723,10 +742,16 @@ button:disabled {
   padding-top: 20px;
 }
 
-.datas-bloqueadas h3 {
-  color: #b30000;
-  font-size: 1.3rem;
-  margin-bottom: 15px;
+.datas-bloqueadas .admin-datas-h3 {
+  color: #e74c3c; /* Cor única: vermelho coral */
+  font-size: 1.5rem; /* Tamanho único maior */
+  margin-bottom: 18px; /* Margem única */
+  font-family: 'Creepster', cursive; /* Fonte única */
+  letter-spacing: 1.2px; /* Espaçamento único */
+  text-transform: uppercase; /* Transformação única */
+  text-decoration: underline; /* Decoração única */
+  text-decoration-color: #c0392b; /* Cor da decoração única */
+  font-weight: bold; /* Peso único */
 }
 
 .datas-bloqueadas-lista {

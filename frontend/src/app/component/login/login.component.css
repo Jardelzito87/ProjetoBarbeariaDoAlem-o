@@ -78,20 +78,26 @@
   filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.7));
 }
 
-.modal-title {
-  color: #FFD700;
-  font-size: 1.8rem;
-  font-weight: bold;
+.login-modal-title {
+  color: #f1c40f; /* Cor única: amarelo ouro */
+  font-size: 2rem; /* Tamanho único maior */
+  font-weight: 800; /* Peso único */
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 3px 3px 6px rgba(241, 196, 15, 0.4); /* Sombra dourada única */
+  font-family: 'Creepster', cursive; /* Fonte única */
+  letter-spacing: 1.5px; /* Espaçamento único */
+  text-transform: capitalize; /* Transformação única */
 }
 
-.modal-subtitle {
-  color: #DDD;
-  font-size: 0.9rem;
+.login-modal-subtitle {
+  color: #ecf0f1; /* Cor única: cinza muito claro */
+  font-size: 1rem; /* Tamanho único maior */
   margin: 0;
-  font-style: italic;
-  opacity: 0.9;
+  font-style: oblique; /* Estilo único */
+  opacity: 0.85; /* Opacidade única */
+  font-weight: 400; /* Peso único */
+  letter-spacing: 0.7px; /* Espaçamento único */
+  text-shadow: 1px 1px 3px rgba(236, 240, 241, 0.2); /* Sombra clara única */
 }
 
 .close-button {
@@ -269,12 +275,17 @@
   margin: 20px 0;
 }
 
-.credentials-title {
-  color: #FFD700;
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin: 0 0 10px 0;
+.login-credentials-title {
+  color: #e67e22; /* Cor única: laranja escuro */
+  font-weight: 700; /* Peso único */
+  font-size: 1rem; /* Tamanho único */
+  margin: 0 0 12px 0; /* Margem única */
   text-align: center;
+  font-family: 'Creepster', cursive; /* Fonte única */
+  letter-spacing: 0.8px; /* Espaçamento único */
+  text-transform: lowercase; /* Transformação única */
+  border-bottom: 2px dashed #e67e22; /* Borda pontilhada única */
+  padding-bottom: 5px; /* Padding único */
 }
 
 .credentials-list {

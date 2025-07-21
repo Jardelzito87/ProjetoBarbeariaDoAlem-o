@@ -43,14 +43,16 @@
     margin-bottom: 12px;
 }
 
-.bemvindo-titulo {
+/* HOME - Título Bem-vindo único */
+.home-bemvindo-titulo {
     text-align: center;
     font-family: 'Creepster', cursive;
     color: #d4af37;
-    font-size: 2.7rem;
-    margin-bottom: 24px;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+    font-size: 2.8rem; /* Único do HOME */
+    margin-bottom: 28px; /* Único do HOME */
+    letter-spacing: 2.5px; /* Único do HOME */
+    text-shadow: 0 3px 18px #222, 0 1px 14px #b30000; /* Único do HOME */
+    text-transform: uppercase; /* Único do HOME */
 }
 
 .apresentacao-conteudo p {
@@ -58,29 +60,34 @@
     color: #eee;
 }
 
-/* Título estiloso Bem-vindo à Barbearia do Além */
-.bemvindo-titulo-estiloso {
+/* HOME - Título estiloso com fundo único */
+.home-bemvindo-titulo-estiloso {
   text-align: center;
   font-family: 'Creepster', cursive;
   color: #fff;
-  font-size: 2.7rem;
-  margin: 38px 0 18px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 16px #000, 0 0px 12px #b30000;
-  background: #181818;
-  padding: 14px 0 10px 0;
-  border-radius: 14px;
+  font-size: 2.9rem; /* Maior que outros componentes */
+  margin: 42px 0 22px 0; /* Espaçamento único */
+  letter-spacing: 3px; /* Mais espaçado */
+  text-shadow: 0 4px 20px #000, 0 2px 16px #b30000; /* Sombra mais intensa */
+  background: linear-gradient(45deg, #181818 0%, #2a2a2a 100%); /* Gradiente único */
+  padding: 18px 0 14px 0; /* Padding único */
+  border-radius: 16px; /* Mais arredondado */
+  border: 3px solid #d4af37; /* Borda dourada */
+  position: relative;
+  overflow: hidden;
 }
 
-/* Seção de Serviços */
-.servicos-titulo {
+/* HOME - Seção de Serviços título único */
+.home-servicos-titulo {
   text-align: center;
   font-family: 'Creepster', cursive;
   color: #d4af37;
-  font-size: 2.7rem;
-  margin: 64px 0 32px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
+  font-size: 3.1rem; /* O maior de todos */
+  margin: 72px 0 40px 0; /* Espaçamento generoso */
+  letter-spacing: 3.5px; /* Muito espaçado */
+  text-shadow: 0 4px 20px #222, 0 2px 16px #b30000, 0 0px 8px #d4af37; /* Tripla sombra */
+  font-weight: 900; /* Mais pesado */
+  position: relative;
 }
 
 .servicos-destaque {
@@ -136,22 +143,23 @@
   white-space: nowrap;
 }
 
-/* Seção de Cortes */
-.cortes-titulo-alem {
+/* HOME - Título de Cortes único */
+.home-cortes-titulo-alem {
     text-align: center;
     font-family: 'Creepster', cursive;
     color: #d4af37;
-    font-size: 2.3rem;
-    margin: 30px 0;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 16px #222, 0 0px 12px #b30000;
-    background: rgba(24, 24, 24, 0.8);
-    padding: 15px 0;
-    border-radius: 12px;
-    max-width: 600px;
+    font-size: 2.5rem; /* Tamanho intermediário único */
+    margin: 35px 0; /* Margem única */
+    letter-spacing: 2.2px; /* Espaçamento único */
+    text-shadow: 0 3px 18px #222, 0 1px 14px #b30000; /* Sombra única */
+    background: linear-gradient(90deg, rgba(24, 24, 24, 0.9) 0%, rgba(44, 44, 44, 0.8) 100%); /* Gradiente único */
+    padding: 18px 0; /* Padding único */
+    border-radius: 14px; /* Raio único */
+    max-width: 650px; /* Largura única */
     margin-left: auto;
     margin-right: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 25px rgba(212, 175, 55, 0.15); /* Sombra dourada única */
+    border: 2px solid rgba(212, 175, 55, 0.3); /* Borda sutil única */
 }
 
 .galeria-cortes {
@@ -160,9 +168,10 @@
     gap: 28px;
     justify-content: center;
     align-items: center;
-    margin-bottom: 24px;
-    margin-top: 12px;
-    flex-wrap: nowrap;
+    margin: 24px auto;
+    padding: 20px;
+    flex-wrap: wrap;
+    max-width: 800px;
 }
 
 .galeria-img {
@@ -171,8 +180,9 @@
     object-fit: cover;
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-    border: 3px solid #eab543;
+    border: 3px solid #d4af37;
     transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
 }
 
 .galeria-img:hover {
@@ -420,15 +430,17 @@
     text-shadow: 1px 1px 4px #222;
 }
 
-/* Depoimentos e Agendamento */
-.depoimentos-agendamento-titulo {
+/* HOME - Depoimentos e Agendamento título único */
+.home-depoimentos-agendamento-titulo {
   text-align: center;
   font-family: 'Creepster', cursive;
   color: #d4af37;
-  font-size: 2.5rem;
-  margin: 56px 0 24px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 12px #222, 0 0px 8px #b30000;
+  font-size: 2.7rem; /* Tamanho específico */
+  margin: 64px 0 28px 0; /* Margem específica */
+  letter-spacing: 2.8px; /* Espaçamento específico */
+  text-shadow: 0 3px 16px #222, 0 1px 12px #b30000; /* Sombra específica */
+  position: relative;
+  font-style: italic; /* Único do HOME - itálico */
 }
 
 .depoimentos-agendamento-wrapper {
@@ -541,4 +553,67 @@
     line-height: 1.6;
     color: #eee; /* ✅ Texto claro para fundo escuro */
     margin-bottom: 1rem;
+}
+
+/* ==============================
+   MEDIA QUERIES - RESPONSIVIDADE
+   ============================== */
+
+/* Para tablets */
+@media (max-width: 768px) {
+    .galeria-cortes {
+        gap: 20px;
+        padding: 15px;
+    }
+    
+    .galeria-img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .home-cortes-titulo-alem {
+        font-size: 2.1rem;
+        margin: 25px 0;
+    }
+    
+    .home-servicos-titulo {
+        font-size: 2.6rem;
+    }
+    
+    .home-bemvindo-titulo {
+        font-size: 2.3rem;
+    }
+}
+
+/* Para smartphones */
+@media (max-width: 480px) {
+    .galeria-cortes {
+        gap: 15px;
+        padding: 10px;
+    }
+    
+    .galeria-img {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .home-cortes-titulo-alem {
+        font-size: 1.9rem;
+        margin: 20px 0;
+        padding: 12px 0;
+    }
+    
+    .home-servicos-titulo {
+        font-size: 2.2rem;
+        margin: 50px 0 30px 0;
+    }
+    
+    .home-bemvindo-titulo {
+        font-size: 2rem;
+    }
+    
+    .home-bemvindo-titulo-estiloso {
+        font-size: 2.1rem;
+        padding: 15px 0 12px 0;
+    }
 }

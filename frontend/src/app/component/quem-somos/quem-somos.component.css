@@ -29,13 +29,16 @@
     margin-bottom: 3rem;
 }
 
-h1 {
-    color: #b30000;
+/* QUEM SOMOS - Título principal único */
+.quem-somos-h1 {
+    color: #e74c3c; /* Cor única: vermelho mais vivo */
     font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-    font-size: 3rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-    letter-spacing: 2px;
-    margin-bottom: 1rem;
+    font-size: 3.2rem; /* Tamanho único maior */
+    text-shadow: 3px 3px 6px rgba(231, 76, 60, 0.4); /* Sombra vermelha única */
+    letter-spacing: 2.5px; /* Espaçamento único */
+    margin-bottom: 1.2rem; /* Margem única */
+    font-weight: 800; /* Peso único */
+    text-transform: capitalize; /* Transformação única */
 }
 
 .divider {
@@ -59,14 +62,17 @@ h1 {
     transform: rotate(90deg);
 }
 
-h2 {
-    color: #b30000;
+/* QUEM SOMOS - Título secundário único */
+.quem-somos-h2 {
+    color: #f39c12; /* Cor única: laranja dourado */
     font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-    border-bottom: 1px solid #333;
-    padding-bottom: 0.5rem;
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    border-bottom: 2px solid #f39c12; /* Borda laranja única */
+    padding-bottom: 0.7rem; /* Padding único */
+    margin-top: 2.5rem; /* Margem única */
+    margin-bottom: 1.8rem; /* Margem única */
+    text-shadow: 2px 2px 4px rgba(243, 156, 18, 0.3); /* Sombra laranja única */
+    font-size: 2.1rem; /* Tamanho único */
+    letter-spacing: 1.5px; /* Espaçamento único */
 }
 
 p {

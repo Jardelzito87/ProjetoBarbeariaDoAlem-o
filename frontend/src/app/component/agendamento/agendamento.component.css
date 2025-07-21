@@ -119,20 +119,26 @@
   position: relative;
 }
 
-.agendamento-header h1 {
-  color: #b30000;
+.agendamento-header .agendamento-h1 {
+  color: #27ae60; /* Cor única: verde esmeralda */
   font-family: 'Creepster', cursive, 'Segoe UI', Tahoma;
-  font-size: 3rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  letter-spacing: 2px;
-  margin-bottom: 15px;
+  font-size: 3.4rem; /* Tamanho único maior */
+  text-shadow: 3px 3px 8px rgba(39, 174, 96, 0.4); /* Sombra verde única */
+  letter-spacing: 3px; /* Espaçamento único maior */
+  margin-bottom: 18px; /* Margem única */
+  font-style: normal; /* Estilo único */
+  text-decoration: underline; /* Decoração única */
+  text-decoration-color: #2ecc71; /* Cor do sublinhado única */
 }
 
 .agendamento-subtitle {
-  color: #c0c0c0;
-  font-size: 1.2rem;
-  margin-top: 10px;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  color: #95a5a6; /* Cor única: cinza azulado */
+  font-size: 1.3rem; /* Tamanho único maior */
+  margin-top: 12px; /* Margem única */
+  text-shadow: 2px 2px 4px rgba(149, 165, 166, 0.3); /* Sombra cinza única */
+  font-style: italic; /* Estilo único */
+  font-weight: 300; /* Peso único */
+  letter-spacing: 1px; /* Espaçamento único */
 }
 
 .divider {

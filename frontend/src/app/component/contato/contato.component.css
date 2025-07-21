@@ -28,7 +28,7 @@
 
 .home-contato {
   position: relative;
-  padding: 20px 0;
+  padding: 140px 0 20px 0; /* ✅ Aumentado padding-top para compensar título fixo (100px header + 40px título aproximadamente) */
 }
 
 .home-contato::after {
@@ -57,21 +57,26 @@
   border-bottom: none;
 }
 
-/* Título estiloso do contato */
+/* CONTATO - Título estiloso único - FIXO no topo */
 .contato-titulo-estiloso {
   text-align: center;
   font-family: 'Creepster', cursive;
-  color: #d4af37;
-  font-size: 2.5rem;
-  margin: 32px 0 18px 0;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 12px #000, 0 0 12px rgba(212, 175, 55, 0.5);
-  background: linear-gradient(135deg, #181818 0%, #300 100%);
-  padding: 15px 0 12px 0;
-  border-radius: 12px;
-  border: 2px solid #b30000;
-  box-shadow: 0 4px 20px rgba(179, 0, 0, 0.3);
-  position: relative;
+  color: #ff6b35; /* Cor única: laranja avermelhado */
+  font-size: 2.3rem; /* Tamanho único */
+  margin: 0;
+  letter-spacing: 1.8px; /* Espaçamento único */
+  text-shadow: 0 3px 14px #000, 0 1px 10px rgba(255, 107, 53, 0.6); /* Sombra laranja única */
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1b1b 100%); /* Gradiente único */
+  padding: 16px 0 13px 0; /* Padding único */
+  border-radius: 0 0 14px 14px; /* Raio único */
+  border: 3px solid #ff6b35; /* Borda laranja única */
+  border-top: none;
+  box-shadow: 0 5px 25px rgba(255, 107, 53, 0.25); /* Sombra laranja única */
+  position: fixed;
+  top: 100px; /* ✅ Logo abaixo do header principal (altura do header) */
+  left: 0; /* ✅ Alinhado à esquerda */
+  width: 100%; /* ✅ Largura total da tela */
+  z-index: 999; /* ✅ Fica abaixo do header mas acima do conteúdo */
   overflow: hidden;
 }
 
