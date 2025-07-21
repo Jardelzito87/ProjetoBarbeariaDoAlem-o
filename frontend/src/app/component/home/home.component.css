@@ -124,6 +124,11 @@
   box-shadow: 0 8px 32px rgba(179, 0, 0, 0.18);
 }
 
+/* Servico card clicável */
+.servico-card-clicavel {
+  cursor: pointer;
+}
+
 .servico-img {
   width: 140px;
   height: 140px;
@@ -373,6 +378,18 @@
     color: #fff;
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(179, 0, 0, 0.3);
+}
+
+/* Célula de agendamento */
+.agendamento-cell {
+    text-align: center;
+}
+
+/* Texto de destaque do agendamento */
+.agendamento-destaque {
+    font-weight: bold;
+    color: #b30000;
+    font-size: 1.2rem;
 }
 
 /* Container de texto e slogans */

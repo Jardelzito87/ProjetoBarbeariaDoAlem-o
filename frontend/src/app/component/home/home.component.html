@@ -92,15 +92,15 @@
 <section class="home-servicos"><br><br><br>
   <h2 class="home-servicos-titulo">Serviços em destaque</h2><br><br><br>
   <div class="servicos-destaque">
-    <div class="servico-card" (click)="navegarParaGaleria('Corte Sobrenatural')" style="cursor: pointer;">
+    <div class="servico-card servico-card-clicavel" (click)="navegarParaGaleria('Corte Sobrenatural')">
       <img src="https://i.postimg.cc/P56SFTmM/Cabelo.jpg" alt="Corte de cabelo estilizado" class="servico-img servico-img-logo" />
       <h3>Corte Sobrenatural</h3>
     </div>
-    <div class="servico-card" (click)="navegarParaGaleria('Barba Maldita')" style="cursor: pointer;">
+    <div class="servico-card servico-card-clicavel" (click)="navegarParaGaleria('Barba Maldita')">
       <img src="https://i.postimg.cc/xT3xMK8h/Barba.jpg" alt="Barba desenhada" class="servico-img servico-img-logo" />
       <h3>Barba Maldita</h3>
     </div>
-    <div class="servico-card" (click)="navegarParaGaleria('Pacto completo')" style="cursor: pointer;">
+    <div class="servico-card servico-card-clicavel" (click)="navegarParaGaleria('Pacto completo')">
       <img src="https://i.postimg.cc/13RWHfNt/Cabelo-Barba.jpg" alt="Tratamentos especiais" class="servico-img servico-img-logo" />
       <h3>Pacto Completo</h3>
     </div>
@@ -123,8 +123,8 @@
             “Nunca imaginei que um corte pudesse ser tão arrepiante!”<br>
             “Ambiente incrível, atendimento top!”
           </td>
-          <td style="text-align:center;">
-            <span style="font-weight:bold; color:#b30000; font-size:1.2rem;">Agende sua visita!</span><br>
+          <td class="agendamento-cell">
+            <span class="agendamento-destaque">Agende sua visita!</span><br>
             <a routerLink="/agendamento" class="btn-agendar">Clique aqui para agendar</a>
           </td>
         </tr>

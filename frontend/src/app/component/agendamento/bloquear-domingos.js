@@ -5,7 +5,7 @@ function bloquearDomingos() {
   
   if (!inputData) return;
   
-  // Adicionar um event listener para quando o usuário clicar no calendário
+  // Adicionar um evento liste para quando o usuário clicar no calendário
   inputData.addEventListener('input', function() {
     const dataEscolhida = new Date(this.value);
     
