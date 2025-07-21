@@ -2,44 +2,6 @@
    ESTILOS DO COMPONENTE PRINCIPAL
    ============================== */
 
-/* Menu alternativo - Estilo simples (se usado) */
-menu {
-    background-color: #333; /* Fundo escuro */
-    margin: 0; /* Remove margem */
-    padding: 1rem; /* Espaçamento interno */
-}
-
-/* Lista do menu alternativo */
-menu ul {
-    list-style-type: none; /* Remove marcadores da lista */
-    margin: 0; /* Remove margem */
-    padding: 0; /* Remove padding */
-    display: flex; /* Layout horizontal */
-    justify-content: center; /* Centraliza horizontalmente */
-}
-
-/* Itens do menu alternativo */
-menu li {
-    margin: 0 1rem; /* Espaçamento horizontal entre itens */
-}
-
-/* Links do menu alternativo */
-menu a {
-    color: white; /* Texto branco */
-    text-decoration: none; /* Remove sublinhado */
-    font-weight: 500; /* Peso médio da fonte */
-    padding: 0.5rem 1rem; /* Espaçamento interno do link */
-    border-radius: 4px; /* Bordas arredondadas */
-    transition: background-color 0.3s; /* Transição suave no hover */
-}
-
-/* Efeito hover do menu alternativo */
-menu a:hover {
-    background-color: #555; /* Fundo cinza no hover */
-}
-
-/* NOTA: main é controlado pelo styles.css global */
-
 /* Títulos principais - Estilo padrão */
 h1 {
     color: #333; /* Cor escura para contraste */
