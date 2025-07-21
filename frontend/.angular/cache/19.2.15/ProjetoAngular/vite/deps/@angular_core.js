@@ -506,8 +506,8 @@ import {
   ɵɵviewQuery,
   ɵɵviewQuerySignal
 } from "./chunk-BO47HE3M.js";
-import "./chunk-37VSNGIT.js";
 import "./chunk-7AADCGDY.js";
+import "./chunk-37VSNGIT.js";
 import "./chunk-HCRA6G56.js";
 export {
   ANIMATION_MODULE_TYPE,
