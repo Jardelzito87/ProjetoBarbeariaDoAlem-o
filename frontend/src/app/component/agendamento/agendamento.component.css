@@ -487,6 +487,32 @@ button:hover::before {
   box-shadow: 0 6px 20px rgba(179, 0, 0, 0.4);
 }
 
+/* Estilos para duplicata de dados */
+.error {
+  border: 2px solid #ff4444 !important;
+  background-color: rgba(255, 68, 68, 0.1) !important;
+}
+
+.duplicata-error {
+  color: #ff4444 !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  margin-top: 5px !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5) !important;
+  background: rgba(255, 68, 68, 0.1) !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  border-left: 4px solid #ff4444 !important;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
 @media (max-width: 768px) {
   .date-time-group {
     flex-direction: column;

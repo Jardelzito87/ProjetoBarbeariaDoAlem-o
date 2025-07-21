@@ -399,42 +399,140 @@ app.get('/api/logs-agendamentos', async (req, res) => {
   }
 });
 
-// POST para criar cliente
-app.post('/api/clientes', async (req, res) => {
-  console.log('Recebido POST para /api/clientes:', req.body);
-  const { nome, email, telefone } = req.body;
+// POST para verificar duplicatas de cliente
+app.post('/api/clientes/verificar-duplicata', async (req, res) => {
+  console.log('🔍 Verificando duplicatas para:', req.body);
+  let { nome, email, telefone } = req.body;
 
-  if (!nome || !email || !telefone) {
-    console.log('Campos obrigatórios ausentes:', { nome, email, telefone });
-    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  // Limpar formatação do telefone se fornecido
+  if (telefone) {
+    const telefoneOriginal = telefone;
+    telefone = telefone.replace(/\D/g, '');
+    console.log('📱 Telefone para verificação:', { original: telefoneOriginal, limpo: telefone });
   }
 
   try {
-    // Verificar se o cliente já existe com o mesmo email
-    console.log('Verificando se cliente existe:', email);
+    const duplicatas = {
+      nome: false,
+      email: false,
+      telefone: false,
+      cliente: null
+    };
+
+    // Verificar nome duplicado
+    if (nome) {
+      console.log('🔍 Verificando nome duplicado:', nome);
+      const nomeExistente = await db.query(
+        'SELECT * FROM clientes WHERE LOWER(nome) = LOWER($1)',
+        [nome]
+      );
+      if (nomeExistente.rows.length > 0) {
+        console.log('❌ Nome duplicado encontrado:', nomeExistente.rows[0]);
+        duplicatas.nome = true;
+        duplicatas.cliente = nomeExistente.rows[0];
+      }
+    }
+
+    // Verificar email duplicado
+    if (email) {
+      console.log('🔍 Verificando email duplicado:', email);
+      const emailExistente = await db.query(
+        'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1)',
+        [email]
+      );
+      if (emailExistente.rows.length > 0) {
+        console.log('❌ Email duplicado encontrado:', emailExistente.rows[0]);
+        duplicatas.email = true;
+        duplicatas.cliente = emailExistente.rows[0];
+      }
+    }
+
+    // Verificar telefone duplicado
+    if (telefone) {
+      console.log('🔍 Verificando telefone duplicado:', telefone);
+      const telefoneExistente = await db.query(
+        'SELECT * FROM clientes WHERE telefone = $1',
+        [telefone]
+      );
+      console.log('📋 Resultado busca telefone:', { 
+        telefone, 
+        encontrados: telefoneExistente.rows.length,
+        clientes: telefoneExistente.rows 
+      });
+      if (telefoneExistente.rows.length > 0) {
+        console.log('❌ Telefone duplicado encontrado:', telefoneExistente.rows[0]);
+        duplicatas.telefone = true;
+        duplicatas.cliente = telefoneExistente.rows[0];
+      }
+    }
+
+    console.log('📋 Resultado final verificação duplicatas:', duplicatas);
+    res.json(duplicatas);
+  } catch (err) {
+    console.error('❌ Erro ao verificar duplicatas:', err);
+    res.status(500).json({ error: 'Erro ao verificar duplicatas' });
+  }
+});
+
+// POST para criar cliente
+app.post('/api/clientes', async (req, res) => {
+  console.log('🔍 POST /api/clientes - Dados recebidos:', req.body);
+  let { nome, email, telefone } = req.body;
+
+  if (!nome || !email || !telefone) {
+    console.log('❌ Campos obrigatórios ausentes:', { nome: !!nome, email: !!email, telefone: !!telefone });
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
+
+  // Limpar formatação do telefone (remover parênteses, espaços e hífens)
+  const telefoneOriginal = telefone;
+  telefone = telefone.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+  console.log('📱 Telefone formatado:', { original: telefoneOriginal, limpo: telefone });
+
+  try {
+    // Verificar se já existe cliente com mesmo email, telefone ou nome
+    console.log('🔍 Verificando duplicatas para:', { nome, email, telefone });
+    
     const clienteExistente = await db.query(
-      'SELECT * FROM clientes WHERE email = $1',
-      [email]
+      'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1) OR telefone = $2 OR LOWER(nome) = LOWER($3)',
+      [email, telefone, nome]
     );
     
     if (clienteExistente.rows.length > 0) {
-      console.log('Cliente existente encontrado:', clienteExistente.rows[0]);
-      // Se o cliente já existe, retorna o cliente existente
-      return res.status(200).json(clienteExistente.rows[0]);
+      const cliente = clienteExistente.rows[0];
+      console.log('❌ Cliente duplicado encontrado:', cliente);
+      
+      // Determinar qual campo está duplicado
+      let campoDuplicado = '';
+      if (cliente.email.toLowerCase() === email.toLowerCase()) {
+        campoDuplicado = 'email';
+      } else if (cliente.telefone === telefone) {
+        campoDuplicado = 'telefone';
+      } else if (cliente.nome.toLowerCase() === nome.toLowerCase()) {
+        campoDuplicado = 'nome';
+      }
+      
+      return res.status(409).json({ 
+        error: 'Cliente já cadastrado', 
+        campo: campoDuplicado,
+        cliente: cliente,
+        message: `Já existe um cliente cadastrado com este ${campoDuplicado}.`
+      });
     }
     
     // Inserir novo cliente
-    console.log('Inserindo novo cliente:', { nome, email, telefone });
+    console.log('💾 Inserindo novo cliente:', { nome, email, telefone });
     const result = await db.query(
       'INSERT INTO clientes (nome, email, telefone) VALUES ($1, $2, $3) RETURNING *',
       [nome, email, telefone]
     );
     
-    console.log('Cliente criado com sucesso:', result.rows[0]);
+    console.log('✅ Cliente criado com sucesso:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error('Erro ao criar cliente:', err);
-    console.error('Detalhes do erro:', err.detail || err.message);
+    console.error('❌ Erro ao criar cliente:', err);
+    console.error('📋 Detalhes do erro:', err.detail || err.message);
+    console.error('📋 Stack trace:', err.stack);
     res.status(500).json({ error: 'Erro interno no servidor', details: err.detail || err.message });
   }
 });

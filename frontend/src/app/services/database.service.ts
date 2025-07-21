@@ -81,13 +81,18 @@ export class DatabaseService {
     return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
   }
   
+  // Verificar duplicatas de cliente
+  verificarDuplicataCliente(cliente: Cliente): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/clientes/verificar-duplicata`, cliente);
+  }
+  
   addCliente(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
   }
 
   // Agendamentos
   createAgendamento(agendamento: Agendamento): Observable<Agendamento> {
-    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento, { headers: this.getAuthHeaders() });
+    return this.http.post<Agendamento>(`${this.apiUrl}/agendamentos`, agendamento);
   }
   
   // Listar agendamentos

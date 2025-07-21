@@ -24,28 +24,43 @@
       
       <div class="form-group">
         <label for="nome">Nome Completo (máx. 35 caracteres)</label>
-        <input type="text" id="nome" formControlName="nome" placeholder="Ex: Maria Alice Pereira" (keypress)="onlyLettersInput($event)" maxlength="35">
-        <small class="form-hint">Digite seu nome completo, pelo menos dois sobrenomes! (ex: Maria Alice Pereira)</small>
+        <input type="text" id="nome" formControlName="nome" placeholder="Ex: Maria Alice Pereira" 
+               (keypress)="onlyLettersInput($event)" (blur)="verificarNomeDuplicado()" 
+               maxlength="35" [class.error]="duplicataErrors.nome">
+        <small class="form-hint">Digite seu nome completo com pelo menos dois sobrenomes (ex: Maria Silva Santos)</small>
         <div *ngIf="isFieldInvalid('nome')" class="error-message">
           {{ getErrorMessage('nome') }}
+        </div>
+        <div *ngIf="duplicataErrors.nome" class="error-message duplicata-error">
+          Este nome já está cadastrado no sistema.
         </div>
       </div>
       
       <div class="form-group">
         <label for="telefone">Telefone para Contato</label>
-        <input type="tel" id="telefone" formControlName="telefone" placeholder="(XX) XXXXX-XXXX" (keypress)="onlyNumbersInput($event)" maxlength="15">
+        <input type="tel" id="telefone" formControlName="telefone" placeholder="(XX) XXXXX-XXXX" 
+               (keypress)="onlyNumbersInput($event)" (blur)="verificarTelefoneDuplicado()" 
+               (input)="onTelefoneInput($event)"
+               maxlength="15" [class.error]="duplicataErrors.telefone">
         <small class="form-hint">Digite um número de telefone celular válido</small>
         <div *ngIf="isFieldInvalid('telefone')" class="error-message">
           {{ getErrorMessage('telefone') }}
+        </div>
+        <div *ngIf="duplicataErrors.telefone" class="error-message duplicata-error">
+          Este telefone já está cadastrado no sistema.
         </div>
       </div>
       
       <div class="form-group">
         <label for="email">E-mail *</label>
-        <input type="email" id="email" formControlName="email" placeholder="seu.email@exemplo.com" required>
+        <input type="email" id="email" formControlName="email" placeholder="seu.email@exemplo.com" 
+               (blur)="verificarEmailDuplicado()" required [class.error]="duplicataErrors.email">
         <small class="form-hint">Por favor, não esqueça de preencher o email correto!</small>
         <div *ngIf="isFieldInvalid('email')" class="error-message">
           {{ getErrorMessage('email') }}
+        </div>
+        <div *ngIf="duplicataErrors.email" class="error-message duplicata-error">
+          Este email já está cadastrado no sistema.
         </div>
       </div>
     </div>

@@ -20,6 +20,14 @@ export class AgendamentoComponent implements OnInit {
   agendamentoForm!: FormGroup;
   dataMinima: string;
 
+  // Controle de duplicatas
+  duplicataErrors = {
+    nome: false,
+    email: false,
+    telefone: false,
+    mensagem: ''
+  };
+
   cliente: Cliente = {
     nome: '',
     email: '',
@@ -152,19 +160,23 @@ export class AgendamentoComponent implements OnInit {
       }
     }
     
-    // Verifica se o último sobrenome tem pelo menos 4 caracteres
-    if (words[words.length - 1].length < 4) {
+    // Verifica se o último sobrenome tem pelo menos 3 caracteres (era 4)
+    if (words[words.length - 1].length < 3) {
       return { sobrenomeCurto: true };
     }
     
-    // Verifica se o penúltimo sobrenome tem pelo menos 4 caracteres
-    if (words[words.length - 2].length < 4) {
-      return { sobrenomeCurto: true };
+    // Verifica se o penúltimo sobrenome tem pelo menos 3 caracteres, exceto preposições comuns
+    const preposicoes = ['de', 'da', 'do', 'das', 'dos', 'e'];
+    if (words.length >= 2) {
+      const penultimoSobrenome = words[words.length - 2].toLowerCase();
+      if (!preposicoes.includes(penultimoSobrenome) && penultimoSobrenome.length < 3) {
+        return { sobrenomeCurto: true };
+      }
     }
     
-    // Verifica se o nome completo tem pelo menos 15 caracteres (sem contar espaços)
+    // Verifica se o nome completo tem pelo menos 12 caracteres (sem contar espaços) - era 15
     const nomeCompletoSemEspacos = value.replace(/\s+/g, '');
-    if (nomeCompletoSemEspacos.length < 15) {
+    if (nomeCompletoSemEspacos.length < 12) {
       return { nomeMuitoCurto: true };
     }
     
@@ -257,6 +269,90 @@ export class AgendamentoComponent implements OnInit {
     return null;
   }
 
+  // Métodos para verificação de duplicatas
+  verificarNomeDuplicado(): void {
+    const nome = this.agendamentoForm.get('nome')?.value;
+    if (nome && nome.length > 2) {
+      this.dbService.verificarDuplicataCliente({ nome, email: '', telefone: '' }).subscribe({
+        next: (resultado) => {
+          this.duplicataErrors.nome = resultado.nome;
+          if (resultado.nome) {
+            this.duplicataErrors.mensagem = `O nome "${nome}" já está cadastrado no sistema.`;
+          }
+        },
+        error: (err) => console.error('Erro ao verificar nome:', err)
+      });
+    }
+  }
+
+  verificarEmailDuplicado(): void {
+    const email = this.agendamentoForm.get('email')?.value;
+    if (email && email.includes('@')) {
+      this.dbService.verificarDuplicataCliente({ nome: '', email, telefone: '' }).subscribe({
+        next: (resultado) => {
+          this.duplicataErrors.email = resultado.email;
+          if (resultado.email) {
+            this.duplicataErrors.mensagem = `O email "${email}" já está cadastrado no sistema.`;
+          }
+        },
+        error: (err) => console.error('Erro ao verificar email:', err)
+      });
+    }
+  }
+
+  verificarTelefoneDuplicado(): void {
+    const telefone = this.agendamentoForm.get('telefone')?.value;
+    console.log('🔍 Verificando telefone duplicado:', { telefone, length: telefone?.length });
+    
+    if (!telefone || telefone.trim() === '') {
+      console.log('⚠️ Telefone vazio, não verificando duplicata');
+      return;
+    }
+
+    // Limpar formatação do telefone antes de verificar
+    const telefoneNumerico = telefone.replace(/\D/g, '');
+    console.log('📱 Telefone limpo para verificação:', { original: telefone, limpo: telefoneNumerico, length: telefoneNumerico.length });
+    
+    // Verificar apenas se tem pelo menos 10 dígitos (para permitir verificação durante digitação)
+    if (telefoneNumerico.length >= 10) {
+      this.dbService.verificarDuplicataCliente({ nome: '', email: '', telefone: telefoneNumerico }).subscribe({
+        next: (resultado) => {
+          console.log('📋 Resultado verificação telefone:', resultado);
+          this.duplicataErrors.telefone = resultado.telefone;
+          if (resultado.telefone) {
+            this.duplicataErrors.mensagem = `O telefone "${telefone}" já está cadastrado no sistema.`;
+          } else {
+            // Limpar mensagem de erro se não houver duplicata
+            if (this.duplicataErrors.mensagem.includes('telefone')) {
+              this.duplicataErrors.mensagem = '';
+            }
+          }
+        },
+        error: (err) => {
+          console.error('❌ Erro ao verificar telefone:', err);
+          // Em caso de erro, não mostrar como duplicata
+          this.duplicataErrors.telefone = false;
+        }
+      });
+    } else {
+      console.log('⚠️ Telefone não tem pelo menos 10 dígitos, não verificando duplicata:', { telefoneNumerico, length: telefoneNumerico.length });
+      // Limpar erro se telefone não tem dígitos suficientes
+      this.duplicataErrors.telefone = false;
+      if (this.duplicataErrors.mensagem.includes('telefone')) {
+        this.duplicataErrors.mensagem = '';
+      }
+    }
+  }
+
+  limparErrosDuplicata(): void {
+    this.duplicataErrors = {
+      nome: false,
+      email: false,
+      telefone: false,
+      mensagem: ''
+    };
+  }
+
   initForm(): void {
     this.agendamentoForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(35), this.noNumbersValidator, this.nomeCompletoValidator]],
@@ -274,13 +370,20 @@ export class AgendamentoComponent implements OnInit {
       this.agendamentoForm.markAllAsTouched();
       return;
     }
+
+    // Verificar duplicatas antes de enviar
+    if (this.duplicataErrors.nome || this.duplicataErrors.email || this.duplicataErrors.telefone) {
+      this.mensagem = 'Os espíritos já reconhecem essas informações! Nome, telefone ou email já estão cadastrados no sistema.';
+      this.mensagemTipo = 'erro';
+      return;
+    }
     
     this.carregando = true;
     this.mensagem = '';
     
     // Atualizar os objetos com os valores do formulário
     this.cliente.nome = this.agendamentoForm.get('nome')?.value;
-    this.cliente.telefone = this.agendamentoForm.get('telefone')?.value;
+    this.cliente.telefone = this.agendamentoForm.get('telefone')?.value?.replace(/\D/g, '') || ''; // Remove formatação
     this.cliente.email = this.agendamentoForm.get('email')?.value;
     
     this.agendamento.data_agendada = this.agendamentoForm.get('data_agendada')?.value;
@@ -311,7 +414,11 @@ export class AgendamentoComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao criar cliente:', err);
-        this.mensagem = 'Os espíritos não reconheceram suas informações. Verifique seus dados e tente novamente.';
+        if (err.error && err.error.message && err.error.message.includes('já cadastrado')) {
+          this.mensagem = 'Os espíritos já reconhecem essas informações! Cliente já está cadastrado no sistema.';
+        } else {
+          this.mensagem = 'Os espíritos não reconheceram suas informações. Verifique seus dados e tente novamente.';
+        }
         this.mensagemTipo = 'erro';
         this.carregando = false;
       }
@@ -320,6 +427,7 @@ export class AgendamentoComponent implements OnInit {
 
   limparFormulario(): void {
     this.agendamentoForm.reset();
+    this.limparErrosDuplicata();
     
     this.cliente = {
       nome: '',
@@ -357,10 +465,10 @@ export class AgendamentoComponent implements OnInit {
     if (field.hasError('todosDigitosIguais')) return 'Telefone inválido: todos os dígitos são iguais';
     if (field.hasError('sequenciaSimples')) return 'Telefone inválido: sequência numérica simples';
     if (field.hasError('dddInvalido')) return 'DDD inválido';
-    if (field.hasError('doisSobrenomes')) return 'Digite nome e dois sobrenomes completos';
+    if (field.hasError('doisSobrenomes')) return 'Digite nome e dois sobrenomes (ex: Maria Silva Santos)';
     if (field.hasError('abreviacao')) return 'Cada parte do nome deve ter pelo menos 2 letras';
-    if (field.hasError('sobrenomeCurto')) return 'Sobrenomes muito curtos, digite sobrenomes completos';
-    if (field.hasError('nomeMuitoCurto')) return 'Nome completo muito curto, digite nome e dois sobrenomes completos';
+    if (field.hasError('sobrenomeCurto')) return 'Digite sobrenomes completos (mínimo 3 letras cada)';
+    if (field.hasError('nomeMuitoCurto')) return 'Nome muito curto. Digite nome e sobrenomes completos';
     if (field.hasError('apenasLetras')) return 'Use apenas letras e espaços no nome';
     if (field.hasError('repeticaoCaracteres')) return 'Evite repetições excessivas de caracteres';
     if (field.hasError('palavrasRepetidas')) return 'Evite palavras repetidas em sequência';
@@ -395,24 +503,36 @@ export class AgendamentoComponent implements OnInit {
       return false;
     }
     
-    // Formata o telefone enquanto digita
-    setTimeout(() => {
-      const input = event.target as HTMLInputElement;
-      const value = input.value.replace(/\D/g, ''); // Remove não-dígitos
-      
-      if (value.length <= 11) {
-        let formattedValue = '';
-        
-        if (value.length > 0) formattedValue = '(' + value.substring(0, 2);
-        if (value.length > 2) formattedValue += ') ' + value.substring(2, 7);
-        if (value.length > 7) formattedValue += '-' + value.substring(7, 11);
-        
-        // Atualiza o valor do campo e do FormControl
-        input.value = formattedValue;
-        this.agendamentoForm.get('telefone')?.setValue(formattedValue, {emitEvent: false});
-      }
-    }, 0);
-    
     return true;
+  }
+
+  onTelefoneInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value.replace(/\D/g, ''); // Remove não-dígitos
+    
+    if (value.length <= 11) {
+      let formattedValue = '';
+      
+      if (value.length > 0) formattedValue = '(' + value.substring(0, 2);
+      if (value.length > 2) formattedValue += ') ' + value.substring(2, 7);
+      if (value.length > 7) formattedValue += '-' + value.substring(7, 11);
+      
+      // Atualiza o valor do campo e do FormControl
+      input.value = formattedValue;
+      this.agendamentoForm.get('telefone')?.setValue(formattedValue, {emitEvent: false});
+      
+      // Limpar erros de duplicata quando o usuário está digitando
+      if (this.duplicataErrors.telefone) {
+        this.duplicataErrors.telefone = false;
+        if (this.duplicataErrors.mensagem.includes('telefone')) {
+          this.duplicataErrors.mensagem = '';
+        }
+      }
+
+      // Verificar duplicata automaticamente quando atingir 11 dígitos
+      if (value.length === 11) {
+        setTimeout(() => this.verificarTelefoneDuplicado(), 500); // Delay para não sobrecarregar
+      }
+    }
   }
 }
