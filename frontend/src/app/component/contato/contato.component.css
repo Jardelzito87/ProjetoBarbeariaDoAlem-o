@@ -60,28 +60,28 @@
 /* CONTATO - Título estiloso único */
 .contato-titulo-estiloso {
   text-align: center;
-  font-family: 'Segoe UI', Tahoma, sans-serif; /* Fonte mais simples */
-  color: #ff0000; /* COR VERMELHA */
-  font-size: 2.5rem; /* TAMANHO MAIOR */
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  color: #ff0000;
+  font-size: 2.5rem;
   margin: 0;
-  letter-spacing: 0.8px; /* Espaçamento mais sutil */
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Sombra bem sutil */
-  background: linear-gradient(135deg, #1a1a1a 0%, #222222 100%); /* Gradiente muito sutil */
-  padding: 8px 0 6px 0; /* Padding bem reduzido */
-  border-radius: 0; /* Remove border-radius - fica quadrado */
-  border: 1px solid rgba(255, 0, 0, 0.7); /* Borda vermelha */
+  letter-spacing: 0.8px;
+  background: #181818;
+  padding: 8px 0 6px 0;
+  border-radius: 0;
+  border: 1px solid rgba(255, 0, 0, 0.7);
   border-top: none;
-  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.2); /* Sombra vermelha sutil */
   position: fixed;
-  top: 100px; /* ✅ Logo abaixo do header principal (altura do header) */
-  left: 0; /* ✅ Alinhado à esquerda */
-  width: 100%; /* ✅ Largura total da tela */
-  z-index: 999; /* ✅ Fica abaixo do header mas acima do conteúdo */
+  top: 100px;
+  left: 0;
+  width: 100%;
+  z-index: 999;
   overflow: hidden;
+  text-shadow: none;
+  box-shadow: none;
 }
 
 .contato-titulo-estiloso::before {
-  display: none; /* Remove o efeito de brilho completamente */
+  display: none;
 }
 
 @keyframes shine {
@@ -245,12 +245,16 @@ textarea {
 }
 
 .contato-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #d4af37;
-    font-family: 'Creepster', cursive;
-    letter-spacing: 1px;
-    font-size: 1.2rem;
+  /* Remove qualquer brilho ou sombra do label */
+  text-shadow: none !important;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.contato-value {
+  color: #fff;
+  text-shadow: none !important;
+  font-weight: 500;
 }
 
 .contato-value {
