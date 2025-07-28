@@ -487,92 +487,22 @@ app.post('/api/clientes', async (req, res) => {
 
 // POST para criar agendamento
 app.post('/api/agendamentos', async (req, res) => {
-  console.log('Recebido POST para /api/agendamentos:', req.body);
-  const { cliente_id, servico_id, data_agendada, hora_agendada, observacoes } = req.body;
-  
-  // Debug: Log detalhado da data recebida
-  console.log('=== DEBUG DATA TIMEZONE ===');
-  console.log('Data recebida do frontend (string):', data_agendada);
-  console.log('Tipo da data:', typeof data_agendada);
-  
-  // Verificar se a data está no formato YYYY-MM-DD
-  if (typeof data_agendada === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data_agendada)) {
-    // Usar a data exatamente como veio do frontend, sem conversão
-    const dataProcessada = data_agendada;
+  try {
+    console.log('Recebido POST para /api/agendamentos:', req.body);
+    const { cliente_id, servico_id, data_agendada, hora_agendada, observacoes } = req.body;
     
-    console.log('Data que será usada no banco de dados (sem conversão):', dataProcessada);
+    console.log('=== DEBUG DATA TIMEZONE ===');
+    console.log('Data recebida do frontend (string):', data_agendada);
+    console.log('Tipo da data:', typeof data_agendada);
+    console.log('Data que será usada no banco de dados (sem conversão):', data_agendada);
     console.log('=== FIM DEBUG DATA ===');
     
     // Verificar campos obrigatórios
-    if (!cliente_id || !servico_id || !hora_agendada) {
-      console.log('Campos obrigatórios ausentes:', { cliente_id, servico_id, hora_agendada });
+    if (!cliente_id || !servico_id || !data_agendada || !hora_agendada) {
+      console.log('Campos obrigatórios ausentes:', { cliente_id, servico_id, data_agendada, hora_agendada });
       return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
     }
 
-    // Verificar se já existe agendamento no mesmo horário
-    const agendamentoExistente = await db.query(
-      "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
-      [dataProcessada, hora_agendada]
-    );
-    
-    if (agendamentoExistente.rows.length > 0) {
-      console.log('Horário já ocupado');
-      return res.status(400).json({ error: 'Horário já está ocupado' });
-    }
-    
-    // Verificar limite de agendamentos por dia (7 no total)
-    const { rows } = await db.query(
-      "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
-      [dataProcessada]
-    );
-    
-    const totalAgendamentos = parseInt(rows[0].total, 10);
-    console.log(`Total de agendamentos para ${dataProcessada}: ${totalAgendamentos}`);
-    
-    if (totalAgendamentos >= 7) {
-      console.log('Limite de agendamentos para este dia atingido');
-      return res.status(400).json({ 
-        error: 'Limite de agendamentos para este dia atingido. Por favor, escolha outra data.' 
-      });
-    }
-
-    // Inserir agendamento
-    console.log('=== DETALHES DA DATA NO BACKEND ===');
-    console.log('Data recebida do frontend (string):', data_agendada);
-    console.log('Data que será inserida no banco:', dataProcessada);
-    
-    const result = await db.query(
-      `INSERT INTO agendamentos 
-       (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
-       VALUES ($1, $2, $3, $4, $5, 'pendente') 
-       RETURNING *`,
-      [cliente_id, servico_id, dataProcessada, hora_agendada, observacoes || null]
-    );
-    
-    console.log('Agendamento inserido com sucesso. Data armazenada:', result.rows[0].data_agendada);
-    
-    // Registrar no log
-    await db.query(
-      `INSERT INTO logs_agendamentos 
-       (agendamento_id, status_anterior, status_novo, alterado_por, data_agendada, hora_agendada, cliente_nome) 
-       VALUES ($1, NULL, 'pendente', 'sistema', $2, $3, 
-         (SELECT nome FROM clientes WHERE id = $4))`,
-      [result.rows[0].id, dataProcessada, hora_agendada, cliente_id]
-    );
-    
-    res.status(201).json(result.rows[0]);
-  } else {
-    console.log('Formato de data inválido ou ausente');
-    return res.status(400).json({ error: 'Formato de data inválido' });
-  }
-  const dataParaInserir = dataProcessada;
-
-  if (!cliente_id || !servico_id || !data_agendada || !hora_agendada) {
-    console.log('Campos obrigatórios ausentes:', { cliente_id, servico_id, data_agendada, hora_agendada });
-    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
-  }
-
-  try {
     // Verificar se o cliente existe
     console.log('Verificando se o cliente existe:', cliente_id);
     const clienteExiste = await db.query('SELECT id FROM clientes WHERE id = $1', [cliente_id]);
@@ -589,103 +519,63 @@ app.post('/api/agendamentos', async (req, res) => {
       return res.status(400).json({ error: 'Serviço não encontrado' });
     }
 
-    // Verificar se data/hora está bloqueada
-    console.log('Verificando se data está bloqueada:', dataParaInserir);
-    const bloqueio = await db.query(
-      'SELECT * FROM datas_bloqueadas WHERE data = $1',
-      [dataParaInserir]
-    );
-    if (bloqueio.rows.length > 0) {
-      console.log('Data bloqueada encontrada');
-      return res.status(400).json({ error: 'Data bloqueada para agendamento' });
-    }
-
     // Verificar se já existe agendamento no mesmo horário
-    console.log('Verificando agendamentos existentes para:', dataParaInserir, hora_agendada);
     const agendamentoExistente = await db.query(
       "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
-      [dataParaInserir, hora_agendada]
+      [data_agendada, hora_agendada]
     );
+    
     if (agendamentoExistente.rows.length > 0) {
       console.log('Horário já ocupado');
       return res.status(400).json({ error: 'Horário já está ocupado' });
     }
     
-    // Verificação removida para permitir múltiplos agendamentos no mesmo dia
-    
-    // Verificar se já atingiu o limite de 7 agendamentos por dia (1 em cada horário)
-    console.log('Verificando limite de agendamentos para o dia:', dataParaInserir);
-    const agendamentosNoDia = await db.query(
+    // Verificar limite de agendamentos por dia (7 no total)
+    const { rows } = await db.query(
       "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
-      [dataParaInserir]
+      [data_agendada]
     );
     
-    const totalAgendamentos = parseInt(agendamentosNoDia.rows[0].total);
-    console.log(`Total de agendamentos para ${dataParaInserir}: ${totalAgendamentos}`);
+    const totalAgendamentos = parseInt(rows[0].total, 10);
+    console.log(`Total de agendamentos para ${data_agendada}: ${totalAgendamentos}`);
     
     if (totalAgendamentos >= 7) {
       console.log('Limite de agendamentos para este dia atingido');
-      return res.status(400).json({ error: 'Limite de agendamentos para este dia atingido. Por favor, escolha outra data.' });
+      return res.status(400).json({ 
+        error: 'Limite de agendamentos para este dia atingido. Por favor, escolha outra data.' 
+      });
     }
 
-    // Inserir agendamento
     console.log('=== DETALHES DA DATA NO BACKEND ===');
     console.log('Data recebida do frontend (string):', data_agendada);
-    
-    // Usar a data processada que já foi validada e formatada
-    console.log('Data que será inserida no banco de dados:', dataParaInserir);
-    
-    // Log detalhado para depuração
-    const [ano, mes, dia] = dataParaInserir.split('-').map(Number);
-    const dataLocal = new Date(ano, mes - 1, dia);
-    
-    console.log('Data convertida para local (objeto Date):', dataLocal);
-    console.log('Data em ISO string:', dataLocal.toISOString());
-    console.log('Data em string local:', dataLocal.toString());
-    console.log('Ano-Mês-Dia local:', 
-      dataLocal.getFullYear() + '-' + 
-      String(dataLocal.getMonth() + 1).padStart(2, '0') + '-' + 
-      String(dataLocal.getDate()).padStart(2, '0')
-    );
-    console.log('==============================');
-    
-    console.log('Inserindo novo agendamento:', { 
-      cliente_id, 
-      servico_id, 
-      data_agendada: dataParaInserir, 
-      hora_agendada,
-      data_convertida: {
-        ano,
-        mes: mes - 1,
-        dia,
-        iso: dataLocal.toISOString(),
-        local: dataLocal.toString()
-      }
-    });
+    console.log('Data que será inserida no banco:', data_agendada);
     
     const result = await db.query(
       `INSERT INTO agendamentos 
-      (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
-      VALUES ($1, $2, $3, $4, $5, 'pendente') RETURNING *`,
-      [cliente_id, servico_id, dataParaInserir, hora_agendada, observacoes || null]
+       (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
+       VALUES ($1, $2, $3, $4, $5, 'pendente') 
+       RETURNING *`,
+      [cliente_id, servico_id, data_agendada, hora_agendada, observacoes || null]
     );
     
     console.log('Agendamento inserido com sucesso. Data armazenada:', result.rows[0].data_agendada);
-
-    // Registrar log de criação do agendamento
+    
+    // Registrar no log
     await db.query(
       `INSERT INTO logs_agendamentos 
-      (agendamento_id, status_anterior, status_novo, alterado_por) 
-      VALUES ($1, NULL, 'pendente', 'sistema')`,
-      [result.rows[0].id]
+       (agendamento_id, status_anterior, status_novo, alterado_por, data_agendada, hora_agendada, cliente_nome) 
+       VALUES ($1, NULL, 'pendente', 'sistema', $2, $3, 
+         (SELECT nome FROM clientes WHERE id = $4))`,
+      [result.rows[0].id, data_agendada, hora_agendada, cliente_id]
     );
-
-    console.log('Agendamento criado com sucesso:', result.rows[0]);
+    
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Erro ao criar agendamento:', err);
-    console.error('Detalhes do erro:', err.detail || err.message);
-    res.status(500).json({ error: 'Erro interno no servidor', details: err.detail || err.message });
+    console.error('Detalhes do erro:', err.message);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Erro ao criar agendamento', detalhes: err.message });
+    }
   }
 });
 
