@@ -69,6 +69,19 @@ export class AdminComponent implements OnInit {
     this.dataHoje = hoje.toISOString().split('T')[0];
   }
 
+  // Helper method to parse dates in local timezone without UTC conversion
+  private parseLocalDate(dateString: string): Date {
+    const dateParts = dateString.split('-');
+    if (dateParts.length === 3) {
+      const year = parseInt(dateParts[0]);
+      const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
+      const day = parseInt(dateParts[2]);
+      return new Date(year, month, day);
+    }
+    // Fallback to regular Date constructor if format is unexpected
+    return new Date(dateString);
+  }
+
   ngOnInit(): void {
     this.adminLogado = this.authService.getAdminLogado();
     this.carregarServicos();
@@ -178,8 +191,10 @@ export class AdminComponent implements OnInit {
           if (a.status === 'pendente' && b.status !== 'pendente') return -1;
           if (a.status !== 'pendente' && b.status === 'pendente') return 1;
           
-          // Depois por data (mais recente primeiro)
-          const dataComparacao = new Date(b.data_agendada).getTime() - new Date(a.data_agendada).getTime();
+          // Depois por data (mais recente primeiro) - fix timezone issue
+          const dateA = this.parseLocalDate(a.data_agendada);
+          const dateB = this.parseLocalDate(b.data_agendada);
+          const dataComparacao = dateB.getTime() - dateA.getTime();
           if (dataComparacao !== 0) return dataComparacao;
           
           // Por último por hora (mais cedo primeiro)
@@ -393,10 +408,7 @@ export class AdminComponent implements OnInit {
 
   formatarData(data: string): string {
     if (!data) return '';
-    const dataObj = new Date(data);
-    const dia = dataObj.getDate().toString().padStart(2, '0');
-    const mes = (dataObj.getMonth() + 1).toString().padStart(2, '0');
-    const ano = dataObj.getFullYear();
+    const [ano, mes, dia] = data.split('-');
     return `${dia}/${mes}/${ano}`;
   }
   
@@ -495,9 +507,9 @@ export class AdminComponent implements OnInit {
     this.totalConcluidos = cortesFeitos.length;
     this.totalCancelados = cortesCancelados.length;
     
-    // Contar cortes por período
+    // Contar cortes por período - fix timezone issue
     this.cortesHoje = cortesFeitos.filter(corte => {
-      const dataCorte = new Date(corte.data_agendada);
+      const dataCorte = this.parseLocalDate(corte.data_agendada);
       dataCorte.setHours(0, 0, 0, 0);
       return dataCorte.getTime() === hoje.getTime();
     }).length;
@@ -505,15 +517,15 @@ export class AdminComponent implements OnInit {
     // NOVA LÓGICA: Contar agendamentos antecipados
     // Agendamentos concluídos cuja data original ainda não chegou
     this.cortesAntecipados = cortesFeitos.filter(corte => {
-      const dataOriginal = new Date(corte.data_agendada);
+      const dataOriginal = this.parseLocalDate(corte.data_agendada);
       dataOriginal.setHours(0, 0, 0, 0);
       // Se a data original é no futuro mas já está concluído = foi antecipado
       return dataOriginal.getTime() > hoje.getTime();
     }).length;
     
-    // NOVA LÓGICA: Contar cortes da semana passada
+    // NOVA LÓGICA: Contar cortes da semana passada - fix timezone issue
     this.cortesSemanaPassada = cortesFeitos.filter(corte => {
-      const dataCorte = new Date(corte.data_agendada);
+      const dataCorte = this.parseLocalDate(corte.data_agendada);
       dataCorte.setHours(0, 0, 0, 0);
       return dataCorte >= inicioSemanaPassada && dataCorte <= fimSemanaPassada;
     }).length;

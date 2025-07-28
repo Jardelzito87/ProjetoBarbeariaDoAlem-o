@@ -400,78 +400,21 @@ app.get('/api/logs-agendamentos', async (req, res) => {
 });
 
 // POST para verificar duplicatas de cliente
+// Modificado para sempre retornar que não há duplicatas, permitindo múltiplos clientes
+// com mesmo email, nome ou telefone
 app.post('/api/clientes/verificar-duplicata', async (req, res) => {
-  console.log('🔍 Verificando duplicatas para:', req.body);
-  let { nome, email, telefone } = req.body;
-
-  // Limpar formatação do telefone se fornecido
-  if (telefone) {
-    const telefoneOriginal = telefone;
-    telefone = telefone.replace(/\D/g, '');
-    console.log('📱 Telefone para verificação:', { original: telefoneOriginal, limpo: telefone });
-  }
-
-  try {
-    const duplicatas = {
-      nome: false,
-      email: false,
-      telefone: false,
-      cliente: null
-    };
-
-    // Verificar nome duplicado
-    if (nome) {
-      console.log('🔍 Verificando nome duplicado:', nome);
-      const nomeExistente = await db.query(
-        'SELECT * FROM clientes WHERE LOWER(nome) = LOWER($1)',
-        [nome]
-      );
-      if (nomeExistente.rows.length > 0) {
-        console.log('❌ Nome duplicado encontrado:', nomeExistente.rows[0]);
-        duplicatas.nome = true;
-        duplicatas.cliente = nomeExistente.rows[0];
-      }
-    }
-
-    // Verificar email duplicado
-    if (email) {
-      console.log('🔍 Verificando email duplicado:', email);
-      const emailExistente = await db.query(
-        'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1)',
-        [email]
-      );
-      if (emailExistente.rows.length > 0) {
-        console.log('❌ Email duplicado encontrado:', emailExistente.rows[0]);
-        duplicatas.email = true;
-        duplicatas.cliente = emailExistente.rows[0];
-      }
-    }
-
-    // Verificar telefone duplicado
-    if (telefone) {
-      console.log('🔍 Verificando telefone duplicado:', telefone);
-      const telefoneExistente = await db.query(
-        'SELECT * FROM clientes WHERE telefone = $1',
-        [telefone]
-      );
-      console.log('📋 Resultado busca telefone:', { 
-        telefone, 
-        encontrados: telefoneExistente.rows.length,
-        clientes: telefoneExistente.rows 
-      });
-      if (telefoneExistente.rows.length > 0) {
-        console.log('❌ Telefone duplicado encontrado:', telefoneExistente.rows[0]);
-        duplicatas.telefone = true;
-        duplicatas.cliente = telefoneExistente.rows[0];
-      }
-    }
-
-    console.log('📋 Resultado final verificação duplicatas:', duplicatas);
-    res.json(duplicatas);
-  } catch (err) {
-    console.error('❌ Erro ao verificar duplicatas:', err);
-    res.status(500).json({ error: 'Erro ao verificar duplicatas' });
-  }
+  console.log('🔍 Verificação de duplicatas desativada - permitindo múltiplos agendamentos');
+  
+  // Sempre retorna que não há duplicatas
+  const duplicatas = {
+    nome: false,
+    email: false,
+    telefone: false,
+    cliente: null
+  };
+  
+  console.log('📋 Resultado verificação duplicatas (sempre sem duplicatas):', duplicatas);
+  res.json(duplicatas);
 });
 
 // POST para criar cliente
@@ -490,50 +433,55 @@ app.post('/api/clientes', async (req, res) => {
   console.log('📱 Telefone formatado:', { original: telefoneOriginal, limpo: telefone });
 
   try {
-    // Verificar se já existe cliente com mesmo email, telefone ou nome
-    console.log('🔍 Verificando duplicatas para:', { nome, email, telefone });
-    
+    // Verificar se já existe um cliente com este email
+    console.log('🔍 Verificando se o cliente já existe pelo email:', email);
     const clienteExistente = await db.query(
-      'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1) OR telefone = $2 OR LOWER(nome) = LOWER($3)',
-      [email, telefone, nome]
+      'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1)',
+      [email]
     );
-    
+
     if (clienteExistente.rows.length > 0) {
-      const cliente = clienteExistente.rows[0];
-      console.log('❌ Cliente duplicado encontrado:', cliente);
-      
-      // Determinar qual campo está duplicado
-      let campoDuplicado = '';
-      if (cliente.email.toLowerCase() === email.toLowerCase()) {
-        campoDuplicado = 'email';
-      } else if (cliente.telefone === telefone) {
-        campoDuplicado = 'telefone';
-      } else if (cliente.nome.toLowerCase() === nome.toLowerCase()) {
-        campoDuplicado = 'nome';
-      }
-      
-      return res.status(409).json({ 
-        error: 'Cliente já cadastrado', 
-        campo: campoDuplicado,
-        cliente: cliente,
-        message: `Já existe um cliente cadastrado com este ${campoDuplicado}.`
-      });
+      // Cliente já existe, retornar o existente
+      console.log('ℹ️ Usando cliente existente:', clienteExistente.rows[0]);
+      return res.status(200).json(clienteExistente.rows[0]);
     }
     
-    // Inserir novo cliente
+    // Se não existir, criar novo cliente
     console.log('💾 Inserindo novo cliente:', { nome, email, telefone });
     const result = await db.query(
       'INSERT INTO clientes (nome, email, telefone) VALUES ($1, $2, $3) RETURNING *',
       [nome, email, telefone]
     );
-    
     console.log('✅ Cliente criado com sucesso:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error('❌ Erro ao criar cliente:', err);
+    console.error('❌ Erro ao criar/verificar cliente:', err);
     console.error('📋 Detalhes do erro:', err.detail || err.message);
-    console.error('📋 Stack trace:', err.stack);
-    res.status(500).json({ error: 'Erro interno no servidor', details: err.detail || err.message });
+    console.error('📋 Código do erro:', err.code);
+    
+    // Se for erro de chave duplicada, tentar novamente buscar o cliente existente
+    if (err.code === '23505' && err.constraint === 'clientes_email_key') {
+      console.log('⚠️ Tentando recuperar cliente existente após falha de chave duplicada');
+      try {
+        const clienteExistente = await db.query(
+          'SELECT * FROM clientes WHERE LOWER(email) = LOWER($1)',
+          [email]
+        );
+        
+        if (clienteExistente.rows.length > 0) {
+          console.log('✅ Cliente recuperado com sucesso após falha de chave duplicada:', clienteExistente.rows[0]);
+          return res.status(200).json(clienteExistente.rows[0]);
+        }
+      } catch (recoveryErr) {
+        console.error('❌ Erro ao tentar recuperar cliente existente:', recoveryErr);
+      }
+    }
+    
+    res.status(500).json({ 
+      error: 'Erro ao processar cliente',
+      details: err.detail || err.message,
+      code: err.code
+    });
   }
 });
 
@@ -541,6 +489,83 @@ app.post('/api/clientes', async (req, res) => {
 app.post('/api/agendamentos', async (req, res) => {
   console.log('Recebido POST para /api/agendamentos:', req.body);
   const { cliente_id, servico_id, data_agendada, hora_agendada, observacoes } = req.body;
+  
+  // Debug: Log detalhado da data recebida
+  console.log('=== DEBUG DATA TIMEZONE ===');
+  console.log('Data recebida do frontend (string):', data_agendada);
+  console.log('Tipo da data:', typeof data_agendada);
+  
+  // Verificar se a data está no formato YYYY-MM-DD
+  if (typeof data_agendada === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data_agendada)) {
+    // Usar a data exatamente como veio do frontend, sem conversão
+    const dataProcessada = data_agendada;
+    
+    console.log('Data que será usada no banco de dados (sem conversão):', dataProcessada);
+    console.log('=== FIM DEBUG DATA ===');
+    
+    // Verificar campos obrigatórios
+    if (!cliente_id || !servico_id || !hora_agendada) {
+      console.log('Campos obrigatórios ausentes:', { cliente_id, servico_id, hora_agendada });
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+    }
+
+    // Verificar se já existe agendamento no mesmo horário
+    const agendamentoExistente = await db.query(
+      "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
+      [dataProcessada, hora_agendada]
+    );
+    
+    if (agendamentoExistente.rows.length > 0) {
+      console.log('Horário já ocupado');
+      return res.status(400).json({ error: 'Horário já está ocupado' });
+    }
+    
+    // Verificar limite de agendamentos por dia (7 no total)
+    const { rows } = await db.query(
+      "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
+      [dataProcessada]
+    );
+    
+    const totalAgendamentos = parseInt(rows[0].total, 10);
+    console.log(`Total de agendamentos para ${dataProcessada}: ${totalAgendamentos}`);
+    
+    if (totalAgendamentos >= 7) {
+      console.log('Limite de agendamentos para este dia atingido');
+      return res.status(400).json({ 
+        error: 'Limite de agendamentos para este dia atingido. Por favor, escolha outra data.' 
+      });
+    }
+
+    // Inserir agendamento
+    console.log('=== DETALHES DA DATA NO BACKEND ===');
+    console.log('Data recebida do frontend (string):', data_agendada);
+    console.log('Data que será inserida no banco:', dataProcessada);
+    
+    const result = await db.query(
+      `INSERT INTO agendamentos 
+       (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
+       VALUES ($1, $2, $3, $4, $5, 'pendente') 
+       RETURNING *`,
+      [cliente_id, servico_id, dataProcessada, hora_agendada, observacoes || null]
+    );
+    
+    console.log('Agendamento inserido com sucesso. Data armazenada:', result.rows[0].data_agendada);
+    
+    // Registrar no log
+    await db.query(
+      `INSERT INTO logs_agendamentos 
+       (agendamento_id, status_anterior, status_novo, alterado_por, data_agendada, hora_agendada, cliente_nome) 
+       VALUES ($1, NULL, 'pendente', 'sistema', $2, $3, 
+         (SELECT nome FROM clientes WHERE id = $4))`,
+      [result.rows[0].id, dataProcessada, hora_agendada, cliente_id]
+    );
+    
+    res.status(201).json(result.rows[0]);
+  } else {
+    console.log('Formato de data inválido ou ausente');
+    return res.status(400).json({ error: 'Formato de data inválido' });
+  }
+  const dataParaInserir = dataProcessada;
 
   if (!cliente_id || !servico_id || !data_agendada || !hora_agendada) {
     console.log('Campos obrigatórios ausentes:', { cliente_id, servico_id, data_agendada, hora_agendada });
@@ -565,10 +590,10 @@ app.post('/api/agendamentos', async (req, res) => {
     }
 
     // Verificar se data/hora está bloqueada
-    console.log('Verificando se data está bloqueada:', data_agendada);
+    console.log('Verificando se data está bloqueada:', dataParaInserir);
     const bloqueio = await db.query(
       'SELECT * FROM datas_bloqueadas WHERE data = $1',
-      [data_agendada]
+      [dataParaInserir]
     );
     if (bloqueio.rows.length > 0) {
       console.log('Data bloqueada encontrada');
@@ -576,36 +601,27 @@ app.post('/api/agendamentos', async (req, res) => {
     }
 
     // Verificar se já existe agendamento no mesmo horário
-    console.log('Verificando agendamentos existentes para:', data_agendada, hora_agendada);
+    console.log('Verificando agendamentos existentes para:', dataParaInserir, hora_agendada);
     const agendamentoExistente = await db.query(
       "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
-      [data_agendada, hora_agendada]
+      [dataParaInserir, hora_agendada]
     );
     if (agendamentoExistente.rows.length > 0) {
       console.log('Horário já ocupado');
       return res.status(400).json({ error: 'Horário já está ocupado' });
     }
     
-    // Verificar se o cliente já tem agendamento no mesmo dia
-    console.log('Verificando se o cliente já tem agendamento no mesmo dia:', cliente_id, data_agendada);
-    const agendamentoClienteMesmoDia = await db.query(
-      "SELECT * FROM agendamentos WHERE cliente_id = $1 AND data_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
-      [cliente_id, data_agendada]
-    );
-    if (agendamentoClienteMesmoDia.rows.length > 0) {
-      console.log('Cliente já possui agendamento neste dia');
-      return res.status(400).json({ error: 'Você já possui um agendamento neste dia. Escolha outra data.' });
-    }
+    // Verificação removida para permitir múltiplos agendamentos no mesmo dia
     
     // Verificar se já atingiu o limite de 7 agendamentos por dia (1 em cada horário)
-    console.log('Verificando limite de agendamentos para o dia:', data_agendada);
+    console.log('Verificando limite de agendamentos para o dia:', dataParaInserir);
     const agendamentosNoDia = await db.query(
       "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
-      [data_agendada]
+      [dataParaInserir]
     );
     
     const totalAgendamentos = parseInt(agendamentosNoDia.rows[0].total);
-    console.log(`Total de agendamentos para ${data_agendada}: ${totalAgendamentos}`);
+    console.log(`Total de agendamentos para ${dataParaInserir}: ${totalAgendamentos}`);
     
     if (totalAgendamentos >= 7) {
       console.log('Limite de agendamentos para este dia atingido');
@@ -613,13 +629,48 @@ app.post('/api/agendamentos', async (req, res) => {
     }
 
     // Inserir agendamento
-    console.log('Inserindo novo agendamento:', { cliente_id, servico_id, data_agendada, hora_agendada });
+    console.log('=== DETALHES DA DATA NO BACKEND ===');
+    console.log('Data recebida do frontend (string):', data_agendada);
+    
+    // Usar a data processada que já foi validada e formatada
+    console.log('Data que será inserida no banco de dados:', dataParaInserir);
+    
+    // Log detalhado para depuração
+    const [ano, mes, dia] = dataParaInserir.split('-').map(Number);
+    const dataLocal = new Date(ano, mes - 1, dia);
+    
+    console.log('Data convertida para local (objeto Date):', dataLocal);
+    console.log('Data em ISO string:', dataLocal.toISOString());
+    console.log('Data em string local:', dataLocal.toString());
+    console.log('Ano-Mês-Dia local:', 
+      dataLocal.getFullYear() + '-' + 
+      String(dataLocal.getMonth() + 1).padStart(2, '0') + '-' + 
+      String(dataLocal.getDate()).padStart(2, '0')
+    );
+    console.log('==============================');
+    
+    console.log('Inserindo novo agendamento:', { 
+      cliente_id, 
+      servico_id, 
+      data_agendada: dataParaInserir, 
+      hora_agendada,
+      data_convertida: {
+        ano,
+        mes: mes - 1,
+        dia,
+        iso: dataLocal.toISOString(),
+        local: dataLocal.toString()
+      }
+    });
+    
     const result = await db.query(
       `INSERT INTO agendamentos 
       (cliente_id, servico_id, data_agendada, hora_agendada, observacoes, status) 
       VALUES ($1, $2, $3, $4, $5, 'pendente') RETURNING *`,
-      [cliente_id, servico_id, data_agendada, hora_agendada, observacoes || null]
+      [cliente_id, servico_id, dataParaInserir, hora_agendada, observacoes || null]
     );
+    
+    console.log('Agendamento inserido com sucesso. Data armazenada:', result.rows[0].data_agendada);
 
     // Registrar log de criação do agendamento
     await db.query(
@@ -699,17 +750,25 @@ app.get('/api/agendamentos', verificarAuth, async (req, res) => {
       ORDER BY a.data_agendada DESC, a.hora_agendada ASC
     `);
     
-    console.log('Agendamentos carregados com sucesso:', result.rows.length);
-    // Verificar se os preços estão sendo retornados corretamente
-    if (result.rows.length > 0) {
+    // Processar as datas para garantir que estejam no formato correto
+    const agendamentos = result.rows.map(agendamento => ({
+      ...agendamento,
+      // Garantir que a data seja retornada exatamente como está no banco
+      data_agendada: agendamento.data_agendada
+    }));
+    
+    // Debug: Verificar se os preços estão sendo retornados corretamente
+    console.log(`Retornando ${agendamentos.length} agendamentos`);
+    if (agendamentos.length > 0) {
       console.log('Exemplo de agendamento com preço:', {
-        id: result.rows[0].id,
-        servico_nome: result.rows[0].servico_nome,
-        servico_preco: result.rows[0].servico_preco
+        id: agendamentos[0].id,
+        data_agendada: agendamentos[0].data_agendada,
+        servico_nome: agendamentos[0].servico_nome,
+        servico_preco: agendamentos[0].servico_preco
       });
     }
     
-    res.json(result.rows);
+    res.json(agendamentos);
   } catch (err) {
     console.error('Erro ao buscar agendamentos:', err);
     res.status(500).json({ error: 'Erro ao buscar agendamentos' });

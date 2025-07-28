@@ -371,22 +371,24 @@ export class AgendamentoComponent implements OnInit {
       return;
     }
 
-    // Verificar duplicatas antes de enviar
-    if (this.duplicataErrors.nome || this.duplicataErrors.email || this.duplicataErrors.telefone) {
-      this.mensagem = 'Os espíritos já reconhecem essas informações! Nome, telefone ou email já estão cadastrados no sistema.';
-      this.mensagemTipo = 'erro';
-      return;
-    }
-    
     this.carregando = true;
     this.mensagem = '';
-    
-    // Atualizar os objetos com os valores do formulário
     this.cliente.nome = this.agendamentoForm.get('nome')?.value;
     this.cliente.telefone = this.agendamentoForm.get('telefone')?.value?.replace(/\D/g, '') || ''; // Remove formatação
     this.cliente.email = this.agendamentoForm.get('email')?.value;
     
-    this.agendamento.data_agendada = this.agendamentoForm.get('data_agendada')?.value;
+    // Usar a data exatamente como veio do input, sem conversão
+    const dataValue = this.agendamentoForm.get('data_agendada')?.value;
+    if (dataValue) {
+      // Usar a data diretamente do input, já está no formato YYYY-MM-DD
+      this.agendamento.data_agendada = dataValue;
+      
+      // Logs para depuração
+      console.log('Data do formulário (input):', dataValue);
+      console.log('Data que será enviada para o backend:', this.agendamento.data_agendada);
+    } else {
+      this.agendamento.data_agendada = '';
+    }
     this.agendamento.hora_agendada = this.agendamentoForm.get('hora_agendada')?.value;
     this.agendamento.servico_id = this.agendamentoForm.get('servico_id')?.value;
     this.agendamento.observacoes = this.agendamentoForm.get('observacoes')?.value;
