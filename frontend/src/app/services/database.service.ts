@@ -154,4 +154,9 @@ export class DatabaseService {
   getLogsAgendamentos(): Observable<LogAgendamento[]> {
     return this.http.get<LogAgendamento[]>(`${this.apiUrl}/logs-agendamentos`, { headers: this.getAuthHeaders() });
   }
+  
+  // Obter agendamentos por data
+  getAgendamentosPorData(data: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/agendamentos-data?data=${data}`);
+  }
 }

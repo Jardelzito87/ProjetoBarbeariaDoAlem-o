@@ -404,6 +404,7 @@ input::placeholder, textarea::placeholder {
   margin-top: 10px;
   border-top: 1px dashed #444;
   padding-top: 10px;
+  font-style: italic;
 }
 
 select {
@@ -513,6 +514,79 @@ button:hover::before {
   text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
+/* Estilos para agendamentos do dia */
+.agendamentos-do-dia {
+  background-color: rgba(0, 50, 0, 0.2);
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  border-radius: 6px;
+  padding: 15px;
+  margin: 15px 0;
+}
+
+.agendamentos-do-dia h4 {
+  color: #00ff00;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.agendamento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  margin: 5px 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  border-left: 3px solid #00ff00;
+}
+
+.agendamento-item .horario {
+  color: #00ff00;
+  font-weight: bold;
+  min-width: 60px;
+}
+
+.agendamento-item .cliente {
+  color: #c0c0c0;
+  flex: 1;
+  margin: 0 10px;
+}
+
+.agendamento-item .status {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.status-pendente {
+  background-color: rgba(255, 165, 0, 0.2);
+  color: #ffa500;
+  border: 1px solid #ffa500;
+}
+
+.status-confirmado {
+  background-color: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+  border: 1px solid #00ff00;
+}
+
+.sem-agendamentos {
+  background-color: rgba(50, 50, 0, 0.2);
+  border: 1px solid rgba(255, 255, 0, 0.3);
+  border-radius: 6px;
+  padding: 15px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.sem-agendamentos p {
+  color: #ffff00;
+  margin: 0;
+  font-style: italic;
+}
+
 @media (max-width: 768px) {
   .date-time-group {
     flex-direction: column;
@@ -526,5 +600,15 @@ button:hover::before {
   
   button {
     width: 100%;
+  }
+  
+  .agendamento-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .agendamento-item .horario {
+    min-width: auto;
   }
 }

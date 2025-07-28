@@ -121,7 +121,21 @@
     
     <div class="form-disclaimer">
       <p>Ao agendar, você concorda em entregar sua aparência às mãos dos mestres do além. Não nos responsabilizamos por possíveis posses demoníacas durante o procedimento.</p>
-      <p class="regras-agendamento">Regras de agendamento: Limite de 1 agendamento por cliente por dia. Máximo de 7 agendamentos por dia (1 em cada horário). Não atendemos aos domingos.</p>
+      
+      <div *ngIf="agendamentosDoDia.length > 0" class="agendamentos-do-dia">
+        <h4>Agendamentos para esta data:</h4>
+        <div class="agendamento-item" *ngFor="let agendamento of agendamentosDoDia">
+          <span class="horario">{{ agendamento.hora_agendada.substring(0,5) }}</span>
+          <span class="cliente">{{ agendamento.cliente_nome }} (ID: {{ agendamento.cliente_id }})</span>
+          <span class="status" [class]="'status-' + agendamento.status">{{ agendamento.status }}</span>
+        </div>
+      </div>
+      
+      <div *ngIf="agendamentosDoDia.length === 0 && agendamentoForm.get('data_agendada')?.value" class="sem-agendamentos">
+        <p>Nenhum agendamento para esta data.</p>
+      </div>
+      
+      <p class="regras-agendamento" *ngIf="!agendamentoForm.get('data_agendada')?.value">Selecione uma data para ver os agendamentos do dia. Não atendemos aos domingos.</p>
     </div>
     
     <div class="form-buttons">

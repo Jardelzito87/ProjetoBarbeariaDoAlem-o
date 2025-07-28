@@ -28,6 +28,9 @@ export class AgendamentoComponent implements OnInit {
     mensagem: ''
   };
 
+  // Agendamentos do dia selecionado
+  agendamentosDoDia: any[] = [];
+
   cliente: Cliente = {
     nome: '',
     email: '',
@@ -71,8 +74,27 @@ export class AgendamentoComponent implements OnInit {
         this.agendamentoForm.get('data_agendada')?.setValue('');
         this.mensagem = 'Não realizamos atendimentos aos domingos. Por favor, escolha outro dia.';
         this.mensagemTipo = 'erro';
+        this.agendamentosDoDia = [];
+      } else {
+        // Buscar agendamentos para a data selecionada
+        this.buscarAgendamentosDoDia(dataStr);
       }
+    } else {
+      this.agendamentosDoDia = [];
     }
+  }
+
+  // Buscar agendamentos para uma data específica
+  buscarAgendamentosDoDia(data: string): void {
+    this.dbService.getAgendamentosPorData(data).subscribe({
+      next: (agendamentos) => {
+        this.agendamentosDoDia = agendamentos;
+      },
+      error: (err) => {
+        console.error('Erro ao buscar agendamentos do dia:', err);
+        this.agendamentosDoDia = [];
+      }
+    });
   }
 
   // Validador personalizado para permitir apenas letras e espaços no nome
@@ -392,6 +414,8 @@ export class AgendamentoComponent implements OnInit {
       hora_agendada: '',
       observacoes: ''
     };
+    
+    this.agendamentosDoDia = [];
   }
   
   // Métodos auxiliares para validação no template

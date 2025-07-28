@@ -651,6 +651,36 @@ app.get('/api/disponibilidade', async (req, res) => {
   }
 });
 
+// GET para listar agendamentos de uma data específica
+app.get('/api/agendamentos-data', async (req, res) => {
+  const { data } = req.query;
+  
+  if (!data) {
+    return res.status(400).json({ error: 'Data é obrigatória' });
+  }
+  
+  try {
+    const result = await db.query(`
+      SELECT 
+        a.id,
+        a.hora_agendada,
+        a.status,
+        c.id as cliente_id,
+        c.nome as cliente_nome
+      FROM agendamentos a
+      JOIN clientes c ON a.cliente_id = c.id
+      WHERE a.data_agendada = $1
+      AND a.status IN ('pendente', 'confirmado')
+      ORDER BY a.hora_agendada ASC
+    `, [data]);
+    
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao buscar agendamentos da data:', err);
+    res.status(500).json({ error: 'Erro ao buscar agendamentos' });
+  }
+});
+
 // GET para listar agendamentos (PROTEGIDA - APENAS ADMIN)
 app.get('/api/agendamentos', verificarAuth, async (req, res) => {
   try {
