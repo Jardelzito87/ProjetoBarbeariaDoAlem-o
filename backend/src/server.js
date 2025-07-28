@@ -521,7 +521,7 @@ app.post('/api/agendamentos', async (req, res) => {
 
     // Verificar se já existe agendamento no mesmo horário
     const agendamentoExistente = await db.query(
-      "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status NOT IN ('cancelado', 'não compareceu')",
+      "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status IN ('pendente', 'confirmado')",
       [data_agendada, hora_agendada]
     );
     
@@ -532,7 +532,7 @@ app.post('/api/agendamentos', async (req, res) => {
     
     // Verificar limite de agendamentos por dia (7 no total)
     const { rows } = await db.query(
-      "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
+      "SELECT COUNT(*) as total FROM agendamentos WHERE data_agendada = $1 AND status IN ('pendente', 'confirmado')",
       [data_agendada]
     );
     
@@ -589,12 +589,12 @@ app.get('/api/verificar-horario', async (req, res) => {
   
   try {
     // Verificar se já existe um agendamento ativo para esta data e hora
-    // Excluímos 'concluido', 'cancelado' e 'não compareceu' dos status que bloqueiam o horário
+    // Apenas 'pendente' e 'confirmado' bloqueiam o horário
     const result = await db.query(
       `SELECT id FROM agendamentos 
        WHERE data_agendada = $1 
        AND hora_agendada = $2 
-       AND status NOT IN ('concluido', 'cancelado', 'não compareceu')`,
+       AND status IN ('pendente', 'confirmado')`,
       [data, hora]
     );
     
@@ -625,11 +625,11 @@ app.get('/api/disponibilidade', async (req, res) => {
     ];
     
     // Buscar agendamentos para a data especificada
-    // Excluímos 'concluido', 'cancelado' e 'não compareceu' dos status que bloqueiam o horário
+    // Apenas 'pendente' e 'confirmado' bloqueiam o horário
     const agendamentosResult = await db.query(
       `SELECT hora_agendada FROM agendamentos 
        WHERE data_agendada = $1 
-       AND status NOT IN ('concluido', 'cancelado', 'não compareceu')`,
+       AND status IN ('pendente', 'confirmado')`,
       [data]
     );
     
