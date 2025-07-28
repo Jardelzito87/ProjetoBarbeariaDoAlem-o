@@ -86,6 +86,23 @@ export class DatabaseService {
     return this.http.post<any>(`${this.apiUrl}/clientes/verificar-duplicata`, cliente);
   }
   
+  // Verificar se um nome já existe
+  verificarNomeExistente(nome: string): Observable<{ existe: boolean }> {
+    return this.http.get<{ existe: boolean }>(`${this.apiUrl}/clientes/verificar-nome?nome=${encodeURIComponent(nome)}`);
+  }
+  
+  // Verificar se um email já existe
+  verificarEmailExistente(email: string): Observable<{ existe: boolean }> {
+    return this.http.get<{ existe: boolean }>(`${this.apiUrl}/clientes/verificar-email?email=${encodeURIComponent(email)}`);
+  }
+  
+  // Verificar se um telefone já existe
+  verificarTelefoneExistente(telefone: string): Observable<{ existe: boolean }> {
+    // Remove formatação do telefone antes de enviar
+    const telefoneNumerico = telefone.replace(/\D/g, '');
+    return this.http.get<{ existe: boolean }>(`${this.apiUrl}/clientes/verificar-telefone?telefone=${telefoneNumerico}`);
+  }
+  
   addCliente(cliente: Cliente): Observable<Cliente> {
     return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
   }
@@ -123,6 +140,14 @@ export class DatabaseService {
   // Verificar disponibilidade de horários para uma data
   verificarDisponibilidade(data: string): Observable<Disponibilidade[]> {
     return this.http.get<Disponibilidade[]>(`${this.apiUrl}/disponibilidade?data=${data}`, { headers: this.getAuthHeaders() });
+  }
+
+  // Verificar se um horário específico está disponível
+  verificarHorarioDisponivel(data: string, hora: string): Observable<{ disponivel: boolean }> {
+    return this.http.get<{ disponivel: boolean }>(
+      `${this.apiUrl}/verificar-horario?data=${data}&hora=${hora}`,
+      { headers: this.getAuthHeaders() }
+    );
   }
   
   // Obter logs de agendamentos

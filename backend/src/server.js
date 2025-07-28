@@ -689,6 +689,37 @@ app.post('/api/agendamentos', async (req, res) => {
   }
 });
 
+// GET para verificar se um horário específico está disponível
+app.get('/api/verificar-horario', async (req, res) => {
+  const { data, hora } = req.query;
+  
+  if (!data || !hora) {
+    return res.status(400).json({ error: 'Data e hora são obrigatórios' });
+  }
+  
+  try {
+    // Verificar se já existe um agendamento ativo para esta data e hora
+    // Excluímos 'concluido', 'cancelado' e 'não compareceu' dos status que bloqueiam o horário
+    const result = await db.query(
+      `SELECT id FROM agendamentos 
+       WHERE data_agendada = $1 
+       AND hora_agendada = $2 
+       AND status NOT IN ('concluido', 'cancelado', 'não compareceu')`,
+      [data, hora]
+    );
+    
+    console.log(`Verificando disponibilidade para ${data} ${hora} - Encontrados ${result.rows.length} agendamentos ativos`);
+    
+    // Se não encontrar agendamentos ativos, o horário está disponível
+    const disponivel = result.rows.length === 0;
+    
+    res.json({ disponivel });
+  } catch (error) {
+    console.error('Erro ao verificar disponibilidade:', error);
+    res.status(500).json({ error: 'Erro ao verificar disponibilidade' });
+  }
+});
+
 // GET para verificar disponibilidade de horários
 app.get('/api/disponibilidade', async (req, res) => {
   const { data } = req.query;
@@ -704,10 +735,15 @@ app.get('/api/disponibilidade', async (req, res) => {
     ];
     
     // Buscar agendamentos para a data especificada
+    // Excluímos 'concluido', 'cancelado' e 'não compareceu' dos status que bloqueiam o horário
     const agendamentosResult = await db.query(
-      "SELECT hora_agendada FROM agendamentos WHERE data_agendada = $1 AND status NOT IN ('cancelado', 'não compareceu')",
+      `SELECT hora_agendada FROM agendamentos 
+       WHERE data_agendada = $1 
+       AND status NOT IN ('concluido', 'cancelado', 'não compareceu')`,
       [data]
     );
+    
+    console.log(`Verificando disponibilidade para ${data} - Encontrados ${agendamentosResult.rows.length} horários ocupados`);
     
     // Mapear horários ocupados
     const horariosOcupados = agendamentosResult.rows.map(row => row.hora_agendada);
