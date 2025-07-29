@@ -286,9 +286,14 @@
         </div>
       </div>
       
-      <button class="toggle-button" (click)="toggleMostrarClientes()">
-        {{ mostrarClientes ? 'Ocultar Clientes' : 'Mostrar Clientes' }}
-      </button>
+      <div class="clientes-controls">
+        <button class="toggle-button" (click)="toggleMostrarClientes()">
+          {{ mostrarClientes ? 'Ocultar Clientes' : 'Mostrar Clientes' }}
+        </button>
+        <button class="refresh-button" (click)="recarregarClientes()" [disabled]="carregandoClientes">
+          🔄 Atualizar
+        </button>
+      </div>
       
       <div *ngIf="mostrarClientes" class="clientes-container">
         <div *ngIf="carregandoClientes" class="loading-container">
@@ -300,7 +305,11 @@
           <p>Nenhum cliente cadastrado</p>
         </div>
         
-        <table *ngIf="clientes.length > 0" class="clientes-table">
+        <div *ngIf="!carregandoClientes && clientes.length > 0" class="clientes-info">
+          <p><strong>Total de clientes cadastrados:</strong> {{ clientes.length }}</p>
+        </div>
+        
+        <table *ngIf="!carregandoClientes && clientes.length > 0" class="clientes-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -310,7 +319,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let cliente of clientes">
+            <tr *ngFor="let cliente of clientes; trackBy: trackByClienteId">
               <td>{{ cliente.id }}</td>
               <td>{{ cliente.nome }}</td>
               <td>{{ cliente.email }}</td>

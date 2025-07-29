@@ -75,6 +75,8 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     margin: 0 auto;
     font-family: 'Segoe UI', 'Poppins', Arial, sans-serif;
+    width: auto;
+    padding: 20px;
 }
 
 .tabela-cortes th, .tabela-cortes td {

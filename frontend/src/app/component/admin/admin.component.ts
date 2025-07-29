@@ -84,6 +84,11 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.adminLogado = this.authService.getAdminLogado();
+    // Limpar dados antigos antes de carregar
+    this.clientes = [];
+    this.agendamentos = [];
+    this.servicos = [];
+    
     this.carregarServicos();
     this.carregarAgendamentos();
     this.carregarClientes();
@@ -125,16 +130,34 @@ export class AdminComponent implements OnInit {
   
   carregarClientes(): void {
     this.carregandoClientes = true;
+    this.clientes = [];
+    
+    // Limpar qualquer cache local
+    localStorage.removeItem('clientes');
+    sessionStorage.removeItem('clientes');
+    
+    console.log('🔍 Fazendo requisição para:', `${this.dbService['apiUrl']}/clientes`);
+    
     this.dbService.getClientes().subscribe({
       next: (data) => {
-        this.clientes = data;
-        console.log('Clientes carregados:', this.clientes);
+        this.clientes = data || [];
+        console.log('=== DEBUG CLIENTES COMPLETO ===');
+        console.log('URL da API:', `${this.dbService['apiUrl']}/clientes`);
+        console.log('Dados brutos do backend:', data);
+        console.log('Tipo dos dados:', typeof data);
+        console.log('É array?', Array.isArray(data));
+        console.log('Quantidade de clientes:', this.clientes.length);
+        console.log('Primeiros 3 clientes:', this.clientes.slice(0, 3));
+        console.log('=== FIM DEBUG ===');
         this.carregandoClientes = false;
       },
       error: (err) => {
-        console.error('Erro ao carregar clientes:', err);
+        console.error('❌ Erro ao carregar clientes:', err);
+        console.error('Status do erro:', err.status);
+        console.error('URL que falhou:', err.url);
+        this.clientes = [];
         this.carregandoClientes = false;
-        this.mensagem = 'Erro ao carregar clientes';
+        this.mensagem = 'Erro ao carregar clientes do banco de dados';
         this.mensagemTipo = 'erro';
       }
     });
@@ -147,6 +170,17 @@ export class AdminComponent implements OnInit {
   toggleMostrarLogs(): void {
     this.mostrarLogs = !this.mostrarLogs;
   }
+  
+  trackByClienteId(index: number, cliente: Cliente): number {
+    return cliente.id || index;
+  }
+  
+  recarregarClientes(): void {
+    console.log('Forçando recarga de clientes...');
+    this.carregarClientes();
+  }
+  
+
 
   initForm(): void {
     this.bloqueioForm = this.fb.group({
