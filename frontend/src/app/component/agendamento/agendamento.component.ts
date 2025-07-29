@@ -30,6 +30,7 @@ export class AgendamentoComponent implements OnInit {
 
   // Agendamentos do dia selecionado
   agendamentosDoDia: any[] = [];
+  dataBloqueada = false;
 
   cliente: Cliente = {
     nome: '',
@@ -75,20 +76,39 @@ export class AgendamentoComponent implements OnInit {
         this.mensagem = 'Não realizamos atendimentos aos domingos. Por favor, escolha outro dia.';
         this.mensagemTipo = 'erro';
         this.agendamentosDoDia = [];
+        this.dataBloqueada = false;
       } else {
         // Buscar agendamentos para a data selecionada
         this.buscarAgendamentosDoDia(dataStr);
       }
     } else {
       this.agendamentosDoDia = [];
+      this.dataBloqueada = false;
     }
   }
 
   // Buscar agendamentos para uma data específica
   buscarAgendamentosDoDia(data: string): void {
     this.dbService.getAgendamentosPorData(data).subscribe({
-      next: (agendamentos) => {
-        this.agendamentosDoDia = agendamentos;
+      next: (response: any) => {
+        // Verificar se a resposta é um array (formato antigo) ou objeto (formato novo)
+        if (Array.isArray(response)) {
+          this.agendamentosDoDia = response;
+        } else {
+          this.agendamentosDoDia = response.agendamentos || [];
+          this.dataBloqueada = response.dataBloqueada || false;
+          
+          // Se a data estiver bloqueada, mostrar mensagem
+          if (response.dataBloqueada) {
+            const motivo = response.motivoBloqueio || 'Data indisponível';
+            this.mensagem = `Esta data está bloqueada para agendamentos. Motivo: ${motivo}`;
+            this.mensagemTipo = 'erro';
+          } else {
+            // Limpar mensagem se a data não estiver bloqueada
+            this.mensagem = '';
+            this.mensagemTipo = '';
+          }
+        }
       },
       error: (err) => {
         console.error('Erro ao buscar agendamentos do dia:', err);
@@ -602,6 +622,7 @@ export class AgendamentoComponent implements OnInit {
     };
     
     this.agendamentosDoDia = [];
+    this.dataBloqueada = false;
   }
   
   // Métodos auxiliares para validação no template

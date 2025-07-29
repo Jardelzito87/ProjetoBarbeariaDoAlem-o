@@ -488,6 +488,20 @@ button:hover::before {
   box-shadow: 0 6px 20px rgba(179, 0, 0, 0.4);
 }
 
+.btn-submit:disabled {
+  background-color: #666;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-submit:disabled:hover {
+  background-color: #666;
+  transform: none;
+  box-shadow: none;
+}
+
 /* Estilos para duplicata de dados */
 .error {
   border: 2px solid #ff4444 !important;

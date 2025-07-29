@@ -140,7 +140,7 @@
     
     <div class="form-buttons">
       <button type="button" class="btn-reset" (click)="limparFormulario()">Cancelar Ritual</button>
-      <button type="submit" class="btn-submit">Selar o Pacto</button>
+      <button type="submit" class="btn-submit" [disabled]="dataBloqueada">Selar o Pacto</button>
     </div>
   </form>
 </div>

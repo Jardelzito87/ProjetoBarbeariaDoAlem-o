@@ -519,6 +519,17 @@ app.post('/api/agendamentos', async (req, res) => {
       return res.status(400).json({ error: 'Serviço não encontrado' });
     }
 
+    // Verificar se a data está bloqueada
+    console.log('Verificando se a data está bloqueada:', data_agendada);
+    const dataBloqueada = await db.query('SELECT * FROM datas_bloqueadas WHERE data = $1', [data_agendada]);
+    if (dataBloqueada.rows.length > 0) {
+      console.log('Data bloqueada encontrada:', dataBloqueada.rows[0]);
+      const motivo = dataBloqueada.rows[0].motivo || 'Data indisponível';
+      return res.status(400).json({ 
+        error: `Esta data está bloqueada para agendamentos. Motivo: ${motivo}` 
+      });
+    }
+
     // Verificar se já existe agendamento no mesmo horário
     const agendamentoExistente = await db.query(
       "SELECT * FROM agendamentos WHERE data_agendada = $1 AND hora_agendada = $2 AND status IN ('pendente', 'confirmado')",
@@ -588,6 +599,12 @@ app.get('/api/verificar-horario', async (req, res) => {
   }
   
   try {
+    // Verificar se a data está bloqueada
+    const dataBloqueada = await db.query('SELECT * FROM datas_bloqueadas WHERE data = $1', [data]);
+    if (dataBloqueada.rows.length > 0) {
+      return res.json({ disponivel: false, motivo: 'Data bloqueada' });
+    }
+
     // Verificar se já existe um agendamento ativo para esta data e hora
     // Apenas 'pendente' e 'confirmado' bloqueiam o horário
     const result = await db.query(
@@ -624,6 +641,18 @@ app.get('/api/disponibilidade', async (req, res) => {
       '09:00:00', '10:00:00', '11:00:00', '14:00:00', '15:00:00', '16:00:00', '17:00:00'
     ];
     
+    // Verificar se a data está bloqueada
+    const dataBloqueada = await db.query('SELECT * FROM datas_bloqueadas WHERE data = $1', [data]);
+    if (dataBloqueada.rows.length > 0) {
+      // Se a data estiver bloqueada, todos os horários ficam indisponíveis
+      const disponibilidade = horarios.map(horario => ({
+        horario,
+        disponivel: false,
+        motivo: 'Data bloqueada'
+      }));
+      return res.json(disponibilidade);
+    }
+
     // Buscar agendamentos para a data especificada
     // Apenas 'pendente' e 'confirmado' bloqueiam o horário
     const agendamentosResult = await db.query(
@@ -673,6 +702,18 @@ app.get('/api/agendamentos-data', async (req, res) => {
       AND a.status IN ('pendente', 'confirmado')
       ORDER BY a.hora_agendada ASC
     `, [data]);
+    
+    // Verificar se a data está bloqueada e adicionar informação
+    const dataBloqueada = await db.query('SELECT motivo FROM datas_bloqueadas WHERE data = $1', [data]);
+    const isBlocked = dataBloqueada.rows.length > 0;
+    
+    const response = {
+      agendamentos: result.rows,
+      dataBloqueada: isBlocked,
+      motivoBloqueio: isBlocked ? dataBloqueada.rows[0].motivo : null
+    };
+    
+    res.json(response);
     
     res.json(result.rows);
   } catch (err) {
