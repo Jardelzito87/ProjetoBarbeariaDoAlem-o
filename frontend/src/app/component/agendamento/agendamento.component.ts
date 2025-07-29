@@ -108,8 +108,20 @@ export class AgendamentoComponent implements OnInit {
   nomeCompletoValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
     
+    const value = control.value.trim();
+    
+    // Verificar sequências e repetições
+    if (this.hasSequentialChars(value) || this.hasRepeatedChars(value)) {
+      return { sequenciaInvalida: true };
+    }
+    
+    // Verificar se parece com nome real
+    if (!this.isRealName(value)) {
+      return { nomeIrreal: true };
+    }
+    
     // Verifica se tem pelo menos 2 partes (nome e sobrenome)
-    const parts = control.value.trim().split(/\s+/);
+    const parts = value.split(/\s+/);
     if (parts.length < 2) {
       return { nomeIncompleto: true };
     }
@@ -124,6 +136,111 @@ export class AgendamentoComponent implements OnInit {
     return null;
   }
 
+  // Validador para verificar se é um nome real
+  isRealName(name: string): boolean {
+    const parts = name.toLowerCase().split(/\s+/);
+    
+    // Lista de nomes comuns brasileiros
+    const nomesComuns = [
+      'ana', 'antonio', 'carlos', 'francisco', 'jose', 'joao', 'luis', 'luiz', 'marcos', 'paulo',
+      'pedro', 'rafael', 'ricardo', 'roberto', 'sergio', 'alexandre', 'andre', 'bruno', 'daniel',
+      'diego', 'eduardo', 'fabio', 'felipe', 'fernando', 'gabriel', 'gustavo', 'henrique', 'igor',
+      'ivan', 'jorge', 'leonardo', 'lucas', 'marcelo', 'mario', 'mateus', 'miguel', 'nicolas',
+      'otavio', 'renato', 'rodrigo', 'samuel', 'thiago', 'victor', 'vinicius', 'wellington',
+      'maria', 'francisca', 'antonia', 'adriana', 'juliana', 'marcia', 'fernanda', 'patricia',
+      'aline', 'amanda', 'andrea', 'angela', 'beatriz', 'bruna', 'camila', 'carla', 'carolina',
+      'claudia', 'cristina', 'daniela', 'debora', 'denise', 'eliane', 'fabiana', 'flavia',
+      'gabriela', 'helena', 'isabela', 'jaqueline', 'jessica', 'joana', 'julia', 'juliane',
+      'karina', 'larissa', 'leticia', 'luana', 'luciana', 'mariana', 'michele', 'monica',
+      'natalia', 'patricia', 'paula', 'priscila', 'raquel', 'renata', 'roberta', 'sandra',
+      'simone', 'solange', 'sueli', 'tatiana', 'valeria', 'vanessa', 'vera', 'viviane'
+    ];
+    
+    // Sobrenomes comuns brasileiros
+    const sobrenomesComuns = [
+      'silva', 'santos', 'oliveira', 'souza', 'rodrigues', 'ferreira', 'alves', 'pereira',
+      'lima', 'gomes', 'ribeiro', 'carvalho', 'almeida', 'lopes', 'soares', 'fernandes',
+      'vieira', 'barbosa', 'rocha', 'dias', 'monteiro', 'mendes', 'castro', 'campos',
+      'cardoso', 'reis', 'araujo', 'cruz', 'cavalcanti', 'azevedo', 'teixeira', 'correia',
+      'nascimento', 'moreira', 'jesus', 'martins', 'costa', 'pinto', 'andrade', 'ramos',
+      'machado', 'freitas', 'garcia', 'cunha', 'guimaraes', 'moura', 'farias', 'peixoto',
+      'batista', 'nunes', 'marques', 'melo', 'cardoso', 'torres', 'bezerra', 'sales',
+      'coelho', 'duarte', 'fonseca', 'nogueira', 'morais', 'brito', 'medeiros', 'dantas'
+    ];
+    
+    // Verificar se pelo menos o primeiro nome é comum
+    const primeiroNome = parts[0];
+    const temNomeComum = nomesComuns.includes(primeiroNome);
+    
+    // Verificar se pelo menos um sobrenome é comum
+    const temSobrenomeComum = parts.slice(1).some(part => sobrenomesComuns.includes(part));
+    
+    // Verificar padrões de nomes falsos
+    const temPadraFalso = parts.some(part => {
+      // Muito curto ou muito longo
+      if (part.length < 2 || part.length > 15) return true;
+      
+      // Muitas consoantes seguidas
+      if (/[bcdfghjklmnpqrstvwxyz]{4,}/i.test(part)) return true;
+      
+      // Muitas vogais seguidas
+      if (/[aeiou]{4,}/i.test(part)) return true;
+      
+      // Padrões estranhos de alternância
+      if (/^[aeiou][bcdfghjklmnpqrstvwxyz][aeiou][bcdfghjklmnpqrstvwxyz]$/i.test(part) && part.length === 4) return true;
+      
+      return false;
+    });
+    
+    // Aceitar se tem nome comum OU sobrenome comum E não tem padrão falso
+    return (temNomeComum || temSobrenomeComum) && !temPadraFalso;
+  }
+
+  // Validador para detectar sequências de caracteres
+  hasSequentialChars(text: string): boolean {
+    const cleanText = text.toLowerCase().replace(/\s/g, '');
+    
+    // Verificar sequências alfabéticas (abc, def, xyz, etc.)
+    for (let i = 0; i < cleanText.length - 2; i++) {
+      const char1 = cleanText.charCodeAt(i);
+      const char2 = cleanText.charCodeAt(i + 1);
+      const char3 = cleanText.charCodeAt(i + 2);
+      
+      if (char2 === char1 + 1 && char3 === char2 + 1) {
+        return true;
+      }
+    }
+    
+    // Verificar sequências numéricas (123, 456, 789, etc.)
+    for (let i = 0; i < cleanText.length - 2; i++) {
+      const num1 = parseInt(cleanText[i]);
+      const num2 = parseInt(cleanText[i + 1]);
+      const num3 = parseInt(cleanText[i + 2]);
+      
+      if (!isNaN(num1) && !isNaN(num2) && !isNaN(num3)) {
+        if (num2 === num1 + 1 && num3 === num2 + 1) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
+  // Validador para detectar repetições excessivas
+  hasRepeatedChars(text: string): boolean {
+    const cleanText = text.toLowerCase().replace(/\s/g, '');
+    
+    // Verificar 3 ou mais caracteres iguais consecutivos
+    for (let i = 0; i < cleanText.length - 2; i++) {
+      if (cleanText[i] === cleanText[i + 1] && cleanText[i + 1] === cleanText[i + 2]) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
   // Validador avançado para telefone
   telefoneValidator(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
@@ -136,7 +253,44 @@ export class AgendamentoComponent implements OnInit {
       return { telefoneInvalido: true };
     }
     
+    // Verificar sequências e repetições no telefone
+    if (this.hasSequentialNumbers(phone) || this.hasRepeatedNumbers(phone)) {
+      return { telefoneSequencial: true };
+    }
+    
     return null;
+  }
+
+  // Validador específico para sequências numéricas em telefone
+  hasSequentialNumbers(phone: string): boolean {
+    // Verificar sequências de 4 ou mais números consecutivos
+    for (let i = 0; i < phone.length - 3; i++) {
+      const num1 = parseInt(phone[i]);
+      const num2 = parseInt(phone[i + 1]);
+      const num3 = parseInt(phone[i + 2]);
+      const num4 = parseInt(phone[i + 3]);
+      
+      if (num2 === num1 + 1 && num3 === num2 + 1 && num4 === num3 + 1) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  // Validador específico para repetições numéricas em telefone
+  hasRepeatedNumbers(phone: string): boolean {
+    // Verificar 5 ou mais números iguais consecutivos
+    for (let i = 0; i < phone.length - 4; i++) {
+      if (phone[i] === phone[i + 1] && 
+          phone[i + 1] === phone[i + 2] && 
+          phone[i + 2] === phone[i + 3] && 
+          phone[i + 3] === phone[i + 4]) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   // Validador para evitar datas passadas e domingos
@@ -155,6 +309,37 @@ export class AgendamentoComponent implements OnInit {
     }
     
     return null;
+  }
+
+  // Validador de segurança para email
+  emailSecurityValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const email = control.value.toLowerCase();
+    const localPart = email.split('@')[0];
+    
+    if (!localPart) return null;
+    
+    // Verificar sequências e repetições na parte local do email
+    if (this.hasSequentialChars(localPart) || this.hasExcessiveRepeatedChars(localPart)) {
+      return { emailInseguro: true };
+    }
+    
+    return null;
+  }
+
+  // Validador específico para repetições excessivas em email
+  hasExcessiveRepeatedChars(text: string): boolean {
+    // Verificar 4 ou mais caracteres iguais consecutivos
+    for (let i = 0; i < text.length - 3; i++) {
+      if (text[i] === text[i + 1] && 
+          text[i + 1] === text[i + 2] && 
+          text[i + 2] === text[i + 3]) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 
   // Métodos para verificação de duplicatas
@@ -227,7 +412,8 @@ export class AgendamentoComponent implements OnInit {
       ]],
       email: ['', [
         Validators.required,
-        Validators.email
+        Validators.email,
+        this.emailSecurityValidator.bind(this)
       ]],
       telefone: ['', [
         Validators.required,
@@ -434,7 +620,11 @@ export class AgendamentoComponent implements OnInit {
     if (field.hasError('email')) return 'E-mail inválido';
     if (field.hasError('hasNumber')) return 'Não pode conter números';
     if (field.hasError('nomeIncompleto')) return 'Digite nome e sobrenomes completos';
+    if (field.hasError('sequenciaInvalida')) return 'Nome não pode conter sequências ou repetições';
+    if (field.hasError('nomeIrreal')) return 'Por favor, digite um nome real válido';
     if (field.hasError('telefoneInvalido')) return 'Telefone inválido';
+    if (field.hasError('telefoneSequencial')) return 'Telefone não pode ter sequências ou muitas repetições';
+    if (field.hasError('emailInseguro')) return 'Email não pode conter sequências ou repetições excessivas';
     if (field.hasError('dataPassada')) return 'Não é possível agendar para datas passadas';
     
     return 'Campo inválido';
