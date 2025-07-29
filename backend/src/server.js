@@ -714,11 +714,11 @@ app.get('/api/agendamentos-data', async (req, res) => {
     };
     
     res.json(response);
-    
-    res.json(result.rows);
   } catch (err) {
     console.error('Erro ao buscar agendamentos da data:', err);
-    res.status(500).json({ error: 'Erro ao buscar agendamentos' });
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Erro ao buscar agendamentos' });
+    }
   }
 });
 
