@@ -767,7 +767,7 @@ app.delete('/api/datas-bloqueadas/:data', async (req, res) => {
 // GET para listar datas bloqueadas
 app.get('/api/datas-bloqueadas', async (req, res) => {
   try {
-    const result = await db.query('SELECT data, motivo FROM datas_bloqueadas ORDER BY data');
+    const result = await db.query('SELECT TO_CHAR(data, \'YYYY-MM-DD\') as data, motivo FROM datas_bloqueadas ORDER BY data');
     res.json(result.rows);
   } catch (err) {
     console.error('Erro ao buscar datas bloqueadas:', err);
