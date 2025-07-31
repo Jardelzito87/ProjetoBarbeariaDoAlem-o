@@ -949,7 +949,7 @@ testConnection().then(async connected => {
     // Limpar todas as sessões ativas ao reiniciar
     await limparSessoesAtivas();
     
-    const PORT = config.server.port;
+    const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
       console.log(`🚀 Servidor rodando na porta ${PORT}`);
       console.log('🔐 Sistema de login pronto - todas as sessões anteriores foram invalidadas');

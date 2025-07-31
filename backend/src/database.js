@@ -4,8 +4,8 @@ const config = require('../config');
 class DatabaseConnection {
   constructor() {
     this.pool = new Pool({
-      connectionString: config.database.connectionString,
-      ssl: config.database.ssl,
+      connectionString: process.env.DATABASE_URL,
+      ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
       ...config.database.pool
     });
 
@@ -64,18 +64,9 @@ class DatabaseConnection {
   // Método para testar conexão
   async testConnection() {
     try {
-      const client = await this.getClient();
-      const result = await client.query('SELECT NOW() as now, version() as version');
-      client.release();
-      
-      console.log('✅ Teste de conexão bem-sucedido:', {
-        timestamp: result.rows[0].now,
-        version: result.rows[0].version.split(' ')[0]
-      });
-      
+      await this.pool.query('SELECT 1');
       return true;
-    } catch (error) {
-      console.error('❌ Falha no teste de conexão:', error.message);
+    } catch (err) {
       return false;
     }
   }
