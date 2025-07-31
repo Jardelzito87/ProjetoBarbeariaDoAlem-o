@@ -4,17 +4,7 @@
   "description": "Backend para o sistema de agendamentos da Barbearia do Além - Estrutura Reorganizada",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "setup-db": "node database/setup-db.js",
-    "setup-neon": "node database/setup-db-neon.js", 
-    "test-connection": "node tests/test-connection.js",
-    "check-tables": "node database/check-tables.js",
-    "init-data": "node database/initialize-data.js",
-    "generate-credentials": "node security/generate-secure-credentials.js",
-    "update-password": "node security/update-admin-password.js",
-    "test-api": "node tests/teste-api-simples.js",
-    "maintenance": "node scripts/correcao-final-status.js"
+    "start": "node src/server.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
