@@ -33,29 +33,29 @@ app.use(session({
 
 // Rota raiz - Redirecionar para frontend
 app.get('/', (req, res) => {
-  // Se for uma requisição do navegador, redirecionar para o frontend
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:4200';
+
   if (req.headers.accept && req.headers.accept.includes('text/html')) {
-    res.redirect('http://localhost:4200');
-  } else {
-    // Se for uma requisição de API, retornar JSON com info da API
-    res.json({
-      name: 'Barbearia do Além API',
-      version: '2.0.0',
-      status: 'online',
-      endpoints: {
-        frontend: 'http://localhost:4200',
-        admin: 'http://localhost:4200/admin',
-        login: 'http://localhost:4200/login',
-        docs: 'http://localhost:3000/docs'
-      },
-      api: {
-        servicos: 'GET /api/servicos',
-        agendamentos: 'GET /api/agendamentos',
-        clientes: 'POST /api/clientes',
-        auth: 'POST /api/admin/login'
-      }
-    });
+    return res.redirect(frontendUrl);
   }
+
+  res.json({
+    name: 'Barbearia do Além API',
+    version: '2.0.0',
+    status: 'online',
+    endpoints: {
+      frontend: frontendUrl,
+      admin: `${frontendUrl}/admin`,
+      login: `${frontendUrl}/login`,
+      docs: `${req.protocol}://${req.get('host')}/docs`
+    },
+    api: {
+      servicos: 'GET /api/servicos',
+      agendamentos: 'GET /api/agendamentos',
+      clientes: 'POST /api/clientes',
+      auth: 'POST /api/admin/login'
+    }
+  });
 });
 
 // Rota para documentação da API
