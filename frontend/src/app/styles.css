@@ -181,12 +181,12 @@ nav {
     }
     
     .menu-barbearia li a {
-        font-size: 1.1rem;
-        padding: 10px 20px;
+        font-size: 1rem;
+        padding: 8px 16px;
         text-align: center;
-        width: 200px;
+        width: 160px;
         border: 1px solid #444;
-        border-radius: 8px;
+        border-radius: 6px;
         background: rgba(34, 34, 34, 0.8);
     }
     
@@ -202,7 +202,7 @@ nav {
     }
     
     main {
-        margin-top: 320px;
+        margin-top: 280px;
     }
 }
 
