@@ -17,6 +17,23 @@ const app = express();
 // Configurar CORS usando configurações centralizadas
 app.use(cors(config.cors));
 
+// Middleware adicional para debug de CORS
+app.use((req, res, next) => {
+  console.log(`🌐 ${req.method} ${req.path} - Origin: ${req.get('Origin') || 'none'}`);
+  
+  // Headers adicionais para garantir CORS
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(express.json());
 app.use(express.static(config.paths.public)); // Servir arquivos estáticos
 
@@ -592,21 +609,28 @@ app.post('/api/agendamentos', async (req, res) => {
 
 // GET para verificar se um horário específico está disponível
 app.get('/api/verificar-horario', async (req, res) => {
+  console.log('🔍 GET /api/verificar-horario - Query params:', req.query);
   const { data, hora } = req.query;
   
   if (!data || !hora) {
+    console.log('❌ Parâmetros ausentes:', { data, hora });
     return res.status(400).json({ error: 'Data e hora são obrigatórios' });
   }
   
   try {
+    console.log(`🔍 Verificando disponibilidade para ${data} às ${hora}`);
+    
     // Verificar se a data está bloqueada
+    console.log('📅 Verificando se a data está bloqueada...');
     const dataBloqueada = await db.query('SELECT * FROM datas_bloqueadas WHERE data = $1', [data]);
     if (dataBloqueada.rows.length > 0) {
+      console.log('🚫 Data bloqueada encontrada:', dataBloqueada.rows[0]);
       return res.json({ disponivel: false, motivo: 'Data bloqueada' });
     }
+    console.log('✅ Data não está bloqueada');
 
     // Verificar se já existe um agendamento ativo para esta data e hora
-    // Apenas 'pendente' e 'confirmado' bloqueiam o horário
+    console.log('📋 Verificando agendamentos existentes...');
     const result = await db.query(
       `SELECT id FROM agendamentos 
        WHERE data_agendada = $1 
@@ -615,15 +639,23 @@ app.get('/api/verificar-horario', async (req, res) => {
       [data, hora]
     );
     
-    console.log(`Verificando disponibilidade para ${data} ${hora} - Encontrados ${result.rows.length} agendamentos ativos`);
+    console.log(`📊 Encontrados ${result.rows.length} agendamentos ativos para ${data} ${hora}`);
     
     // Se não encontrar agendamentos ativos, o horário está disponível
     const disponivel = result.rows.length === 0;
+    console.log(`✅ Horário ${disponivel ? 'disponível' : 'ocupado'}`);
     
     res.json({ disponivel });
   } catch (error) {
-    console.error('Erro ao verificar disponibilidade:', error);
-    res.status(500).json({ error: 'Erro ao verificar disponibilidade' });
+    console.error('❌ Erro ao verificar disponibilidade:', error);
+    console.error('📋 Stack trace:', error.stack);
+    
+    if (!res.headersSent) {
+      res.status(500).json({ 
+        error: 'Erro ao verificar disponibilidade',
+        details: error.message 
+      });
+    }
   }
 });
 
@@ -831,6 +863,20 @@ app.get('/api/logs-agendamentos', async (req, res) => {
   } catch (err) {
     console.error('Erro ao buscar logs de agendamentos:', err);
     res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
+
+// Middleware global de tratamento de erros
+app.use((err, req, res, next) => {
+  console.error('❌ Erro não tratado:', err);
+  console.error('📋 Stack:', err.stack);
+  
+  if (!res.headersSent) {
+    res.status(500).json({
+      error: 'Erro interno do servidor',
+      message: err.message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 

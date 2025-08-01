@@ -1,7 +1,7 @@
 // Configurações do ambiente - Barbearia do Além
 export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:3000',
+  production: true,
+  apiUrl: 'https://projetobarbeariadoalem-o-3.onrender.com',
   
   // Configurações padrão do sistema
   defaultCredentials: {
@@ -11,10 +11,10 @@ export const environment = {
   
   // URLs importantes
   urls: {
-    backend: 'http://localhost:3000',
-    frontend: 'http://localhost:4200',
-    login: 'http://localhost:4200/login',
-    admin: 'http://localhost:4200/admin'
+    backend: 'https://projetobarbeariadoalem-o-3.onrender.com',
+    frontend: 'https://jardelzito87.github.io',
+    login: 'https://jardelzito87.github.io/login',
+    admin: 'https://jardelzito87.github.io/admin'
   },
   
   // Configurações de banco
@@ -28,6 +28,6 @@ export const environment = {
     step1: 'Execute: setup-projeto.bat',
     step2: 'Se erro de banco, edite backend/.env',
     step3: 'Execute: start-completo.bat',
-    step4: 'Acesse: http://localhost:4200/login'
+    step4: 'Acesse: https://jardelzito87.github.io/login'
   }
 };

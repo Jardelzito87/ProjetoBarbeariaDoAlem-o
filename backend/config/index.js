@@ -36,9 +36,28 @@ module.exports = {
 
   // Configurações de CORS
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+    origin: function (origin, callback) {
+      // Permitir requisições sem origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+      
+      const allowedOrigins = [
+        'http://localhost:4200',
+        'http://127.0.0.1:4200',
+        'https://jardelzito87.github.io',
+        process.env.FRONTEND_URL
+      ].filter(Boolean);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        console.log('CORS blocked origin:', origin);
+        callback(null, true); // Permitir temporariamente para debug
+      }
+    },
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
   },
 
   // Diretórios da aplicação
