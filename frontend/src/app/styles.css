@@ -1,4 +1,3 @@
-
 /* Importa fonte temática de Halloween para elementos especiais */
 @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
 
@@ -31,7 +30,7 @@ body {
     flex-direction: column; /* Empilha elementos verticalmente */
     align-items: center; /* Centraliza horizontalmente */
     background: #222; /* Fundo escuro sólido */
-    padding: 24px 0 12px 0; /* Espaçamento interno assimétrico */
+    padding: 24px 20px 12px 20px; /* Espaçamento interno com padding lateral */
     box-shadow: 0 2px 8px rgba(0,0,0,0.2); /* Sombra sutil para profundidade */
     position: fixed; /* Fixo no topo da tela */
     top: 0; /* Posicionado no topo */
@@ -48,6 +47,7 @@ body {
     width: 100%; /* Usa toda largura disponível */
     max-width: 1200px; /* Largura máxima para telas grandes */
     position: relative; /* Permite posicionamento absoluto dos filhos */
+    padding: 0 10px; /* Padding lateral para mobile */
 }
 
 /* Ícones fantasmas decorativos - Animação flutuante */
@@ -106,6 +106,8 @@ nav {
     list-style: none; /* Remove marcadores da lista */
     padding: 0;
     margin: 0;
+    flex-wrap: wrap; /* Permite quebra de linha em telas pequenas */
+    justify-content: center; /* Centraliza itens */
 }
 
 /* Links do menu - Estilo padrão e hover */
@@ -118,11 +120,127 @@ nav {
     display: flex;
     align-items: center;
     gap: 8px; /* Espaço para ícones (se houver) */
+    white-space: nowrap; /* Evita quebra de texto */
+    padding: 8px 4px; /* Padding para melhor toque em mobile */
 }
 
 /* Efeito hover - Cor dourada tema barbearia */
 .menu-barbearia li a:hover {
     color: #eab543; /* Dourado no hover */
+}
+
+/* ==============================
+   RESPONSIVIDADE MOBILE
+   ============================== */
+
+/* Tablets e telas médias */
+@media (max-width: 768px) {
+    .header-barbearia {
+        padding: 20px 15px 10px 15px;
+    }
+    
+    .header-container {
+        padding: 0 5px;
+    }
+    
+    .menu-barbearia {
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .menu-barbearia li a {
+        font-size: 1.1rem;
+        padding: 6px 3px;
+    }
+    
+    .ghost-left {
+        left: 10px;
+    }
+    
+    .ghost-right {
+        right: 10px;
+    }
+    
+    .ghost-svg {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Smartphones */
+@media (max-width: 480px) {
+    .header-barbearia {
+        padding: 15px 10px 8px 10px;
+    }
+    
+    .header-container {
+        padding: 0;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .menu-barbearia {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .menu-barbearia li {
+        flex: 0 0 auto;
+    }
+    
+    .menu-barbearia li a {
+        font-size: 1rem;
+        padding: 8px 6px;
+        text-align: center;
+        min-width: 80px;
+    }
+    
+    .ghost-icon {
+        position: relative;
+        order: -1;
+    }
+    
+    .ghost-left, .ghost-right {
+        position: relative;
+        left: auto;
+        right: auto;
+        display: inline-block;
+        margin: 0 10px;
+    }
+    
+    .ghost-svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    nav {
+        margin-top: 8px;
+        width: 100%;
+    }
+    
+    main {
+        margin-top: 140px; /* Aumenta margem para compensar header maior */
+    }
+}
+
+/* Telas muito pequenas */
+@media (max-width: 360px) {
+    .menu-barbearia {
+        gap: 10px;
+    }
+    
+    .menu-barbearia li a {
+        font-size: 0.9rem;
+        padding: 6px 4px;
+        min-width: 70px;
+    }
+    
+    main {
+        margin-top: 160px;
+    }
 }
 
 /* ==============================
@@ -150,4 +268,3 @@ main {
     border-top: 2px solid #eab543; /* Borda dourada no topo */
     margin-top: 32px; /* Espaço antes do rodapé */
 }
-
