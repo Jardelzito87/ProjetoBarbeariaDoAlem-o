@@ -3,6 +3,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
 const path = require('path');
 
 // Garantir que dotenv seja carregado
@@ -37,8 +38,13 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.static(config.paths.public)); // Servir arquivos estáticos
 
-// Configurar sessões usando configurações centralizadas
+// Configurar sessões usando PostgreSQL como store
 app.use(session({
+  store: new pgSession({
+    conString: config.database.connectionString,
+    tableName: 'session',
+    createTableIfMissing: true
+  }),
   secret: config.security.sessionSecret,
   resave: false,
   saveUninitialized: false,
