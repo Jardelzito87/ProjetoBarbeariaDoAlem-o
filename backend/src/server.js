@@ -41,7 +41,7 @@ app.use(express.static(config.paths.public)); // Servir arquivos estáticos
 // Configurar sessões usando PostgreSQL como store
 app.use(session({
   store: new pgSession({
-    conString: config.database.connectionString,
+    pool: db.pool,
     tableName: 'session',
     createTableIfMissing: true
   }),
@@ -50,9 +50,19 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     secure: false, // true em produção com HTTPS
-    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+    maxAge: 2 * 60 * 60 * 1000 // 2 horas
   }
 }));
+
+// Ping para manter Neon ativo
+setInterval(async () => {
+  try {
+    await db.query('SELECT 1');
+    console.log('⏱️ Ping Neon DB - OK');
+  } catch (err) {
+    console.error('❌ Erro ao pingar banco:', err);
+  }
+}, 5 * 60 * 1000); // 5 minutos
 
 // Rota raiz - Redirecionar para frontend
 app.get('/', (req, res) => {
