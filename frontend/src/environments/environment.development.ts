@@ -1,7 +1,7 @@
 // Configurações do ambiente - Barbearia do Além
 export const environment = {
   production: true,
-  apiUrl: 'https://projetobarbeariadoalem-o-3.onrender.com',
+  apiUrl: 'https://projetobarbeariadoalem-o-3.onrender.com/api',
   
   // Configurações padrão do sistema
   defaultCredentials: {
@@ -11,7 +11,7 @@ export const environment = {
   
   // URLs importantes
   urls: {
-    backend: 'https://projetobarbeariadoalem-o-3.onrender.com',
+    backend: 'https://projetobarbeariadoalem-o-3.onrender.com/api',
     frontend: 'https://jardelzito87.github.io',
     login: 'https://jardelzito87.github.io/login',
     admin: 'https://jardelzito87.github.io/admin'
