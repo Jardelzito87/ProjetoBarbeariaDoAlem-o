@@ -114,116 +114,6 @@
       </div>
     </div>
     
-    <!-- Seção de Gerenciamento de Administradores -->
-    <div class="admin-section">
-      <h2>Gerenciar Administradores</h2>
-      
-      <div class="admin-controls">
-        <button class="toggle-button" (click)="toggleMostrarAdmins()">
-          {{ mostrarAdmins ? 'Ocultar Administradores' : 'Mostrar Administradores' }}
-        </button>
-        <button class="btn-add-admin" (click)="mostrarFormNovoAdmin = true" *ngIf="mostrarAdmins">
-          <span class="btn-icon">➕</span> Adicionar Administrador
-        </button>
-      </div>
-      
-      <!-- Formulário para Novo Admin -->
-      <div *ngIf="mostrarFormNovoAdmin" class="form-container">
-        <h3>Novo Administrador</h3>
-        <form [formGroup]="novoAdminForm" (ngSubmit)="criarNovoAdmin()">
-          <div class="form-group">
-            <label for="nomeAdmin">Nome</label>
-            <input type="text" id="nomeAdmin" formControlName="nome" placeholder="Nome completo">
-          </div>
-          
-          <div class="form-group">
-            <label for="emailAdmin">Email</label>
-            <input type="email" id="emailAdmin" formControlName="email" placeholder="email@exemplo.com">
-          </div>
-          
-          <div class="form-group">
-            <label for="nivelAcesso">Nível de Acesso</label>
-            <select id="nivelAcesso" formControlName="nivel_acesso">
-              <option value="admin">Administrador</option>
-              <option value="moderador">Moderador</option>
-            </select>
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" [disabled]="novoAdminForm.invalid">Criar Admin</button>
-            <button type="button" (click)="cancelarNovoAdmin()">Cancelar</button>
-          </div>
-        </form>
-      </div>
-      
-      <!-- Lista de Administradores -->
-      <div *ngIf="mostrarAdmins" class="admins-container">
-        <div *ngIf="carregandoAdmins" class="loading-container">
-          <div class="loading-icon"></div>
-          <span>Carregando administradores...</span>
-        </div>
-        
-        <table *ngIf="!carregandoAdmins && administradores.length > 0" class="admins-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Email</th>
-              <th>Nível</th>
-              <th>Status</th>
-              <th>Último Login</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let admin of administradores">
-              <td>{{ admin.id }}</td>
-              <td>{{ admin.nome }}</td>
-              <td>{{ admin.email }}</td>
-              <td>{{ admin.nivel_acesso }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="admin.ativo ? 'ativo' : 'inativo'">
-                  {{ admin.ativo ? 'Ativo' : 'Inativo' }}
-                </span>
-              </td>
-              <td>{{ admin.ultimo_login ? (admin.ultimo_login | date:'dd/MM/yyyy HH:mm') : 'Nunca' }}</td>
-              <td>
-                <button class="btn-change-password" (click)="abrirFormAlterarSenha(admin)">
-                  <span class="btn-icon">🔑</span> Alterar Senha
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
-      <!-- Formulário para Alterar Senha -->
-      <div *ngIf="mostrarFormAlterarSenha" class="form-container">
-        <h3>Alterar Senha - {{ adminSelecionado?.nome }}</h3>
-        <form [formGroup]="alterarSenhaForm" (ngSubmit)="alterarSenha()">
-          <div class="form-group">
-            <label for="senhaAtual">Senha Atual</label>
-            <input type="password" id="senhaAtual" formControlName="senhaAtual" placeholder="Digite a senha atual">
-          </div>
-          
-          <div class="form-group">
-            <label for="novaSenha">Nova Senha</label>
-            <input type="password" id="novaSenha" formControlName="novaSenha" placeholder="Digite a nova senha">
-          </div>
-          
-          <div class="form-group">
-            <label for="confirmarSenha">Confirmar Nova Senha</label>
-            <input type="password" id="confirmarSenha" formControlName="confirmarSenha" placeholder="Confirme a nova senha">
-          </div>
-          
-          <div class="form-actions">
-            <button type="submit" [disabled]="alterarSenhaForm.invalid">Alterar Senha</button>
-            <button type="button" (click)="cancelarAlterarSenha()">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    
     <div class="admin-section">
       <div class="historico-header-container">
         <div class="historico-title-section">
@@ -526,6 +416,142 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    
+    <!-- Seção de Gerenciamento de Administradores - Localizada no final -->
+    <div class="admin-section admin-management-section">
+      <div class="section-header">
+        <h2><span class="section-icon">👥</span> Gerenciamento do Sistema</h2>
+        <p class="section-description">Controle de usuários e permissões administrativas</p>
+      </div>
+      
+      <div class="admin-controls">
+        <button class="toggle-button professional" (click)="toggleMostrarAdmins()">
+          <span class="btn-icon">👥</span>
+          {{ mostrarAdmins ? 'Ocultar Administradores' : 'Gerenciar Administradores' }}
+        </button>
+        <button class="btn-add-admin" (click)="mostrarFormNovoAdmin = true" *ngIf="mostrarAdmins">
+          <span class="btn-icon">➕</span> Novo Administrador
+        </button>
+      </div>
+      
+      <!-- Formulário para Novo Admin -->
+      <div *ngIf="mostrarFormNovoAdmin" class="form-container">
+        <h3><span class="form-icon">🆕</span> Criar Novo Administrador</h3>
+        <form [formGroup]="novoAdminForm" (ngSubmit)="criarNovoAdmin()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nomeAdmin">Nome Completo</label>
+              <input type="text" id="nomeAdmin" formControlName="nome" placeholder="Digite o nome completo">
+            </div>
+            
+            <div class="form-group">
+              <label for="emailAdmin">Email</label>
+              <input type="email" id="emailAdmin" formControlName="email" placeholder="email@exemplo.com">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="nivelAcesso">Nível de Acesso</label>
+            <select id="nivelAcesso" formControlName="nivel_acesso">
+              <option value="admin">Administrador Completo</option>
+              <option value="moderador">Moderador</option>
+            </select>
+          </div>
+          
+          <div class="password-info">
+            <p><strong>Senha padrão:</strong> admin123 (o usuário deve alterar no primeiro login)</p>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="novoAdminForm.invalid">
+              <span class="btn-icon">✓</span> Criar Administrador
+            </button>
+            <button type="button" class="btn-secondary" (click)="cancelarNovoAdmin()">
+              <span class="btn-icon">✕</span> Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Lista de Administradores -->
+      <div *ngIf="mostrarAdmins" class="admins-container">
+        <div *ngIf="carregandoAdmins" class="loading-container">
+          <div class="loading-icon"></div>
+          <span>Carregando administradores...</span>
+        </div>
+        
+        <div *ngIf="!carregandoAdmins && administradores.length > 0" class="table-container">
+          <table class="admins-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Nível</th>
+                <th>Status</th>
+                <th>Último Login</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let admin of administradores">
+                <td><span class="admin-id">#{{ admin.id }}</span></td>
+                <td><strong>{{ admin.nome }}</strong></td>
+                <td>{{ admin.email }}</td>
+                <td>
+                  <span class="nivel-badge" [ngClass]="admin.nivel_acesso">
+                    {{ admin.nivel_acesso === 'admin' ? 'Admin' : 'Moderador' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="admin.ativo ? 'ativo' : 'inativo'">
+                    {{ admin.ativo ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </td>
+                <td>{{ admin.ultimo_login ? (admin.ultimo_login | date:'dd/MM/yyyy HH:mm') : 'Nunca logou' }}</td>
+                <td>
+                  <button class="btn-change-password" (click)="abrirFormAlterarSenha(admin)">
+                    <span class="btn-icon">🔑</span> Alterar Senha
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Formulário para Alterar Senha -->
+      <div *ngIf="mostrarFormAlterarSenha" class="form-container">
+        <h3><span class="form-icon">🔑</span> Alterar Senha - {{ adminSelecionado?.nome }}</h3>
+        <form [formGroup]="alterarSenhaForm" (ngSubmit)="alterarSenha()">
+          <div class="form-group">
+            <label for="senhaAtual">Senha Atual</label>
+            <input type="password" id="senhaAtual" formControlName="senhaAtual" placeholder="Digite a senha atual">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="novaSenha">Nova Senha</label>
+              <input type="password" id="novaSenha" formControlName="novaSenha" placeholder="Mínimo 6 caracteres">
+            </div>
+            
+            <div class="form-group">
+              <label for="confirmarSenha">Confirmar Nova Senha</label>
+              <input type="password" id="confirmarSenha" formControlName="confirmarSenha" placeholder="Repita a nova senha">
+            </div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-primary" [disabled]="alterarSenhaForm.invalid">
+              <span class="btn-icon">✓</span> Alterar Senha
+            </button>
+            <button type="button" class="btn-secondary" (click)="cancelarAlterarSenha()">
+              <span class="btn-icon">✕</span> Cancelar
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
