@@ -419,10 +419,10 @@
       </div>
     </div>
     
-    <!-- Seção de Gerenciamento de Administradores - Localizada no final -->
+    <!-- Seção de Gerenciamento de Administradores -->
     <div class="admin-section admin-management-section">
       <div class="section-header">
-        <h2><span class="section-icon">👥</span> Gerenciamento do Sistema</h2>
+        <h2><span class="section-icon">👥</span> Administração do Sistema</h2>
         <p class="section-description">Controle de usuários e permissões administrativas</p>
       </div>
       
@@ -434,6 +434,59 @@
         <button class="btn-add-admin" (click)="mostrarFormNovoAdmin = true" *ngIf="mostrarAdmins">
           <span class="btn-icon">➕</span> Novo Administrador
         </button>
+      </div>
+      
+      <!-- Lista de Administradores -->
+      <div *ngIf="mostrarAdmins" class="admins-container">
+        <div *ngIf="carregandoAdmins" class="loading-container">
+          <div class="loading-icon"></div>
+          <span>Carregando administradores...</span>
+        </div>
+        
+        <div *ngIf="!carregandoAdmins" class="table-container">
+          <div *ngIf="administradores.length === 0" class="empty-state">
+            <p>Nenhum administrador encontrado</p>
+          </div>
+          
+          <div *ngIf="administradores.length > 0">
+            <table class="admins-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Nível</th>
+                  <th>Status</th>
+                  <th>Último Login</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let admin of administradores">
+                  <td><span class="admin-id">#{{ admin.id }}</span></td>
+                  <td><strong>{{ admin.nome }}</strong></td>
+                  <td>{{ admin.email }}</td>
+                  <td>
+                    <span class="nivel-badge" [ngClass]="admin.nivel_acesso">
+                      {{ admin.nivel_acesso === 'admin' ? 'Admin' : 'Moderador' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-badge" [ngClass]="admin.ativo ? 'ativo' : 'inativo'">
+                      {{ admin.ativo ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </td>
+                  <td>{{ admin.ultimo_login ? (admin.ultimo_login | date:'dd/MM/yyyy HH:mm') : 'Nunca logou' }}</td>
+                  <td>
+                    <button class="btn-change-password" (click)="abrirFormAlterarSenha(admin)">
+                      <span class="btn-icon">🔑</span> Alterar Senha
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
       
       <!-- Formulário para Novo Admin -->
@@ -473,59 +526,6 @@
             </button>
           </div>
         </form>
-      </div>
-      
-      <!-- Lista de Administradores -->
-      <div *ngIf="mostrarAdmins" class="admins-container">
-        <div *ngIf="carregandoAdmins" class="loading-container">
-          <div class="loading-icon"></div>
-          <span>Carregando administradores...</span>
-        </div>
-        
-        <div *ngIf="!carregandoAdmins" class="table-container">
-          <div *ngIf="administradores.length === 0" class="empty-state">
-            <p>Nenhum administrador encontrado</p>
-          </div>
-          
-          <div *ngIf="administradores.length > 0">
-          <table class="admins-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Nível</th>
-                <th>Status</th>
-                <th>Último Login</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let admin of administradores">
-                <td><span class="admin-id">#{{ admin.id }}</span></td>
-                <td><strong>{{ admin.nome }}</strong></td>
-                <td>{{ admin.email }}</td>
-                <td>
-                  <span class="nivel-badge" [ngClass]="admin.nivel_acesso">
-                    {{ admin.nivel_acesso === 'admin' ? 'Admin' : 'Moderador' }}
-                  </span>
-                </td>
-                <td>
-                  <span class="status-badge" [ngClass]="admin.ativo ? 'ativo' : 'inativo'">
-                    {{ admin.ativo ? 'Ativo' : 'Inativo' }}
-                  </span>
-                </td>
-                <td>{{ admin.ultimo_login ? (admin.ultimo_login | date:'dd/MM/yyyy HH:mm') : 'Nunca logou' }}</td>
-                <td>
-                  <button class="btn-change-password" (click)="abrirFormAlterarSenha(admin)">
-                    <span class="btn-icon">🔑</span> Alterar Senha
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          </div>
-        </div>
       </div>
       
       <!-- Formulário para Alterar Senha -->
