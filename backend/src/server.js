@@ -314,6 +314,106 @@ app.post('/api/admin/logout', verificarAuth, async (req, res) => {
   }
 });
 
+// GET - Listar administradores
+app.get('/api/admins', verificarAuth, async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT id, nome, email, nivel_acesso, ativo, criado_em, ultimo_login FROM administradores ORDER BY nome'
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Erro ao listar admins:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+// POST - Criar novo administrador
+app.post('/api/admins', verificarAuth, async (req, res) => {
+  const { nome, email, nivel_acesso } = req.body;
+  const senha = 'admin123';
+  
+  if (!nome || !email || !nivel_acesso) {
+    return res.status(400).json({ error: 'Nome, email e nível de acesso são obrigatórios' });
+  }
+  
+  try {
+    const emailExiste = await db.query(
+      'SELECT id FROM administradores WHERE email = $1',
+      [email]
+    );
+    
+    if (emailExiste.rows.length > 0) {
+      return res.status(400).json({ error: 'Email já está em uso' });
+    }
+    
+    const senhaHash = await bcrypt.hash(senha, config.security.saltRounds);
+    
+    const result = await db.query(
+      'INSERT INTO administradores (nome, email, senha_hash, nivel_acesso) VALUES ($1, $2, $3, $4) RETURNING id, nome, email, nivel_acesso, ativo, criado_em',
+      [nome, email, senhaHash, nivel_acesso]
+    );
+    
+    res.status(201).json({
+      admin: result.rows[0],
+      senhaTemporaria: senha
+    });
+  } catch (err) {
+    console.error('Erro ao criar admin:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
+// PUT - Alterar senha do administrador
+app.put('/api/admins/:id/senha', verificarAuth, async (req, res) => {
+  const { id } = req.params;
+  const { senhaAtual, novaSenha } = req.body;
+  
+  if (!senhaAtual || !novaSenha) {
+    return res.status(400).json({ error: 'Senha atual e nova senha são obrigatórias' });
+  }
+  
+  try {
+    const adminResult = await db.query(
+      'SELECT * FROM administradores WHERE id = $1',
+      [id]
+    );
+    
+    if (adminResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Administrador não encontrado' });
+    }
+    
+    const admin = adminResult.rows[0];
+    const senhaValida = await bcrypt.compare(senhaAtual, admin.senha_hash);
+    
+    if (!senhaValida) {
+      return res.status(400).json({ error: 'Senha atual incorreta' });
+    }
+    
+    const novaSenhaHash = await bcrypt.hash(novaSenha, config.security.saltRounds);
+    
+    await db.query(
+      'UPDATE administradores SET senha_hash = $1 WHERE id = $2',
+      [novaSenhaHash, id]
+    );
+    
+    res.json({ success: true, message: 'Senha alterada com sucesso' });
+  } catch (err) {
+    console.error('Erro ao alterar senha:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});q.session.destroy((err) => {
+      if (err) {
+        console.error('Erro ao destruir sessão:', err);
+      }
+    });
+    
+    res.json({ success: true, message: 'Logout realizado com sucesso' });
+  } catch (err) {
+    console.error('Erro no logout:', err);
+    res.status(500).json({ error: 'Erro interno do servidor' });
+  }
+});
+
 // GET - Verificar status de autenticação
 app.get('/api/admin/status', verificarAuth, async (req, res) => {
   try {

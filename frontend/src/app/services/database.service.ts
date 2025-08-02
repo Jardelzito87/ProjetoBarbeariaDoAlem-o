@@ -165,4 +165,24 @@ export class DatabaseService {
   getAgendamentosPorData(data: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/agendamentos-data?data=${data}`);
   }
+  
+  // ============= GERENCIAMENTO DE ADMINISTRADORES =============
+  
+  // Listar administradores
+  getAdministradores(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/admins`, { headers: this.getAuthHeaders() });
+  }
+  
+  // Criar novo administrador
+  criarAdministrador(admin: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/admins`, admin, { headers: this.getAuthHeaders() });
+  }
+  
+  // Alterar senha do administrador
+  alterarSenhaAdmin(id: number, senhaAtual: string, novaSenha: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/admins/${id}/senha`, 
+      { senhaAtual, novaSenha }, 
+      { headers: this.getAuthHeaders() }
+    );
+  }
 }

@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin.component.html',
-  styleUrl: './admin.component.css'
+  styleUrls: ['./admin.component.css', './admin-gerenciar.css']
 })
 export class AdminComponent implements OnInit {
   agendamentos: Agendamento[] = [];
@@ -57,6 +57,16 @@ export class AdminComponent implements OnInit {
   // Autenticação
   adminLogado: any = null;
   exibindoMenuUsuario = false;
+  
+  // Gerenciamento de administradores
+  administradores: any[] = [];
+  mostrarAdmins = false;
+  carregandoAdmins = false;
+  mostrarFormNovoAdmin = false;
+  mostrarFormAlterarSenha = false;
+  adminSelecionado: any = null;
+  novoAdminForm!: FormGroup;
+  alterarSenhaForm!: FormGroup;
 
   constructor(
     private dbService: DatabaseService, 
@@ -186,6 +196,18 @@ export class AdminComponent implements OnInit {
     this.bloqueioForm = this.fb.group({
       data: ['', [Validators.required]],
       motivo: ['']
+    });
+    
+    this.novoAdminForm = this.fb.group({
+      nome: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      nivel_acesso: ['admin', [Validators.required]]
+    });
+    
+    this.alterarSenhaForm = this.fb.group({
+      senhaAtual: ['', [Validators.required]],
+      novaSenha: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarSenha: ['', [Validators.required]]
     });
   }
 
@@ -604,5 +626,100 @@ export class AdminComponent implements OnInit {
         this.carregando = false;
       }
     });
+  }
+  
+  // ============= MÉTODOS DE GERENCIAMENTO DE ADMINISTRADORES =============
+  
+  toggleMostrarAdmins(): void {
+    this.mostrarAdmins = !this.mostrarAdmins;
+    if (this.mostrarAdmins) {
+      this.carregarAdministradores();
+    }
+  }
+  
+  carregarAdministradores(): void {
+    this.carregandoAdmins = true;
+    this.dbService.getAdministradores().subscribe({
+      next: (admins) => {
+        this.administradores = admins;
+        this.carregandoAdmins = false;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar administradores:', err);
+        this.mensagem = 'Erro ao carregar administradores';
+        this.mensagemTipo = 'erro';
+        this.carregandoAdmins = false;
+      }
+    });
+  }
+  
+  criarNovoAdmin(): void {
+    if (this.novoAdminForm.invalid) return;
+    
+    const dadosAdmin = this.novoAdminForm.value;
+    this.carregando = true;
+    
+    this.dbService.criarAdministrador(dadosAdmin).subscribe({
+      next: (response) => {
+        this.mensagem = `Administrador criado! Senha temporária: ${response.senhaTemporaria}`;
+        this.mensagemTipo = 'sucesso';
+        this.cancelarNovoAdmin();
+        this.carregarAdministradores();
+        this.carregando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao criar administrador:', err);
+        this.mensagem = err.error?.error || 'Erro ao criar administrador';
+        this.mensagemTipo = 'erro';
+        this.carregando = false;
+      }
+    });
+  }
+  
+  cancelarNovoAdmin(): void {
+    this.mostrarFormNovoAdmin = false;
+    this.novoAdminForm.reset();
+    this.novoAdminForm.patchValue({ nivel_acesso: 'admin' });
+  }
+  
+  abrirFormAlterarSenha(admin: any): void {
+    this.adminSelecionado = admin;
+    this.mostrarFormAlterarSenha = true;
+    this.alterarSenhaForm.reset();
+  }
+  
+  alterarSenha(): void {
+    if (this.alterarSenhaForm.invalid) return;
+    
+    const { senhaAtual, novaSenha, confirmarSenha } = this.alterarSenhaForm.value;
+    
+    if (novaSenha !== confirmarSenha) {
+      this.mensagem = 'As senhas não coincidem';
+      this.mensagemTipo = 'erro';
+      return;
+    }
+    
+    this.carregando = true;
+    
+    this.dbService.alterarSenhaAdmin(this.adminSelecionado.id, senhaAtual, novaSenha).subscribe({
+      next: () => {
+        this.mensagem = 'Senha alterada com sucesso';
+        this.mensagemTipo = 'sucesso';
+        this.cancelarAlterarSenha();
+        this.carregando = false;
+      },
+      error: (err) => {
+        console.error('Erro ao alterar senha:', err);
+        this.mensagem = err.error?.error || 'Erro ao alterar senha';
+        this.mensagemTipo = 'erro';
+        this.carregando = false;
+      }
+    });
+  }
+  
+  cancelarAlterarSenha(): void {
+    this.mostrarFormAlterarSenha = false;
+    this.adminSelecionado = null;
+    this.alterarSenhaForm.reset();
   }
 }
