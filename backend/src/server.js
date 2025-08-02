@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With,Accept,Origin');
   
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
@@ -315,14 +315,20 @@ app.post('/api/admin/logout', verificarAuth, async (req, res) => {
 });
 
 // GET - Listar administradores
-app.get('/api/admins', verificarAuth, async (req, res) => {
+app.get('/api/admins', (req, res, next) => {
+  console.log('🔍 GET /api/admins - Headers:', req.headers);
+  console.log('🔍 Authorization:', req.headers.authorization);
+  next();
+}, verificarAuth, async (req, res) => {
   try {
+    console.log('✅ Buscando administradores no banco...');
     const result = await db.query(
       'SELECT id, nome, email, nivel_acesso, ativo, criado_em, ultimo_login FROM administradores ORDER BY nome'
     );
+    console.log('📊 Administradores encontrados:', result.rows.length);
     res.json(result.rows);
   } catch (err) {
-    console.error('Erro ao listar admins:', err);
+    console.error('❌ Erro ao listar admins:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
 });
