@@ -401,17 +401,6 @@ app.put('/api/admins/:id/senha', verificarAuth, async (req, res) => {
     console.error('Erro ao alterar senha:', err);
     res.status(500).json({ error: 'Erro interno do servidor' });
   }
-});q.session.destroy((err) => {
-      if (err) {
-        console.error('Erro ao destruir sessão:', err);
-      }
-    });
-    
-    res.json({ success: true, message: 'Logout realizado com sucesso' });
-  } catch (err) {
-    console.error('Erro no logout:', err);
-    res.status(500).json({ error: 'Erro interno do servidor' });
-  }
 });
 
 // GET - Verificar status de autenticação
