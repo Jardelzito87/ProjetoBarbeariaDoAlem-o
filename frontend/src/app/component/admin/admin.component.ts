@@ -631,22 +631,46 @@ export class AdminComponent implements OnInit {
   // ============= MÉTODOS DE GERENCIAMENTO DE ADMINISTRADORES =============
   
   toggleMostrarAdmins(): void {
+    console.log('🔍 Toggle administradores clicado');
     this.mostrarAdmins = !this.mostrarAdmins;
+    console.log('📊 Estado mostrarAdmins:', this.mostrarAdmins);
     if (this.mostrarAdmins) {
       this.carregarAdministradores();
     }
   }
   
   carregarAdministradores(): void {
+    console.log('🚀 Iniciando carregamento de administradores');
     this.carregandoAdmins = true;
+    
+    // Verificar se tem token
+    const token = localStorage.getItem('admin-token');
+    console.log('🔑 Token presente:', !!token);
+    
+    if (!token) {
+      console.error('❌ Token não encontrado');
+      this.mensagem = 'Erro de autenticação. Faça login novamente.';
+      this.mensagemTipo = 'erro';
+      this.carregandoAdmins = false;
+      return;
+    }
+    
     this.dbService.getAdministradores().subscribe({
       next: (admins) => {
+        console.log('✅ Administradores carregados:', admins);
         this.administradores = admins;
         this.carregandoAdmins = false;
       },
       error: (err) => {
-        console.error('Erro ao carregar administradores:', err);
-        this.mensagem = 'Erro ao carregar administradores';
+        console.error('❌ Erro ao carregar administradores:', err);
+        console.error('📊 Status:', err.status);
+        console.error('📊 Mensagem:', err.error);
+        
+        if (err.status === 401) {
+          this.mensagem = 'Sessão expirada. Faça login novamente.';
+        } else {
+          this.mensagem = 'Erro ao carregar administradores: ' + (err.error?.error || 'Erro desconhecido');
+        }
         this.mensagemTipo = 'erro';
         this.carregandoAdmins = false;
       }
