@@ -482,7 +482,12 @@
           <span>Carregando administradores...</span>
         </div>
         
-        <div *ngIf="!carregandoAdmins && administradores.length > 0" class="table-container">
+        <div *ngIf="!carregandoAdmins" class="table-container">
+          <div *ngIf="administradores.length === 0" class="empty-state">
+            <p>Nenhum administrador encontrado</p>
+          </div>
+          
+          <div *ngIf="administradores.length > 0">
           <table class="admins-table">
             <thead>
               <tr>
@@ -519,6 +524,7 @@
               </tr>
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       

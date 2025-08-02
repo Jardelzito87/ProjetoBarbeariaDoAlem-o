@@ -658,8 +658,19 @@ export class AdminComponent implements OnInit {
     this.dbService.getAdministradores().subscribe({
       next: (admins) => {
         console.log('✅ Administradores carregados:', admins);
-        this.administradores = admins;
+        console.log('📊 Tipo dos dados:', typeof admins);
+        console.log('📊 É array?', Array.isArray(admins));
+        console.log('📊 Quantidade:', admins?.length);
+        
+        this.administradores = admins || [];
         this.carregandoAdmins = false;
+        
+        // Forçar detecção de mudanças
+        setTimeout(() => {
+          console.log('🔄 Estado final - mostrarAdmins:', this.mostrarAdmins);
+          console.log('🔄 Estado final - administradores:', this.administradores);
+          console.log('🔄 Estado final - carregandoAdmins:', this.carregandoAdmins);
+        }, 100);
       },
       error: (err) => {
         console.error('❌ Erro ao carregar administradores:', err);
